@@ -349,9 +349,9 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
    Saving: every change is a small op ({op, path, value}) sent to the relay (worker/worker.js),
    never the whole document (the NTRC v38 lesson). Changes show at once, queue on the phone
    while there's no signal, retry by themselves, and say plainly whether they're saved. */
-const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "4.3", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
+const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "4.5", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
 const BASE = {"settings": {"twos": 0, "prizes": {"overall": 50, "front": 25, "back": 25}, "course": "Thorpe Hall GC", "format": "stableford"}, "players": [], "weeks": [], "money": [], "updatedAt": ""};               // data baked in at build time: the fallback copy
-const BUILD = "v4.3 · 11-26";
+const BUILD = "v4.5 · 11-26";
 const MONO = "<svg class=\"sp-mono\" role=\"img\" aria-label=\"TS\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"56\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"60\" cy=\"60\" r=\"50\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"/><text x=\"60\" y=\"74\" text-anchor=\"middle\" font-family=\"Charter,Georgia,serif\" font-weight=\"700\" font-size=\"42\" fill=\"currentColor\" letter-spacing=\"2\">TS<\/text><\/svg>";              // the monogram, inline SVG
 let WORKER = String(CFG.worker_url || "").replace(/\/+$/, "");
 const HOSTED = typeof location !== "undefined" && /^https?:$/.test(location.protocol);
@@ -847,7 +847,7 @@ function render() {
 function paintNav() {
   const tabs = [["home", "Home"], ["weeks", "Results"], ["season", "Stats"], ["me", "Me"]];
   if (ADMIN()) tabs.push(["admin", "Admin"]);
-  const on = { home: "home", card: "home", pick: "home", week: "weeks", weeks: "weeks", season: "season", stat: "season", cmp: "season", me: "me", a2: "me" }[R.v] || (ADMIN() ? "admin" : "home");
+  const on = { home: "home", card: "home", pick: "home", week: "weeks", weeks: "weeks", season: "season", stat: "season", cmp: "season", aweek: "admin", aweeks: "admin", me: "me", a2: "me" }[R.v] || (ADMIN() ? "admin" : "home");
   $("nav").innerHTML = tabs.map(([k, l]) => `<button class="${k === on ? "on" : ""}" data-go="${k}">${l}</button>`).join("");
 }
 function paint() {
@@ -1062,7 +1062,7 @@ function vHome() {
     if (ADMIN()) {
       const ent = entrants(w), miss = weekIds(w).filter(id => !cardOf(w, id)), od = ent.filter(id => odd(w, id).length);
       h += `<div class="panel"><div class="kick">Admin</div><p><b>${ent.length}</b> card${ent.length === 1 ? "" : "s"} in${miss.length ? `, <b>${miss.length}</b> still to come` : ""}${od.length ? `, <b>${od.length}</b> to check` : ""}.</p>
-        <button class="btn go" data-go="week" data-w="${esc(w.id)}">Check the cards and lock the week</button></div>`;
+        <button class="btn go" data-go="aweek" data-w="${esc(w.id)}">Check the cards and lock the week</button></div>`;
     }
     h += `<h2 class="h2">Leaderboard so far <small>${esc(fmtDate(w.date, false, true))}</small></h2>${prizeHtml(w, false)}${rowsHtml(w, "overall", 0, false)}${missingHtml(w)}
       <button class="btn quiet" data-go="week" data-w="${esc(w.id)}">See the front 9 and back 9 too</button>`;
@@ -1093,7 +1093,7 @@ function vPick() {
 function vCard() {
   const w = WK(R.w), id = R.p; if (!w || !id) return vHome();
   const c = (w.cards || {})[id] || {}, med = MED(w), mine = id === ME();
-  const lockedOut = w.locked && !ADMIN();
+  const lockedOut = w.locked;                              // admins too: unlock it in Admin first
   const totalOnly = R.tot != null ? R.tot : (isNum(c.total) && c.out == null && c.in == null);
   const v = x => isNum(x) ? x : "";
   let h = `${backBtn()}<h1 class="h1">${mine ? "Your card" : esc(nm(id)) + "'s card"}</h1>
@@ -1101,7 +1101,7 @@ function vCard() {
   if (id !== ME() && !ADMIN()) return h + `<div class="state none">Only your own card.<small>The admin puts in anyone else's.</small></div><button class="btn main" data-act="back">Done</button>`;
   if (lockedOut) {
     const cd = cardOf(w, id);
-    return h + `<div class="state none">This week is finished and locked.<small>Ask the admin if something's wrong.</small></div>
+    return h + `<div class="state none">This week is finished and locked.<small>${ADMIN() ? "To change it: Admin → Change a week → this week → Unlock." : "Ask the admin if something's wrong."}</small></div>
       ${cd ? `<div class="tot"><b>${cd.total != null ? cd.total : "-"}</b><span>${unit(w)}</span>${cd.out != null ? `<div class="mut">Out ${cd.out} · In ${cd.in}</div>` : ""}</div>` : ""}
       <button class="btn main" data-act="back">Done</button>`;
   }
@@ -1204,24 +1204,45 @@ function cardState(w, id) {
   return `<div class="state ${cls}" id="cState">${a}${b ? `<small>${esc(b)}</small>` : ""}</div>`;
 }
 /* ---------- a week: the full result, and the admin's checks ---------- */
+/* RESULTS: one read-only view for everyone, admins included (Justin: scrolling mustn't change anything).
+   Changes are made only in Admin → a week (vAWeek), and a locked week must be unlocked there first. */
 function vWeek() {
   const w = WK(R.w); if (!w) return vWeeks();
-  let h = `${backBtn()}<div class="kick" style="text-align:center">${w.locked ? "Final result" : "Cards still coming in"}</div>
+  let h = weekHead(w);
+  if (!w.locked && ME()) h += `<button class="btn main" data-act="mycard" data-w="${esc(w.id)}">${cardOf(w, ME()) ? "Change my card" : "Put in my card"}</button>`;
+  return h + weekBody(w, false);
+}
+const weekHead = (w, kick) => `${backBtn()}<div class="kick" style="text-align:center">${kick || (w.locked ? "Final result" : "Cards still coming in")}</div>
     <h1 class="h1">${esc(fmtDate(w.date, true, true))}</h1><p class="sub">${HOME} · ${esc(fmtWords(w))}${weekTee(w) ? ` · tee ${esc(weekTee(w))}` : ""}${(w.wx || []).length ? ` · ${esc(wxLong(w))}` : ""}</p>`;
-  if (!w.locked && !ADMIN() && ME()) h += `<button class="btn main" data-act="mycard" data-w="${esc(w.id)}">${ME() && cardOf(w, ME()) ? "Change my card" : "Put in my card"}</button>`;
-  if (ADMIN() && !w.locked) h += adminWeek(w);
-  h += `<h2 class="h2">The winners</h2>${prizeHtml(w, ADMIN())}${ADMIN() ? tiesHtml(w) : ""}`;
-  h += `<h2 class="h2">Overall <small>18 holes</small></h2>${rowsHtml(w, "overall", 0, ADMIN())}${missingHtml(w)}${spoonHtml(w)}`;
-  h += `<h2 class="h2">Front 9</h2>${rowsHtml(w, "front", 5, ADMIN())}`;
-  h += `<h2 class="h2">Back 9</h2>${rowsHtml(w, "back", 5, ADMIN())}`;
+function weekBody(w, edit) {
+  let h = `<h2 class="h2">The winners</h2>${prizeHtml(w, ADMIN())}${edit ? tiesHtml(w) : ""}`;
+  h += `<h2 class="h2">Overall <small>18 holes</small></h2>${rowsHtml(w, "overall", 0, edit)}${missingHtml(w)}${spoonHtml(w)}`;
+  h += `<h2 class="h2">Front 9</h2>${rowsHtml(w, "front", 5, edit)}`;
+  h += `<h2 class="h2">Back 9</h2>${rowsHtml(w, "back", 5, edit)}`;
   if (MED(w)) {
     const g = entrants(w).filter(id => cardOf(w, id).total != null).sort((a, b) => cardOf(w, a).total - cardOf(w, b).total);
     if (g.length) h += `<p class="note">Best gross: <b>${esc(nm(g[0]))}</b>, ${cardOf(w, g[0]).total} strokes.</p>`;
   }
   const tb = twosBook()[w.id];
   if (tb && (tb.fee || tb.carryIn)) h += `<p class="note">2s: ${tb.ids.length ? tb.ids.map(id => esc(nm(id))).join(", ") : "nobody yet"}.${ADMIN() ? ` Pot ${fmtM(tb.pot)}${tb.carryIn ? `, including ${fmtM(tb.carryIn)} rolled over` : ""}.` : ""}</p>`;
-  if (ADMIN() && w.locked) h += adminWeek(w);
   return h;
+}
+/* ADMIN → a week: the only place a week is changed. Locked: read-only until "Unlock to make changes". */
+function vAWeek() {
+  if (!ADMIN()) return vAdminPin();
+  const w = WK(R.w); if (!w) return vAWeeks();
+  if (w.locked) return weekHead(w, "Admin · locked") + `<div class="panel lockp"><p><b>This week is locked.</b> Nothing can be changed until you unlock it.</p>
+      ${R.unl === w.id ? `<p>Unlock it? Cards, payments and ties can then be changed. Lock it again when you're done.</p>
+        <div class="btns2"><button class="btn warn" data-act="lock" data-on="">Yes, unlock it</button><button class="btn quiet" data-act="unlno">No, leave it</button></div>`
+      : `<button class="btn" data-act="unl">Unlock to make changes</button>`}</div>` + weekBody(w, false);
+  return weekHead(w, "Admin · open for changes") + adminWeek(w) + weekBody(w, true);
+}
+function vAWeeks() {
+  if (!ADMIN()) return vAdminPin();
+  const ws = [...DOC.weeks].reverse();
+  return `${backBtn("admin")}<h1 class="h1">Change a week</h1><p class="sub">Pick the week. A locked one has to be unlocked first.</p>
+    <div class="lb">${ws.map(w => `<div class="row tap" data-go="aweek" data-w="${esc(w.id)}"><div class="pos" style="font-size:.85rem">${esc(fmtDate(w.date)).replace(/ (\d\d)$/, "<br>$1")}</div>
+      <div class="nm">${esc(fmtDate(w.date, true))}<span class="meta">${inPot(w).length} played</span></div><div class="sc"><small>${w.locked ? "🔒 locked" : "open"}</small></div></div>`).join("") || `<div class="empty">No weeks yet.</div>`}</div>`;
 }
 /* ties: the countback numbers to ask for, and the admin's pick; shown right under the winners, any time, even locked */
 function tiesHtml(w) {
@@ -1284,8 +1305,7 @@ function adminWeek(w) {
     ${pz.map(z => `<span>${CAT(z.cat).label}: ${z.ids.length ? esc(z.ids.map(nm).join(" & ")) : "nobody"}</span><b>${fmtM(z.amt)}</b>`).join("")}</div>
     <p class="note">${w.locked ? "Prizes and entries are in everyone's balance." : "Prizes and entries go into everyone's balance when you lock the week."}</p>`;
   h += `<button class="btn" data-go="setup" data-w="${esc(w.id)}">Change the week's set-up</button>`;
-  h += w.locked ? `<button class="btn warn" data-act="lock" data-on="">Unlock this week</button><p class="note">Locked: only you can change it.</p>`
-    : `${CATS.some(c => needCB(w, c.k)) ? `<p class="hint">Still to settle: ${CATS.filter(c => needCB(w, c.k)).map(c => c.label).join(", ")}. Put in the countback numbers above before you lock.</p>` : ""}
+  h += w.locked ? "" : `${CATS.some(c => needCB(w, c.k)) ? `<p class="hint">Still to settle: ${CATS.filter(c => needCB(w, c.k)).map(c => c.label).join(", ")}. Put in the countback numbers above before you lock.</p>` : ""}
       <button class="btn go" data-act="lock" data-on="1">Lock this week</button><p class="note">Lock it when the cards are all in and right. After that, only you can change it.</p>`;
   return h;
 }
@@ -1293,7 +1313,6 @@ function adminWeek(w) {
 function vWeeks() {
   const ws = [...DOC.weeks].reverse();
   let h = `<h1 class="h1">Results</h1><p class="sub">Every week, newest first</p>`;
-  if (ADMIN()) h += `<button class="btn go" data-go="setup">Set up a new week</button>`;
   if (!ws.length) return h + `<div class="empty">No weeks yet.</div>`;
   h += `<div class="lb">` + ws.map(w => {
     const o = winnersOf(w, "overall");
@@ -1627,11 +1646,11 @@ function vAdmin() {
   if (!ADMIN()) return vAdminPin();
   const w = thisWeek();
   return `<h1 class="h1">Admin</h1><p class="sub">${esc(CFG.admin_name || "")}</p>
-    ${w ? `<button class="btn main" data-go="week" data-w="${esc(w.id)}">This week: the cards</button>` : ""}
+    ${w ? `<button class="btn main" data-go="aweek" data-w="${esc(w.id)}">This week: groups, cards, money</button>` : ""}
     <button class="btn go" data-go="setup">Set up a new week</button>
     <button class="btn" data-go="players">Players</button>
     <button class="btn" data-go="money">Money</button>
-    <button class="btn" data-go="weeks">Old weeks</button>
+    <button class="btn" data-go="aweeks">Change a week</button>
     <button class="btn quiet" data-go="settings">Prizes, 2s and the course card</button>`;
 }
 function vPlayers() {
@@ -1761,7 +1780,7 @@ function vHist() {
   h += HIST.list.map(c => {
     const d = c.date ? new Date(c.date) : null;
     return `<div class="hist"><div class="v">${esc(show(c.value))}</div><div class="mut">${c.first ? "before then: " : ""}${d ? esc(fmtDate(d.getFullYear() + "-" + p2(d.getMonth() + 1) + "-" + p2(d.getDate()), true) + " " + fmtTime(d)) : ""}${c.who ? " · " + esc(c.who) : ""}</div>
-      ${JSON.stringify(c.value ?? null) !== cur ? `<button class="btn" data-act="putback" data-v="${esc(JSON.stringify(c.value ?? null))}">Put it back to this</button>` : `<div class="tag in" style="display:inline-block;margin-top:.3rem">what it says now</div>`}</div>`;
+      ${JSON.stringify(c.value ?? null) !== cur && !w.locked ? `<button class="btn" data-act="putback" data-v="${esc(JSON.stringify(c.value ?? null))}">Put it back to this</button>` : `<div class="tag in" style="display:inline-block;margin-top:.3rem">what it says now</div>`}</div>`;
   }).join("");
   return h;
 }
@@ -1780,7 +1799,7 @@ async function loadHist(path) {
   if (R.v === "hist") render();
 }
 
-const VIEWS = { home: vHome, pick: vPick, card: vCard, week: vWeek, weeks: vWeeks, season: vSeason, stat: vStat, cmp: vCmp, me: vMe, mypin: vMyPin, a2: vA2,
+const VIEWS = { home: vHome, pick: vPick, card: vCard, week: vWeek, weeks: vWeeks, season: vSeason, stat: vStat, cmp: vCmp, me: vMe, mypin: vMyPin, aweek: vAWeek, aweeks: vAWeeks, a2: vA2,
   who: vWho, pin: vPin, hcp1: vHcp1, admin: vAdmin, players: vPlayers, player: vPlayer, money: vMoney, setup: vSetup, settings: vSettings, hist: vHist };
 
 /* ======================= taps ======================= */
@@ -1915,7 +1934,9 @@ async function act(a, d, el) {
     case "tiechg": R.tie = d.c; return render();
     case "dbl": save([set(["weeks", w.id, "dbl", d.p], d.c)], nm(d.p) + " takes the " + (d.c === "front" ? "front 9" : "back 9"));
       toast(nm(d.p) + " takes the " + (d.c === "front" ? "front 9" : "back 9")); return render();
-    case "lock": save([set(["weeks", w.id, "locked"], !!d.on)], d.on ? "Lock the week" : "Unlock the week"); toast(d.on ? "Locked" : "Unlocked"); return render();
+    case "lock": R.unl = null; save([set(["weeks", w.id, "locked"], !!d.on)], d.on ? "Lock the week" : "Unlock the week"); toast(d.on ? "Locked" : "Unlocked: you can make changes"); return render();
+    case "unl": R.unl = w.id; return render();
+    case "unlno": R.unl = null; return render();
     case "sfmt": DRAFT.format = d.f; return render();
     case "wx": { const now = new Set(w.wx || []); now.has(d.k) ? now.delete(d.k) : now.add(d.k);
       save([set(["weeks", w.id, "wx"], WX.map(x => x[0]).filter(k => now.has(k)))], "Weather " + fmtDate(w.date)); return render(); }
