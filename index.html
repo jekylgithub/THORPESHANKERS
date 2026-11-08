@@ -1,0 +1,1766 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thorpe SHANKERS</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Shankers">
+<meta name="theme-color" content="#122341">
+<style>
+/* Thorpe SHANKERS. The Clubhouse Board (from NTRC / FF Tour): ivory paper, navy chrome,
+   gold detail, Charter serif. Scaled for older eyes: everything in rem off an 18px base
+   (bigger with "Writing size"), buttons 56px+ and well apart, strong contrast. */
+:root{
+  --paper:#f7f4ec; --card:#fffefa; --ink:#14203a; --navy:#122341; --navy2:#1a2f54;
+  --mut:#4f4a3f; --faint:#6e685a; --hair:#ddd5c1; --hair2:#c3b99c;
+  --gold:#8a6a22; --gold-pale:#e2d19f; --gold-wash:rgba(168,134,60,.10);
+  --green:#2e5a35; --green-wash:#e6efe4; --red:#9a1f2e; --red-wash:#f8e6e6; --amber:#7a5200; --amber-wash:#fbf0d6;
+  --serif:"Charter","Bitstream Charter","Iowan Old Style",Palatino,"Palatino Linotype",Georgia,serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --tap:max(56px,3.2rem);
+}
+html{font-size:18px;-webkit-text-size-adjust:100%;background:var(--navy);}
+html.big1{font-size:21px;} html.big2{font-size:24px;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:1rem;
+  -webkit-font-smoothing:antialiased;line-height:1.5;min-height:100vh;overscroll-behavior-y:contain;}
+button,input,select{font:inherit;color:inherit;}
+.hide{display:none!important;}
+
+/* chrome */
+.chrome{position:sticky;top:0;z-index:20;background:var(--navy);color:#f4f1e8;
+  box-shadow:0 2px 10px rgba(18,35,65,.25);padding-top:env(safe-area-inset-top,0px);}
+.chrome-in{max-width:760px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:.55rem;
+  padding:.7rem 1rem .7rem;}
+.brand{font-family:var(--serif);font-weight:700;font-size:1.15rem;letter-spacing:.03em;}
+.mono-h{height:1.7rem;width:auto;color:var(--gold-pale);flex:none;}
+.flag{background:var(--gold-pale);color:var(--navy);text-align:center;font-size:.85rem;font-weight:700;padding:.4rem 1rem;}
+.flag.off{background:var(--red);color:#fff;font-size:1rem;padding:.7rem 1rem;}
+.wrap{max-width:760px;margin:0 auto;padding:1.3rem max(16px,env(safe-area-inset-left,0px)) calc(7rem + env(safe-area-inset-bottom,0px));}
+
+/* bottom bar: words, not icons */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--navy);
+  padding:.35rem .35rem calc(.35rem + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;gap:.3rem;
+  box-shadow:0 -2px 10px rgba(18,35,65,.2);}
+.nav button{flex:1;max-width:9rem;min-height:var(--tap);background:none;border:0;border-radius:6px;cursor:pointer;
+  color:#e9e4d6;font-size:.9rem;font-weight:600;padding:.2rem;}
+.nav button.on{background:rgba(226,209,159,.16);color:var(--gold-pale);box-shadow:inset 0 -3px 0 var(--gold-pale);}
+
+/* headings */
+.h1{font-family:var(--serif);font-weight:700;color:var(--navy);font-size:1.75rem;line-height:1.15;margin:.2rem 0 .3rem;text-align:center;}
+.h2{font-family:var(--serif);font-weight:700;color:var(--navy);font-size:1.35rem;margin:2rem 0 .6rem;
+  padding-bottom:.35rem;border-bottom:2px solid var(--navy);}
+.h2 small{font-family:var(--sans);font-weight:500;font-size:.85rem;color:var(--mut);margin-left:.4rem;}
+.sub{text-align:center;color:var(--mut);font-size:1rem;margin:0 0 1rem;}
+.rule{display:flex;align-items:center;gap:.8rem;margin:.6rem auto 1rem;max-width:18rem;}
+.rule span{flex:1;height:1px;background:var(--hair2);} .rule em{font-family:var(--serif);font-style:normal;color:var(--gold);letter-spacing:.2em;}
+p{margin:.5rem 0;} .mut{color:var(--mut);} .small{font-size:.9rem;}
+.note{color:var(--mut);font-size:.95rem;margin:.6rem 0;}
+
+/* the week panel */
+.panel{background:var(--card);border:1px solid var(--hair);border-radius:8px;padding:1rem;margin:0 0 1rem;}
+.panel.navy{background:linear-gradient(180deg,var(--navy2),var(--navy));color:#f4f1e8;border:0;
+  box-shadow:inset 0 0 0 1px rgba(217,200,154,.5),inset 0 0 0 5px var(--navy),inset 0 0 0 6px rgba(217,200,154,.22);padding:1.2rem 1.1rem;}
+.panel.navy .kick{color:var(--gold-pale);}
+.kick{font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--gold);}
+.wk-t{font-family:var(--serif);font-weight:700;font-size:1.4rem;line-height:1.2;margin:.15rem 0;}
+.wk-f{font-size:1rem;}
+.panel.navy .wk-f{color:#e9e4d6;}
+
+/* buttons */
+.btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:var(--tap);margin:.75rem 0;
+  border-radius:8px;border:2px solid var(--navy);background:var(--card);color:var(--navy);
+  font-size:1.05rem;font-weight:700;cursor:pointer;padding:.5rem 1rem;text-align:center;text-decoration:none;line-height:1.25;}
+.btn.main{background:var(--gold-pale);border-color:var(--gold-pale);color:var(--navy);font-size:1.25rem;min-height:calc(var(--tap) + 12px);
+  box-shadow:0 3px 0 rgba(0,0,0,.25);}
+.panel:not(.navy) .btn.main,.wrap > .btn.main{background:var(--navy);border-color:var(--navy);color:#fff;}
+.btn.go{background:var(--navy);color:#fff;}
+.btn.warn{border-color:var(--red);color:var(--red);}
+.btn.quiet{border-color:var(--hair2);color:var(--mut);font-weight:600;}
+.btn.back{width:auto;display:inline-flex;min-height:var(--tap);margin:0 0 .6rem;padding:.4rem 1rem;border-color:var(--hair2);color:var(--navy);}
+.btn[disabled]{opacity:.45;cursor:default;}
+.btns2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;} .btns2 .btn{margin:.4rem 0;}
+.link{background:none;border:0;color:var(--navy);text-decoration:underline;text-underline-offset:3px;font-size:1rem;
+  cursor:pointer;padding:.8rem .2rem;min-height:var(--tap);font-weight:600;}
+
+/* leaderboard */
+.lb{border-top:2px solid var(--navy);margin:0;}
+.row{display:grid;grid-template-columns:2.6rem 1fr auto;gap:.6rem;align-items:center;padding:.75rem .3rem;
+  border-bottom:1px solid var(--hair);min-height:var(--tap);}
+.row.tap{cursor:pointer;}
+.row.win{background:var(--gold-wash);}
+.pos{font-family:var(--serif);font-weight:700;font-size:1.15rem;text-align:center;color:var(--mut);}
+.row.win .pos{color:var(--gold);}
+.nm{font-family:var(--serif);font-weight:700;font-size:1.15rem;color:var(--navy);line-height:1.25;min-width:0;}
+.nm .meta{display:block;font-family:var(--sans);font-weight:400;font-size:.9rem;color:var(--mut);margin-top:.1rem;}
+.sc{font-family:var(--serif);font-weight:700;font-size:1.5rem;color:var(--navy);text-align:right;line-height:1.1;font-variant-numeric:tabular-nums lining-nums;}
+.sc small{display:block;font-family:var(--sans);font-size:.75rem;font-weight:600;color:var(--mut);letter-spacing:.06em;text-transform:uppercase;}
+.cbn{display:inline-block;margin-top:.25rem;font-size:.8rem;font-family:var(--sans);font-weight:600;color:var(--gold);
+  border:1px solid var(--gold-pale);border-radius:4px;padding:0 .35rem;background:#fff;}
+.prz{display:grid;gap:.6rem;margin:.4rem 0 .4rem;}
+.prz-r{display:grid;grid-template-columns:1fr auto;gap:.6rem;align-items:baseline;padding:.7rem .9rem;border-radius:8px;background:var(--gold-wash);border:1px solid var(--gold-pale);}
+.prz-r b{font-family:var(--serif);font-size:1.15rem;color:var(--navy);}
+.prz-r .what{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--gold);display:block;}
+.prz-r .amt{font-family:var(--serif);font-weight:700;font-size:1.2rem;color:var(--green);}
+.missing{color:var(--mut);font-size:1rem;margin:.6rem 0;}
+.empty{color:var(--mut);text-align:center;padding:1.4rem .5rem;font-family:var(--serif);font-style:italic;font-size:1.1rem;}
+
+/* tables */
+table.t{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums lining-nums;}
+table.t th{font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);font-weight:700;padding:.5rem .35rem;
+  border-bottom:2px solid var(--navy);text-align:center;}
+table.t th:nth-child(2),table.t td:nth-child(2){text-align:left;}
+table.t td{padding:.65rem .35rem;border-bottom:1px solid var(--hair);text-align:center;font-size:1.05rem;}
+table.t td.n{font-family:var(--serif);font-weight:700;color:var(--navy);}
+table.t td.p{font-family:var(--serif);font-weight:700;font-size:1.2rem;color:var(--navy);}
+table.t tr.me td{background:var(--gold-wash);}
+
+/* card entry */
+.hline{text-align:center;font-size:1.05rem;color:var(--navy);margin:.2rem 0 .2rem;}
+.hline .link{min-height:var(--tap);padding:.6rem .4rem;}
+.fmt{text-align:center;font-size:1.15rem;font-weight:700;color:var(--navy);background:var(--gold-wash);border:2px solid var(--gold-pale);
+  border-radius:8px;padding:.7rem;margin:.6rem 0 1rem;}
+.fmt b{text-transform:uppercase;letter-spacing:.06em;}
+.halves{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.box{display:block;text-align:center;}
+.box span{display:block;font-family:var(--serif);font-weight:700;font-size:1.3rem;color:var(--navy);}
+.box span small{display:block;font-family:var(--sans);font-weight:500;font-size:.85rem;color:var(--mut);}
+.box input{width:100%;height:5rem;margin-top:.35rem;text-align:center;font-family:var(--serif);font-weight:700;font-size:2.6rem;
+  border:3px solid var(--navy);border-radius:10px;background:#fff;color:var(--ink);padding:0;-moz-appearance:textfield;}
+.box input::-webkit-outer-spin-button,.box input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.box input:focus{outline:4px solid var(--gold-pale);outline-offset:1px;}
+.tot{text-align:center;margin:1.1rem 0 .4rem;font-family:var(--serif);color:var(--navy);}
+.tot b{display:block;font-size:3rem;line-height:1.05;font-variant-numeric:lining-nums;}
+.tot span{font-size:1.15rem;font-weight:700;}
+.hint{border-radius:8px;padding:.7rem .9rem;margin:.6rem 0;font-size:1rem;background:var(--amber-wash);color:var(--amber);border:1px solid #e6cf91;font-weight:600;}
+.state{border-radius:10px;padding:1rem;margin:1rem 0;text-align:center;font-size:1.3rem;font-weight:800;border:3px solid;}
+.state.ok{background:var(--green-wash);color:var(--green);border-color:var(--green);}
+.state.wait{background:var(--amber-wash);color:var(--amber);border-color:#d4ad4e;}
+.state.no{background:var(--red-wash);color:var(--red);border-color:var(--red);}
+.state.none{background:#fff;color:var(--mut);border-color:var(--hair2);font-weight:600;font-size:1.1rem;}
+.state small{display:block;font-size:.95rem;font-weight:600;margin-top:.25rem;}
+
+/* pickers and forms */
+.who{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:.8rem 0;}
+.who button{min-height:var(--tap);border:2px solid var(--hair2);background:var(--card);border-radius:8px;cursor:pointer;
+  font-family:var(--serif);font-weight:700;font-size:1.1rem;color:var(--navy);padding:.4rem;line-height:1.2;}
+.who button.done{border-color:var(--green);background:var(--green-wash);}
+.who button small{display:block;font-family:var(--sans);font-weight:500;font-size:.8rem;color:var(--mut);}
+.fld{display:block;margin:0 0 1rem;}
+.fld > span{display:block;font-weight:700;color:var(--navy);margin-bottom:.3rem;font-size:1rem;}
+.fld input,.fld select{width:100%;min-height:var(--tap);font-size:1.1rem;padding:.4rem .7rem;border:2px solid var(--hair2);border-radius:8px;background:#fff;}
+.fld input:focus,.fld select:focus{outline:3px solid var(--gold-pale);border-color:var(--navy);}
+.choice{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:.3rem 0 1rem;}
+.choice button{min-height:var(--tap);border:2px solid var(--hair2);background:#fff;border-radius:8px;font-weight:700;cursor:pointer;padding:.4rem;line-height:1.2;}
+.choice button.on{border-color:var(--navy);background:var(--navy);color:#fff;}
+.tick{display:grid;grid-template-columns:1fr 5.2rem;gap:.6rem;align-items:center;border-bottom:1px solid var(--hair);padding:.35rem 0;}
+.tick button{min-height:var(--tap);text-align:left;border:2px solid var(--hair2);background:#fff;border-radius:8px;padding:.3rem .8rem;
+  font-family:var(--serif);font-weight:700;font-size:1.1rem;color:var(--navy);cursor:pointer;}
+.tick button.on{border-color:var(--green);background:var(--green-wash);}
+.tick button.on::before{content:"✓ ";color:var(--green);}
+.tick input{min-height:var(--tap);width:100%;text-align:center;font-size:1.1rem;border:2px solid var(--hair2);border-radius:8px;}
+.tick label{font-size:.75rem;color:var(--mut);text-align:center;display:block;}
+.chk{border-bottom:1px solid var(--hair);padding:.7rem 0;display:grid;grid-template-columns:1fr auto;gap:.6rem;align-items:center;}
+.chk .nm{font-size:1.05rem;}
+.chk .tag{font-size:.85rem;font-weight:700;border-radius:4px;padding:.15rem .5rem;white-space:nowrap;}
+.tag.in{background:var(--green-wash);color:var(--green);} .tag.out{background:#eee9dc;color:var(--mut);} .tag.odd{background:var(--amber-wash);color:var(--amber);}
+.paid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-top:.4rem;grid-column:1/-1;}
+.paid button{min-height:var(--tap);border:2px solid var(--hair2);background:#fff;border-radius:8px;font-weight:700;cursor:pointer;font-size:.95rem;}
+.paid button.on{border-color:var(--green);background:var(--green);color:#fff;}
+.cbbox{background:var(--amber-wash);border:2px solid #d4ad4e;border-radius:8px;padding:.9rem;margin:.8rem 0;}
+.cbbox h4{margin:0 0 .3rem;font-size:1.05rem;color:var(--amber);}
+.cbrow{display:grid;grid-template-columns:1fr 4.6rem 4.6rem;gap:.5rem;align-items:center;margin:.4rem 0;}
+.cbrow input{min-height:var(--tap);width:100%;text-align:center;font-size:1.2rem;font-weight:700;border:2px solid var(--hair2);border-radius:8px;}
+.cbrow .lab{font-size:.75rem;text-align:center;color:var(--mut);font-weight:700;}
+
+/* money */
+.bal{font-family:var(--serif);font-weight:700;font-size:1.15rem;}
+.bal.owes{color:var(--red);} .bal.cred{color:var(--green);} .bal.zero{color:var(--mut);}
+.led{display:grid;grid-template-columns:1fr auto;gap:.2rem .6rem;padding:.55rem 0;border-bottom:1px solid var(--hair);font-size:1rem;}
+.led .d{font-size:.85rem;color:var(--mut);}
+.led .a{font-weight:700;text-align:right;font-variant-numeric:tabular-nums;}
+.led .x{grid-column:1/-1;}
+.tots{display:grid;grid-template-columns:1fr auto;gap:.1rem .8rem;font-size:1.05rem;}
+.tots b{text-align:right;font-variant-numeric:tabular-nums;}
+
+/* history */
+.hist{border-bottom:1px solid var(--hair);padding:.7rem 0;}
+.hist .v{font-family:var(--serif);font-weight:700;font-size:1.2rem;color:var(--navy);}
+
+/* the saving queue */
+.qbar{border-radius:8px;padding:.7rem .9rem;margin:0 0 1rem;font-weight:700;font-size:1rem;}
+.qbar.wait{background:var(--amber-wash);color:var(--amber);border:2px solid #d4ad4e;}
+.qbar.no{background:var(--red-wash);color:var(--red);border:2px solid var(--red);}
+.qbar ul{margin:.3rem 0 0;padding-left:1.1rem;font-weight:500;}
+
+/* add to home screen pictures */
+.a2-step{display:grid;grid-template-columns:2.2rem 1fr;gap:.7rem;align-items:start;margin:.9rem 0;}
+.a2-n{width:2.2rem;height:2.2rem;border-radius:50%;background:var(--navy);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;}
+.a2-pic{margin-top:.5rem;border:1px solid var(--hair2);border-radius:10px;background:#fff;padding:.6rem;max-width:18rem;}
+.a2-pic svg{display:block;width:100%;height:auto;}
+
+/* splash */
+#splash{position:fixed;inset:0;z-index:60;background:var(--paper);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:2rem 1.2rem calc(2rem + env(safe-area-inset-bottom,0px));overflow-y:auto;
+  transition:opacity .6s ease,visibility .6s;}
+#splash.gone{opacity:0;visibility:hidden;pointer-events:none;}
+#splash .in{width:min(26rem,100%);}
+#splash .in > *{opacity:0;transform:translateY(7px);animation:spIn .8s cubic-bezier(.22,.61,.36,1) forwards;}
+@keyframes spIn{to{opacity:1;transform:none;}}
+.sp-mono{width:min(9rem,40vw);height:auto;color:var(--navy);animation-delay:.1s;}
+.sp-t{font-family:var(--serif);font-weight:700;color:var(--navy);line-height:1.05;font-size:2.6rem;margin-top:.8rem;animation-delay:.2s;}
+.sp-tag{font-family:var(--serif);font-style:italic;color:var(--mut);font-size:1.05rem;margin-top:.4rem;animation-delay:.35s;}
+.sp-hi{font-family:var(--serif);font-weight:700;color:var(--navy);font-size:1.4rem;margin-top:1.4rem;animation-delay:.45s;}
+#splash .btn{animation-delay:.55s;}
+#splash .who{animation-delay:.55s;}
+.sp-q{font-family:var(--serif);font-weight:700;color:var(--navy);font-size:1.35rem;margin-top:1.4rem;animation-delay:.5s;}
+#splash2{position:fixed;inset:0;z-index:59;background:#000;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:calc(env(safe-area-inset-top,0px) + 18px) 16px calc(env(safe-area-inset-bottom,0px) + 18px);transition:opacity .6s ease,visibility .6s;}
+#splash2.gone{opacity:0;visibility:hidden;pointer-events:none;}
+#splash2 img{flex:1 1 auto;min-height:0;max-width:100%;max-height:calc(100% - 3rem);object-fit:contain;}
+#splash2 .s2-e{margin-top:.8rem;font-size:1rem;color:rgba(255,255,255,.75);}
+@media(prefers-reduced-motion:reduce){ #splash .in > *{animation:none;opacity:1;transform:none;} }
+
+#toast{position:fixed;left:50%;bottom:calc(6rem + env(safe-area-inset-bottom,0px));transform:translate(-50%,14px);z-index:58;
+  background:var(--navy);color:#fff;font-size:1rem;font-weight:700;padding:.7rem 1.2rem;border-radius:999px;opacity:0;
+  transition:opacity .25s,transform .25s;pointer-events:none;box-shadow:0 4px 16px rgba(28,39,64,.22);max-width:90vw;text-align:center;}
+#toast.show{opacity:1;transform:translate(-50%,0);}
+.foot{text-align:center;margin-top:2.5rem;font-size:.8rem;color:var(--faint);}
+
+/* stats */
+.h3{font-family:var(--serif);font-weight:700;color:var(--navy);font-size:1.15rem;margin:1.4rem 0 .4rem;}
+.choice.srt,.choice.wx,.choice.yrs{grid-template-columns:1fr 1fr 1fr;}
+.choice button{color:var(--navy);font-size:1rem;}
+.choice button.on{color:#fff;}
+table.t tr.tap{cursor:pointer;}
+table.t td .meta{display:block;font-family:var(--sans);font-weight:400;font-size:.8rem;color:var(--mut);margin-top:.15rem;line-height:1.3;}
+table.t td:first-child{color:var(--mut);font-weight:700;width:1.6rem;padding-left:0;}
+table.st td{font-size:1rem;}
+table.st td:nth-child(n+4){white-space:nowrap;}
+.neg{color:var(--red);font-weight:700;} .pos2{color:var(--green);font-weight:700;}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin:.6rem 0 1rem;}
+.tiles>div{background:var(--card);border:1px solid var(--hair);border-radius:8px;padding:.6rem .4rem;text-align:center;font-size:.85rem;color:var(--mut);line-height:1.3;}
+.tiles b{display:block;font-family:var(--serif);font-size:1.6rem;color:var(--navy);line-height:1.15;font-variant-numeric:lining-nums;}
+.chart{margin:.4rem 0 1rem;}
+.chart svg{display:block;width:100%;height:auto;overflow:visible;}
+.chart .gl{stroke:var(--hair);stroke-width:1;}
+.chart .ax{font-size:11px;fill:var(--mut);font-family:var(--sans);}
+.chart .avg{stroke:var(--gold);stroke-width:2;stroke-dasharray:4 4;}
+.chart .bar path{fill:var(--navy2);}
+.chart .bar .hit{fill:transparent;cursor:pointer;}
+.chart .bar.on path{fill:var(--gold);}
+.tbinfo{font-size:.95rem;color:var(--mut);text-align:center;margin-top:.4rem;min-height:2.6em;}
+.tbinfo b{color:var(--navy);}
+table.av td:nth-child(4){width:48%;}
+.mbar{display:flex;align-items:center;gap:.4rem;}
+.mbar i{display:block;height:.9rem;background:var(--navy2);border-radius:0 4px 4px 0;min-width:2px;}
+.mbar b{font-family:var(--serif);color:var(--navy);}
+table.wl td{font-size:.95rem;}
+table.wl td.small{font-size:.85rem;}
+.tiles small{display:block;font-size:.8rem;margin-top:.1rem;}
+.lb .row.me{background:var(--gold-wash);}
+.cbn.age{color:var(--green);border-color:#b9d3b4;margin-left:.3rem;}
+.chart .ln{fill:none;stroke:var(--navy2);stroke-width:2;}
+.chart .dot circle:not(.hit){fill:var(--navy2);stroke:var(--paper);stroke-width:2;}
+.chart .dot .hit{fill:transparent;cursor:pointer;}
+.chart .dot.on circle:not(.hit){fill:var(--gold);}
+.who.cmp button{font-size:1rem;}
+.cmpwrap{overflow-x:auto;}
+table.cmpt th:nth-child(2),table.cmpt td:nth-child(2){text-align:center;}
+table.cmpt td:first-child{text-align:left;width:auto;font-weight:700;color:var(--navy);font-size:.95rem;padding-left:.2rem;}
+table.cmpt td{font-size:1rem;}
+table.cmpt td.best{background:var(--gold-wash);color:var(--gold);font-weight:800;}
+.verdict p{font-family:var(--serif);font-size:1.1rem;color:var(--navy);margin:.2rem 0 .8rem;line-height:1.4;}
+.verdict p:last-child{margin-bottom:0;}
+select{width:100%;min-height:var(--tap);font-size:1.1rem;border:2px solid var(--hair2);border-radius:8px;background:#fff;color:var(--ink);padding:0 .6rem;}
+table.card18 td,table.card18 th{text-align:center !important;font-size:.95rem;}
+.neg,.pos2{white-space:nowrap;}
+.tiles b{font-size:clamp(1.15rem,5.5vw,1.6rem);white-space:nowrap;}
+.nm .meta b{color:var(--navy);}
+.sp-jibe{font-family:var(--serif);font-style:italic;color:var(--gold);font-size:1rem;margin:.5rem auto 0;max-width:20rem;line-height:1.35;animation-delay:.5s;}
+.spoon{margin:.6rem 0;padding:.6rem .8rem;border-left:4px solid var(--gold-pale);background:var(--card);font-size:1rem;color:var(--mut);}
+.spoon b{color:var(--navy);}
+.quip{font-family:var(--serif);font-style:italic;font-size:1.05rem;color:var(--gold);margin-top:.4rem;font-weight:400;}
+
+</style>
+</head>
+<body>
+<div id="splash"></div>
+
+<header class="chrome"><div class="chrome-in"><svg class="mono-h" role="img" aria-label="TS" viewBox="0 0 120 120"><circle cx="60" cy="60" r="56" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="60" cy="60" r="50" fill="none" stroke="currentColor" stroke-width="1"/><text x="60" y="74" text-anchor="middle" font-family="Charter,Georgia,serif" font-weight="700" font-size="42" fill="currentColor" letter-spacing="2">TS</text></svg><span class="brand">Thorpe SHANKERS</span></div></header>
+<div id="flags"></div>
+<main class="wrap" id="view"></main>
+<nav class="nav" id="nav"></nav>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+"use strict";
+/* Thorpe SHANKERS: the weekly roll-up. One app for everyone.
+   Players put in cards (theirs or their group's) and set their own nickname. The admin,
+   with the admin PIN, does everything else, all inside this app on a phone.
+
+   Saving: every change is a small op ({op, path, value}) sent to the relay (worker/worker.js),
+   never the whole document (the NTRC v38 lesson). Changes show at once, queue on the phone
+   while there's no signal, retry by themselves, and say plainly whether they're saved. */
+const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "2.0", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "", "worker_url": "", "season_start": "", "admins": ["justin", "kevin"]};
+const BASE = {"settings": {"twos": 0, "prizes": {"overall": 50, "front": 25, "back": 25}, "course": "Thorpe Hall GC", "format": "stableford"}, "players": [], "weeks": [], "money": [], "updatedAt": ""};               // data baked in at build time: the fallback copy
+const BUILD = "v2.0 · 11-26";
+const MONO = "<svg class=\"sp-mono\" role=\"img\" aria-label=\"TS\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"56\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"60\" cy=\"60\" r=\"50\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"/><text x=\"60\" y=\"74\" text-anchor=\"middle\" font-family=\"Charter,Georgia,serif\" font-weight=\"700\" font-size=\"42\" fill=\"currentColor\" letter-spacing=\"2\">TS<\/text><\/svg>";              // the monogram, inline SVG
+let WORKER = String(CFG.worker_url || "").replace(/\/+$/, "");
+const HOSTED = typeof location !== "undefined" && /^https?:$/.test(location.protocol);
+const K = { auth:"ts.auth.v1", admin:"ts.admin.v1", q:"ts.queue.v1", srv:"ts.server.v1", local:"ts.localdoc.v1",
+            hist:"ts.localhist.v1", a2:"ts.a2hs.v1", big:"ts.big.v1" };
+const clone = o => JSON.parse(JSON.stringify(o));
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+const lsDel = k => { try { localStorage.removeItem(k); } catch (e) {} };
+const jget = k => { try { return JSON.parse(lsGet(k) || "null"); } catch (e) { return null; } };
+const jset = (k, v) => lsSet(k, JSON.stringify(v));
+const isNum = v => typeof v === "number" && isFinite(v);
+const $ = id => document.getElementById(id);
+const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+
+/* ======================= the data and saving ======================= */
+/* Ops, applied exactly as the relay applies them (worker.js apply), minus the rules. */
+function step(node, seg) {
+  if (Array.isArray(node)) return node.find(x => x && (x.id === seg || String(x.n) === String(seg)));
+  return node && typeof node === "object" ? node[seg] : undefined;
+}
+function applyOp(doc, op) {
+  const p = op.path.map(String); let node = doc;
+  for (let i = 0; i < p.length - 1; i++) {
+    let next = step(node, p[i]);
+    if (next === undefined) { if (Array.isArray(node)) throw new Error("missing " + p.join("/")); next = node[p[i]] = {}; }
+    node = next;
+  }
+  const last = p[p.length - 1];
+  if (op.op === "push") {
+    let arr = step(node, last); if (arr === undefined && !Array.isArray(node)) arr = node[last] = [];
+    arr.push(clone(op.value));
+  } else if (Array.isArray(node)) {
+    const i = node.findIndex(x => x && (x.id === last || String(x.n) === last));
+    if (i < 0) throw new Error("missing " + p.join("/"));
+    op.op === "del" ? node.splice(i, 1) : (node[i] = clone(op.value));
+  } else if (op.op === "del") delete node[last];
+  else node[last] = clone(op.value);
+}
+function valueAt(doc, path) { let n = doc; for (const s of path) { n = step(n, String(s)); if (n === undefined) return null; } return n; }
+
+/* SRV = the last copy the server gave us (or the baked-in one). DOC = SRV + our unsaved changes. */
+/* a fingerprint of the data baked into this page: any change to it (a rebuilt sample, a renamed
+   course) starts the try-out copy afresh instead of keeping an old one */
+const BASEKEY = (() => { const t = JSON.stringify(BASE); let h = 5381; for (let i = 0; i < t.length; i++) h = (h * 33 ^ t.charCodeAt(i)) >>> 0; return BASE.updatedAt + "|" + h.toString(36); })();
+function loadSrv() {
+  if (!WORKER) {                                        // trying it out: everything lives on this phone
+    // the copy kept on this phone is only reused while it grew from exactly this build's data
+    const l = jget(K.local);
+    return l && l.doc && l.base === BASEKEY ? l : { doc: clone(BASE), sha: null, base: BASEKEY };
+  }
+  const s = jget(K.srv);
+  return s && s.doc && String(s.doc.updatedAt || "") >= String(BASE.updatedAt || "") ? s : { doc: clone(BASE), sha: null };
+}
+let SRV = loadSrv();
+let Q = (jget(K.q) || []).filter(x => x && Array.isArray(x.ops));
+let DOC;
+let flying = null, savingOff = false, noSignal = false, retryT = null, retryN = 0, lastPull = 0;
+function norm(d) {
+  d.players = Array.isArray(d.players) ? d.players : []; d.weeks = Array.isArray(d.weeks) ? d.weeks : [];
+  d.money = Array.isArray(d.money) ? d.money : []; d.settings = d.settings || {};
+  d.weeks.sort((a, b) => String(a.date).localeCompare(String(b.date)) || String(a.id).localeCompare(String(b.id)));
+  return d;
+}
+function view() {
+  DOC = clone(SRV.doc);
+  for (const it of Q) if (it.st !== "no") for (const op of it.ops) { try { applyOp(DOC, op); } catch (e) {} }
+  norm(DOC);
+}
+view();
+const persistQ = () => jset(K.q, Q);
+
+let AUTH = jget(K.auth);                                 // {id, key} from the link, or {id, pin}
+let ADMINPIN = lsGet(K.admin);
+const ME = () => AUTH && AUTH.id && DOC.players.some(p => p.id === AUTH.id) ? AUTH.id : null;
+/* The admin is a player: the relay's ADMINS list says who (it tells the app at sign-in).
+   In try-out mode, config.json "admins" stands in for it. The admin PIN is the spare way in (#admin). */
+/* names already set up on a phone (the relay keeps the list): they're left off "Who are you?" */
+let CLAIMED = jget("ts.claimed.v1") || [], FREEP = jget("ts.free.v1") || [];
+/* live: the relay sends only the names not yet set up (the scores stay private); try-out: from the data */
+const free = () => WORKER ? [...FREEP].sort((a, b) => (a.nick || a.name).localeCompare(b.nick || b.name)) : active().filter(p => !CLAIMED.includes(p.id));
+const ADMIN = () => !!ADMINPIN || !!(ME() && (WORKER ? AUTH.admin : (CFG.admins || []).includes(ME())));
+const adminCred = () => ADMINPIN ? { pin: ADMINPIN } : AUTH.key ? { key: AUTH.key } : { by: AUTH.id, pin: AUTH.pin };
+function cred(as) {
+  if (as === "admin" && ADMINPIN) return { player: "admin", pin: ADMINPIN };
+  if (AUTH && AUTH.key) return { key: AUTH.key };
+  return { player: AUTH && AUTH.id, pin: AUTH && AUTH.pin };
+}
+
+/* save: queue some ops. ck groups repeat saves of the same thing (a card being typed),
+   so only the latest is sent. */
+function save(ops, label, ck) {
+  const as = ADMIN() ? "admin" : "player";
+  const ex = ck && Q.find(x => x.ck === ck && x.qid !== flying);
+  if (ex) { ex.ops = ops; ex.st = "wait"; ex.why = ""; ex.as = as; }
+  else Q.push({ qid: uid("q"), ops, label, ck: ck || "", st: "wait", as, t: Date.now() });
+  persistQ(); view(); paint(); flush();
+}
+async function post(path, body) {
+  const res = await fetch(WORKER + path, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) });
+  let j = {}; try { j = await res.json(); } catch (e) {}
+  j.status = res.status; return j;
+}
+function plainWhy(r, as) {
+  const e = String(r.error || "");
+  if (r.status === 401) return as === "admin" ? "The admin PIN wasn't accepted. Go to Admin and put it in again."
+    : "This phone isn't signed in any more (the admin may have reset it). Tap Me, then say who you are, or ask for your link.";
+  if (/locked/i.test(e)) return "That week is finished and locked. Ask the admin.";
+  if (r.status === 403) return "Only the admin can change that.";
+  if (r.status === 400) return "Those numbers don't look right. Check them and put them in again.";
+  if (r.status === 404) return "That week or player isn't there any more.";
+  return "It was turned down. Ask the admin.";
+}
+function later(ms) {
+  clearTimeout(retryT);
+  retryT = setTimeout(flush, ms || [3000, 6000, 15000, 30000, 60000][Math.min(retryN++, 4)]);
+}
+async function flush() {
+  if (flying) return;
+  const it = Q.find(x => x.st === "wait"); if (!it) return;
+  if (!WORKER) { localApply(it); return flush(); }
+  if ((it.as === "player" && !AUTH) || (it.as === "admin" && !ADMIN())) {
+    it.st = "no"; it.why = it.as === "admin" ? "Go to Admin and put in the admin PIN." : "Tap Me and say who you are first.";
+    persistQ(); view(); paint(); return flush();
+  }
+  flying = it.qid; paint();
+  let r; try { r = await post("/write", Object.assign(cred(it.as), { ops: it.ops })); } catch (e) { r = { net: true }; }
+  flying = null;
+  if (r.ok) {
+    SRV = { doc: r.doc, sha: r.sha }; jset(K.srv, SRV);
+    Q = Q.filter(x => x !== it); savingOff = false; noSignal = false; retryN = 0;
+  } else if (r.net || r.status === 503 || r.status === 429) { noSignal = !!r.net; later(); }
+  else if (r.status >= 500) { savingOff = true; later(60000); }
+  else { it.st = "no"; it.why = plainWhy(r, it.as); }
+  persistQ(); view(); paint(); softRender();
+  if (r.ok || it.st === "no") flush();
+}
+/* trying it out (no relay yet): the same rules, applied on this phone */
+function localApply(it) {
+  const d = clone(SRV.doc), hist = jget(K.hist) || [];
+  try {
+    for (const op of it.ops) {
+      const p = op.path.map(String);
+      if (it.as !== "admin") {
+        const w = p[0] === "weeks" ? step(d.weeks, p[1]) : null;
+        if (w && w.locked) throw { status: 403, error: "locked" };
+        const ok = op.op === "set" && ((p.length === 4 && p[0] === "weeks" && (p[2] === "cards" || p[2] === "hcp"))
+          || (p.length === 3 && p[0] === "players" && p[2] === "hcp") || (p.length === 4 && p[0] === "weeks" && p[2] === "age") || (p.length === 3 && p[0] === "players" && p[1] === ME() && (p[2] === "nick" || p[2] === "age")));
+        if (!ok) throw { status: 403 };
+      }
+      applyOp(d, op);
+      hist.push({ t: new Date().toISOString(), who: it.as === "admin" && (ADMINPIN || !ME()) ? "Admin" : (P(ME()).name || "?"), path: p, value: op.op === "del" ? null : op.value });
+    }
+    d.updatedAt = new Date().toISOString();
+    SRV = { doc: d, sha: null, base: BASEKEY }; jset(K.local, SRV); jset(K.hist, hist.slice(-400));
+    Q = Q.filter(x => x !== it);
+  } catch (e) { it.st = "no"; it.why = plainWhy(e, it.as); }
+  persistQ(); view(); paint(); softRender();
+}
+async function pull() {
+  if (!WORKER) return;
+  const c = ADMINPIN ? { player: "admin", pin: ADMINPIN } : AUTH && AUTH.key ? { key: AUTH.key } : AUTH && AUTH.pin ? { player: AUTH.id, pin: AUTH.pin } : null;
+  if (!c) return;                                       // the scores are private: nothing to fetch until signed in
+  lastPull = Date.now();
+  try {
+    const res = await fetch(WORKER + "/data", { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(c), cache: "no-store" });
+    if (res.status >= 500) { savingOff = true; paint(); return; }
+    if (res.status === 401 && AUTH && !ADMINPIN) { signedOut(); return; }
+    const j = await res.json();
+    if (j && j.doc) { SRV = { doc: j.doc, sha: j.sha }; jset(K.srv, SRV); noSignal = false; view(); softRender(); paint(); }
+  } catch (e) { noSignal = true; paint(); }
+}
+
+/* ======================= players, weeks ======================= */
+const P = id => DOC.players.find(p => p.id === id) || FREEP.find(p => p.id === id) || { id, name: id || "", hcp: 0 };
+const nm = id => { const p = P(id); return p.nick || p.name; };
+const active = () => DOC.players.filter(p => p.active !== false).sort((a, b) => nm(a.id).localeCompare(nm(b.id)));
+const WK = id => DOC.weeks.find(w => w.id === id);
+const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+// UK style everywhere: 07 Nov 26, 24-hour clock.
+const p2 = n => String(n).padStart(2, "0");
+const MON3 = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+/* DD MMM YY: "07 Nov 26"; long adds the day ("Saturday 07 Nov 26"); noYr drops the year, for
+   screens about one week, where the year goes without saying (Justin, 08-11-2026). */
+function fmtDate(s, long, noYr) {
+  s = String(s || ""); if (s.length < 10) return s;
+  const d = new Date(s.slice(0, 10) + "T12:00:00");
+  return (long ? DAYS[d.getDay()] + " " : "") + p2(d.getDate()) + " " + MON3[d.getMonth()] + (noYr ? "" : " " + String(d.getFullYear()).slice(2));
+}
+const fmtTime = d => p2(d.getHours()) + ":" + p2(d.getMinutes());
+const today = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+function nextSaturday() { const d = new Date(); d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7));
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+const MED = w => w.format === "gross";
+/* Thorpe Hall GC, yellow and white tees (the same pars and stroke indexes on both): from The Social Golfer,
+   11-2026. Par 71: 35 out, 36 in. Thorpe Hall GC is the only course (Justin: "exclusively"). */
+const HALL = { par: [4, 4, 3, 5, 3, 4, 3, 5, 4, 4, 5, 4, 3, 5, 4, 3, 4, 4], si: [9, 5, 15, 13, 7, 1, 17, 3, 11, 10, 14, 2, 18, 8, 6, 12, 4, 16] };
+const HOME = "Thorpe Hall GC";
+const okArr = a => Array.isArray(a) && a.length === 18 && a.every(isNum);
+const CARD = () => { const c = DOC.settings.card || {}; return { par: okArr(c.par) ? c.par : HALL.par, si: okArr(c.si) ? c.si : HALL.si }; };
+const sum = a => a.reduce((x, y) => x + y, 0);
+/* shots a handicap gets on a hole (a plus handicap gives them back on the easiest holes) */
+const shotsOn = (H, si) => { const b = Math.floor(H / 18), r = H - 18 * b; return b + (si <= r ? 1 : 0); };
+const homeCourse = () => true;                          // every week is at Thorpe Hall GC
+/* Gross strokes, worked out from Stableford points and that day's handicap. A hole's points are
+   2 + par + shots - strokes, so a nine's strokes are its par + shots + 18 - points. A hole with no
+   points counts as a net double bogey, the same as the official adjusted score. Medal weeks: as typed. */
+function grossOf(w, id) {
+  const c = cardOf(w, id); if (!c) return null;
+  if (MED(w)) return { out: isNum(c.out) ? c.out : null, in: isNum(c.in) ? c.in : null, total: isNum(c.total) ? c.total : null };
+  if (!homeCourse(w) || !(isNum((w.hcp || {})[id]) || isNum(P(id).hcp))) return null;
+  const H = playH(w, id), cd = CARD(), nine = k => sum([0, 1, 2, 3, 4, 5, 6, 7, 8].map(i => cd.par[i + 9 * k] + shotsOn(H, cd.si[i + 9 * k]))) + 18;
+  return { out: isNum(c.out) ? nine(0) - c.out : null, in: isNum(c.in) ? nine(1) - c.in : null, total: isNum(c.total) ? nine(0) + nine(1) - c.total : null };
+}
+/* Age: a whole number the player gives if he likes (never a date of birth). Each week his card goes
+   in, the age he has then is kept on that week, so old age shots stay right after a birthday. */
+function ageOn(id, date, w) {
+  const a = w && w.age && w.age[id]; if (isNum(a)) return a;
+  return isNum(P(id).age) ? P(id).age : null;
+}
+/* Net to handicap: how a round stands against playing to handicap. Points: 36 (18 a nine) is
+   level, 37 is -1 (one better), 33 is +3. Medal: net strokes against par. Negative = better. */
+function relOf(w, id, cat) {
+  const c = cardOf(w, id); if (!c) return null;
+  const v = cat === "front" ? c.out : cat === "back" ? c.in : c.total; if (!isNum(v)) return null;
+  if (!MED(w)) return (cat === "overall" ? 36 : 18) - v;
+  if (cat !== "overall" || !homeCourse(w)) return null;
+  return v - playH(w, id) - sum(CARD().par);
+}
+const fmtRel = (x, dp) => x == null ? "–" : Math.abs(x) < .05 ? "level" : (x < 0 ? "−" : "+") + (dp ? fmtAvg(Math.abs(x)) : Math.abs(Math.round(x)));
+const shotAge = (w, id) => { const g = grossOf(w, id), a = ageOn(id, w.date, w); return !!(g && isNum(g.total) && a != null && g.total <= a); };
+const unit = w => MED(w) ? "strokes" : "points";
+const fmtWords = w => MED(w) ? "Medal: strokes (net after handicap)" : "Stableford: points";
+const thisWeek = () => { const open = DOC.weeks.filter(w => !w.locked); return open.length ? open[open.length - 1] : null; };
+const lastWeek = () => { const l = DOC.weeks.filter(w => w.locked); return l.length ? l[l.length - 1] : null; };
+const set = (path, value) => ({ op: "set", path, value });
+
+/* ======================= scoring ======================= */
+function cardOf(w, id) {
+  const c = (w.cards || {})[id]; if (!c || typeof c !== "object") return null;
+  const out = isNum(c.out) ? c.out : null, inn = isNum(c.in) ? c.in : null;
+  const total = isNum(c.total) ? c.total : (out != null && inn != null ? out + inn : null);
+  if (out == null && inn == null && total == null) return null;
+  return { out, in: inn, total };
+}
+const entrants = w => Object.keys(w.cards || {}).filter(id => cardOf(w, id));
+function hcpOf(w, id) { const h = (w.hcp || {})[id]; return isNum(h) ? h : (isNum(P(id).hcp) ? P(id).hcp : 0); }
+/* playing handicaps are whole numbers; rounding only guards against anything older */
+const playH = (w, id) => Math.round(hcpOf(w, id));
+const hcpChecked = (w, id) => isNum((w.hcp || {})[id]);
+const fmtH = h => !isNum(h) ? "not set" : (h < 0 ? "+" + (-h) : String(h));
+function parseH(str) {
+  let t = String(str || "").trim().replace(",", "."); const plus = t.startsWith("+"); t = t.replace(/^\+/, "");
+  if (!/^\d{1,2}$/.test(t)) return null;              // playing handicap at Thorpe Hall GC: a whole number
+  const h = plus ? -(+t) : +t; return h >= -10 && h <= 54 ? h : null;
+}
+/* The three prizes. Each has its score, then the countback steps, in order.
+   Medal: net = gross minus handicap; a 9 takes half the handicap, a last 6 a third, a last 3 a sixth, the last hole an 18th. */
+const CATS = [
+  { k: "overall", label: "Overall", long: "Overall, 18 holes", steps: ["", "back 9", "last 6", "last 3", "last hole"], fields: [null, null, "b6", "b3", "b1"] },
+  { k: "front", label: "Front 9", long: "Front 9 (holes 1 to 9)", steps: ["", "last 6 (holes 4 to 9)", "last 3 (holes 7 to 9)", "last hole (the 9th)"], fields: [null, "f6", "f3", "f1"] },
+  { k: "back", label: "Back 9", long: "Back 9 (holes 10 to 18)", steps: ["", "last 6 (holes 13 to 18)", "last 3 (holes 16 to 18)", "last hole (the 18th)"], fields: [null, "b6", "b3", "b1"] },
+];
+const CAT = k => CATS.find(c => c.k === k);
+function chain(w, cat, id) {
+  const c = cardOf(w, id); if (!c) return null;
+  const cb = (w.cb || {})[id] || {}, h = MED(w) ? playH(w, id) : 0;
+  const v = (x, f) => isNum(x) ? Math.round((x - h * f) * 100) / 100 : null;
+  if (cat === "overall") return [v(c.total, 1), v(c.in, 1 / 2), v(cb.b6, 1 / 3), v(cb.b3, 1 / 6), v(cb.b1, 1 / 18)];
+  if (cat === "front") return [v(c.out, 1 / 2), v(cb.f6, 1 / 3), v(cb.f3, 1 / 6), v(cb.f1, 1 / 18)];
+  return [v(c.in, 1 / 2), v(cb.b6, 1 / 3), v(cb.b3, 1 / 6), v(cb.b1, 1 / 18)];
+}
+/* rank one prize: level scores go to countback step by step, but only while every man
+   still level has that number; then the admin's pick; then they share it. */
+function rank(w, cat) {
+  const med = MED(w), pick = ((w.pick || {})[cat]) || [];
+  const items = entrants(w).map(id => ({ id, ch: chain(w, cat, id) })).filter(x => x.ch && x.ch[0] != null);
+  const groups = [];
+  const cmp = (a, b) => med ? a - b : b - a;
+  function part(g, k) {
+    if (g.length === 1) { groups.push(g); return; }
+    if (k >= g[0].ch.length || g.some(x => x.ch[k] == null)) {
+      const inP = g.filter(x => pick.includes(x.id)).sort((a, b) => pick.indexOf(a.id) - pick.indexOf(b.id));
+      if (inP.length >= g.length - 1 && inP.length) {
+        inP.forEach(x => { x.how = "admin"; groups.push([x]); });
+        const rest = g.filter(x => !pick.includes(x.id)); if (rest.length) { rest.forEach(x => x.how = "admin"); groups.push(rest); }
+      } else { g.forEach(x => x.stuck = k); groups.push(g); }
+      return;
+    }
+    const s = [...g].sort((a, b) => cmp(a.ch[k], b.ch[k]));
+    for (let i = 0; i < s.length;) {
+      let j = i; while (j < s.length && s[j].ch[k] === s[i].ch[k]) j++;
+      const sub = s.slice(i, j);
+      if (k > 0 && sub.length < s.length) sub.forEach(x => x.how = k);
+      part(sub, k + 1); i = j;
+    }
+  }
+  part(items, 0);
+  let pos = 1;
+  for (const g of groups) { g.forEach(x => { x.pos = pos; x.eq = g.length > 1; x.level = items.filter(y => y.ch[0] === x.ch[0]).length > 1; }); pos += g.length; }
+  return groups.flat();
+}
+const winnersOf = (w, cat) => rank(w, cat).filter(r => r.pos === 1);
+/* a tie for a prize that a countback number would settle: which numbers to ask for */
+function needCB(w, cat) {
+  const top = winnersOf(w, cat); if (top.length < 2) return null;
+  const k = top[0].stuck, c = CAT(cat);
+  if (k == null || !c.fields[k]) return null;
+  return { cat, ids: top.map(x => x.id), field: c.fields[k], step: c.steps[k], k };
+}
+/* ---- money, in pence ---- */
+const pence = x => Math.round((+x || 0) * 100);
+const fmtM = p => { const s = p < 0 ? "-" : ""; p = Math.abs(p); return s + "£" + (p % 100 ? (p / 100).toFixed(2) : String(p / 100)); };
+const ENTRY = 10;                       // £ a man, always (Justin: "that doesn't change")
+const wEntry = () => ENTRY;
+const wTwos = w => isNum(w.twos) ? w.twos : (isNum(DOC.settings.twos) ? DOC.settings.twos : 0);
+const wPrizes = w => w.prizes || DOC.settings.prizes || { overall: 50, front: 25, back: 25 };
+function pot(w) { return pence(wEntry(w)) * entrants(w).length; }
+function prizes(w) {
+  const total = pot(w), pr = wPrizes(w);
+  return CATS.map(c => {
+    const amt = Math.floor(total * (pr[c.k] || 0) / 100), win = winnersOf(w, c.k);
+    return { cat: c.k, amt, ids: win.map(x => x.id), each: win.length ? Math.floor(amt / win.length) : 0 };
+  });
+}
+/* 2s: optional (fee 0 = off). Each week's 2s pot = fee x players + whatever rolled over;
+   nobody with a 2 and it rolls on to the next locked week. */
+function twosBook() {
+  const out = {}; let carry = 0;
+  for (const w of DOC.weeks) {
+    const fee = pence(wTwos(w)), n = entrants(w).length, potv = fee * n + carry;
+    const won = (w.twosWon || []).filter(id => cardOf(w, id));
+    out[w.id] = { fee, pot: potv, carryIn: carry, ids: won, each: won.length ? Math.floor(potv / won.length) : 0 };
+    if (w.locked) carry = won.length ? 0 : potv;
+  }
+  return out;
+}
+/* A player's money: what the finished (locked) weeks say, plus the admin's entries. */
+function lines(id) {
+  const L = [], tb = twosBook();
+  for (const w of DOC.weeks) {
+    if (!w.locked || !cardOf(w, id)) continue;
+    const fee = pence(wEntry(w)) + pence(wTwos(w));
+    if (fee) L.push({ date: w.date, what: "Entry " + fmtDate(w.date), p: -fee, wk: w.id });
+    for (const z of prizes(w)) if (z.ids.includes(id) && z.each)
+      L.push({ date: w.date, what: CAT(z.cat).label + " winner " + fmtDate(w.date) + (z.ids.length > 1 ? " (shared)" : ""), p: z.each, wk: w.id });
+    const t = tb[w.id]; if (t.ids.includes(id) && t.each) L.push({ date: w.date, what: "2s " + fmtDate(w.date), p: t.each, wk: w.id });
+  }
+  for (const m of DOC.money) if (m && m.p === id) L.push({ date: m.date, what: m.what || "Money", p: pence(m.amt), mid: m.id });
+  L.sort((a, b) => String(a.date).localeCompare(String(b.date)));
+  return L;
+}
+const balance = id => lines(id).reduce((a, l) => a + l.p, 0);
+function paidFor(w, id) { return DOC.money.find(m => m && m.wk === w.id && m.p === id && /^Paid /.test(m.what || "")); }
+/* ---- stats: wins, money and turnout, from the finished (locked) weeks ---- */
+const seasonOf = w => String(w.date || "").slice(0, 4);
+function seasons() { return [...new Set(DOC.weeks.filter(w => w.locked).map(seasonOf))].sort(); }
+const inYr = (w, yr) => w.locked && (yr === "all" || seasonOf(w) === yr);
+const byDate = ws => [...ws].sort((a, b) => String(a.date).localeCompare(String(b.date)));
+/* every man who played: wins (a shared prize counts as a win), what he won, what he paid in, net */
+function winStats(yr) {
+  const T = {}, tb = twosBook();
+  for (const w of byDate(DOC.weeks)) {
+    if (!inYr(w, yr)) continue;
+    const fee = pence(wEntry(w)) + pence(wTwos(w));
+    for (const id of entrants(w)) { const t = T[id] = T[id] || { id, played: 0, wins: 0, front: 0, back: 0, overall: 0, won: 0, paid: 0, list: [] }; t.played++; t.paid += fee; }
+    for (const z of prizes(w)) for (const id of z.ids) { const t = T[id]; t.wins++; t[z.cat]++; t.won += z.each; t.list.push({ w, cat: z.cat, p: z.each, shared: z.ids.length > 1 }); }
+    const t2 = tb[w.id]; if (t2.each) for (const id of t2.ids) { T[id].won += t2.each; T[id].list.push({ w, cat: "twos", p: t2.each, shared: t2.ids.length > 1 }); }
+  }
+  return Object.values(T).map(t => Object.assign(t, { net: t.won - t.paid }));
+}
+const SORTS = { wins: ["Most wins", ["wins", "won", "net"]], won: ["Most won", ["won", "wins", "net"]], net: ["Best net", ["net", "won", "wins"]] };
+function winTable(yr, by) {
+  const k = (SORTS[by] || SORTS.wins)[1], rows = winStats(yr);
+  rows.sort((a, b) => b[k[0]] - a[k[0]] || b[k[1]] - a[k[1]] || b[k[2]] - a[k[2]] || nm(a.id).localeCompare(nm(b.id)));
+  rows.forEach((r, i) => { r.pos = i && rows[i - 1][k[0]] === r[k[0]] ? rows[i - 1].pos : i + 1; });
+  rows.forEach(r => r.eq = rows.filter(x => x.pos === r.pos).length > 1);
+  return rows;
+}
+/* turnout: how many put a card in, each finished week, with the day, tee time and weather */
+const WX = [["sun", "Sunny"], ["cloud", "Cloudy"], ["rain", "Rain"], ["wind", "Windy"], ["cold", "Cold"], ["hot", "Hot"]];
+const wxWords = w => (w.wx || []).map(k => (WX.find(x => x[0] === k) || [k, k])[1]).join(", ");
+const dayOf = w => DAYS[new Date(String(w.date).slice(0, 10) + "T12:00:00").getDay()];
+const MONTHN = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+function turnout(yr) { return byDate(DOC.weeks.filter(w => inYr(w, yr))).map(w => ({ w, n: entrants(w).length })); }
+/* average turnout grouped by something; a week can sit in more than one group (Rain and Windy) */
+function avgBy(T, keys, order) {
+  const G = {};
+  for (const t of T) for (const k of keys(t.w)) { const g = G[k] = G[k] || { k, weeks: 0, n: 0 }; g.weeks++; g.n += t.n; }
+  const out = Object.values(G).map(g => Object.assign(g, { avg: g.n / g.weeks }));
+  return order ? out.sort((a, b) => order.indexOf(a.k) - order.indexOf(b.k)) : out.sort((a, b) => String(a.k).localeCompare(String(b.k)));
+}
+/* ---- cards that look wrong ---- */
+function odd(w, id) {
+  const c = cardOf(w, id), o = []; if (!c) return o;
+  if (!MED(w)) {
+    if (c.total > 60) o.push("looks like strokes, not points");
+    else if (c.total > 48) o.push("very high for points");
+    else if (c.total < 10 && c.total != null) o.push("very low");
+    if (c.out != null && c.in != null && Math.abs(c.out - c.in) > 12) o.push("front and back very different");
+  } else {
+    if (c.total != null && c.total < 55) o.push("looks like points, not strokes");
+    if (c.total > 140) o.push("very high");
+    if (c.out != null && c.in != null && Math.abs(c.out - c.in) > 15) o.push("front and back very different");
+  }
+  if (c.total == null) o.push("total missing");
+  else if (c.out == null || c.in == null) o.push("only a total: can't win the front or back 9");
+  if ((w.players || []).length && !(w.players || []).includes(id)) o.push("wasn't on the list for this week");
+  if (!hcpChecked(w, id)) o.push("handicap not checked this week");
+  return o;
+}
+
+/* ======================= screens ======================= */
+let R = { v: "home" };
+function go(v, a) { R = Object.assign({ v }, a || {}); try { history.pushState(R, ""); } catch (e) {} render(); window.scrollTo(0, 0); }
+function back() { if (history.state && history.length > 1) history.back(); else go("home"); }
+window.addEventListener("popstate", e => { R = (e.state && e.state.v) ? e.state : { v: "home" }; render(); });
+const typing = () => { const a = document.activeElement; return a && /INPUT|SELECT|TEXTAREA/.test(a.tagName) && $("view").contains(a); };
+let wantRender = false;
+function softRender() { if (R.v === "card" || R.v === "setup" || typing()) { wantRender = true; paint(); return; } render(); }
+document.addEventListener("focusout", () => setTimeout(() => { if (wantRender && !typing() && R.v !== "card" && R.v !== "setup") { wantRender = false; render(); } }, 50));
+
+/* live, and not signed in: the scores are private, so just the way in */
+function vGate() {
+  return `<h1 class="h1">${esc(CFG.app_name)}</h1><p class="sub">The scores are for the Shankers only.</p>
+    <button class="btn main" data-act="who">Who are you?</button>
+    <p class="note">One of the Shankers but not on the list? Ask the admin to send your link on WhatsApp.</p>`;
+}
+function render() {
+  wantRender = false;
+  const v = WORKER && !ME() && !ADMINPIN && !["who", "pin", "admin"].includes(R.v) ? vGate : (VIEWS[R.v] || VIEWS.home);
+  let h; try { h = v(); } catch (e) { console.error(e); h = `<div class="empty">Something went wrong drawing this page.</div><button class="btn" data-go="home">Back to the start</button>`; }
+  $("view").innerHTML = qbar() + h + `<div class="foot">${esc(CFG.app_name)} · ${esc(BUILD)}${CFG.built_by ? `<br>Built by ${esc(CFG.built_by)}` : ""}${CFG.admin_by ? ` · Admin by ${esc(CFG.admin_by)}` : ""}</div>`;
+  paintNav(); paint(); wire();
+}
+function paintNav() {
+  const tabs = [["home", "Home"], ["weeks", "Results"], ["season", "Stats"], ["me", "Me"]];
+  if (ADMIN()) tabs.push(["admin", "Admin"]);
+  const on = { home: "home", card: "home", pick: "home", week: "weeks", weeks: "weeks", season: "season", stat: "season", cmp: "season", me: "me", a2: "me" }[R.v] || (ADMIN() ? "admin" : "home");
+  $("nav").innerHTML = tabs.map(([k, l]) => `<button class="${k === on ? "on" : ""}" data-go="${k}">${l}</button>`).join("");
+}
+function paint() {
+  const f = $("flags"); if (f) {
+    let h = "";
+    if (savingOff) h += `<div class="flag off">Saving is switched off, tell Justin. Anything you put in is kept on this phone and saves once it's fixed.</div>`;
+    if (DOC.sample) h += `<div class="flag">Sample players and scores, not real ones</div>`;
+    if (!WORKER) h += `<div class="flag">Trying it out: changes stay on this phone</div>`;
+    f.innerHTML = h;
+  }
+  const s = $("cState"); if (s && R.v === "card") s.outerHTML = cardState(WK(R.w), R.p);
+  const qb = $("qbar"); if (qb) qb.outerHTML = qbar();
+}
+function qbar() {
+  const no = Q.filter(x => x.st === "no"), wait = Q.filter(x => x.st !== "no");
+  let h = "";
+  if (no.length) h += `<div class="qbar no">Not saved: ${no.length === 1 ? "one change was" : no.length + " changes were"} turned down.
+    <ul>${no.map(x => `<li>${esc(x.label)}: ${esc(x.why)}</li>`).join("")}</ul><button class="btn quiet" data-act="clearno">OK, forget ${no.length === 1 ? "it" : "them"}</button></div>`;
+  if (wait.length && R.v !== "card") h += `<div class="qbar wait">Not saved yet, will keep trying: ${wait.map(x => esc(x.label)).join(", ")}.${noSignal ? " No signal at the moment." : ""}</div>`;
+  return `<div id="qbar">${h}</div>`;
+}
+const backBtn = (to) => `<button class="btn back" data-${to ? "go=\"" + to + "\"" : "act=\"back\""}>‹ Back</button>`;
+
+/* ---------- leaderboard rows ---------- */
+function rowsHtml(w, cat, limit, admin) {
+  const r = rank(w, cat), med = MED(w), c = CAT(cat);
+  if (!r.length) return `<div class="empty">No cards in yet.</div>`;
+  return `<div class="lb">` + r.slice(0, limit || 99).map(x => {
+    const cd = cardOf(w, x.id), h = playH(w, x.id);
+    let meta = cat === "overall"
+      ? (cd.out != null && cd.in != null ? `Out ${cd.out} · In ${cd.in}` : "Total only")
+      : (cat === "front" ? "holes 1 to 9" : "holes 10 to 18");
+    if (med) meta += ` · gross ${cat === "overall" ? cd.total : (cat === "front" ? cd.out : cd.in)} · handicap ${fmtH(h)}`;
+    const rl = relOf(w, x.id, cat); if (rl != null) meta += ` · net ${fmtRel(rl)}`;
+    let cbn = "";
+    if (x.how === "admin") cbn = `<span class="cbn">placed by the admin</span>`;
+    else if (isNum(x.how)) cbn = `<span class="cbn">countback: ${esc(c.steps[x.how])} ${fmtN(x.ch[x.how])}</span>`;
+    else if (x.eq && x.pos === 1) cbn = `<span class="cbn">level: shared</span>`;
+    if (cat === "overall" && shotAge(w, x.id)) cbn += `<span class="cbn age">shot their age (${ageOn(x.id, w.date, w)})</span>`;
+    const sc = x.ch[0];
+    return `<div class="row ${x.pos === 1 ? "win" : ""} ${admin ? "tap" : ""}" ${admin ? `data-go="card" data-w="${esc(w.id)}" data-p="${esc(x.id)}"` : ""}>
+      <div class="pos">${x.pos}${x.eq ? "=" : ""}</div>
+      <div class="nm">${esc(nm(x.id))}<span class="meta">${esc(meta)}</span>${cbn}</div>
+      <div class="sc">${fmtN(sc)}<small>${med ? "net" : "points"}</small></div></div>`;
+  }).join("") + `</div>`;
+}
+const fmtN = n => !isNum(n) ? "" : (Number.isInteger(n) ? String(n) : (Math.round(n * 10) / 10).toFixed(1).replace(".5", "½").replace(/\.0$/, ""));
+function prizeHtml(w, money) {
+  const pz = prizes(w);
+  return `<div class="prz">` + pz.map(z => {
+    const c = CAT(z.cat), win = winnersOf(w, z.cat);
+    const who = win.length ? win.map(x => esc(nm(x.id))).join(" &amp; ") : "<span class='mut'>nobody yet</span>";
+    const sc = win.length ? fmtN(win[0].ch[0]) + " " + (MED(w) ? "net" : "pts") : "";
+    return `<div class="prz-r"><div><span class="what">${c.label}</span><b>${who}</b> ${win.length > 1 ? "<span class='mut small'>(level)</span>" : ""}</div>
+      <div>${money ? `<span class="amt">${fmtM(z.amt)}</span>` : `<span class="mut">${sc}</span>`}</div></div>`;
+  }).join("") + `</div>`;
+}
+/* ---- a bit of roasting: they like it, they rely on it ---- */
+/* the splash line: the hokey cokey first thing on a Saturday and on a first visit, then a different one each day */
+function jibe() {
+  const J = CFG.jibes || []; if (!J.length) return "";
+  const d = new Date(), n = Math.floor((d - new Date(2026, 0, 1)) / 864e5);
+  return J[d.getDay() === 6 || !ME() ? 0 : n % J.length];
+}
+const pickOf = (list, seed) => { let h = 0; for (const ch of String(seed)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return list[h % list.length]; };
+/* the wooden spoon, on a finished week */
+function spoonHtml(w) {
+  if (!w.locked) return "";
+  const r = rank(w, "overall"); if (r.length < 4) return "";
+  const lastPos = r[r.length - 1].pos, s = r.filter(x => x.pos === lastPos); if (s.length > 2) return "";
+  const who = s.map(x => nm(x.id)).join(" and "), they = s.length > 1, rl = relOf(w, s[0].id, "overall");
+  const line = pickOf([
+    `The bar thanks ${they ? "them both" : "them"} for their custom.`,
+    `A lovely walk, by all accounts.`,
+    `Character-building stuff.`,
+    `Still paid the full tenner, mind.`,
+    `Somebody has to hold the others up.`,
+    `There's always next Saturday. And the one after that.`], w.id);
+  return `<div class="spoon"><b>Wooden spoon:</b> ${esc(who)}, ${fmtN(s[0].ch[0])} ${MED(w) ? "net" : "points"}${rl != null ? ` (${esc(fmtRel(rl))})` : ""}. ${esc(line)}</div>`;
+}
+/* a word on the card, when it's very good or very bad (rel: 0 = played to handicap, minus = better) */
+function cardQuip(rel) {
+  if (rel == null) return "";
+  if (rel <= -7) return "Steady on. The committee will want a word about that handicap.";
+  if (rel <= -4) return "Tidy. Someone check the adding up.";
+  if (rel >= 13) return "Saved. The less said, the better.";
+  if (rel >= 8) return "Saved. A good walk, spoiled.";
+  return "";
+}
+function missingHtml(w) {
+  const miss = (w.players || []).filter(id => !cardOf(w, id));
+  return miss.length ? `<p class="missing">Still to come in: ${miss.map(id => esc(nm(id))).join(", ")}</p>` : "";
+}
+
+/* ---------- home ---------- */
+function vHome() {
+  const w = thisWeek(), l = lastWeek(), me = ME();
+  let h = "";
+  if (w) {
+    const mine = me && cardOf(w, me);
+    h += `<div class="panel navy"><div class="kick">This week</div><div class="wk-t">${esc(fmtDate(w.date, true, true))}</div>
+      <div class="wk-f">${HOME} · ${esc(fmtWords(w))}</div>
+      ${me || ADMIN() ? `<button class="btn main" data-act="mycard">${mine ? `Change my card (${mine.total != null ? mine.total : "…"} ${unit(w)})` : "Put in my card"}</button>
+      <button class="btn" data-go="pick" data-w="${esc(w.id)}" style="background:transparent;color:#f4f1e8;border-color:rgba(226,209,159,.6)">Put in a card for someone else</button>`
+      : `<p class="wk-f" style="margin-top:.8rem">You're just looking. Playing? Ask the admin to send your link.</p>`}</div>`;
+    if (ADMIN()) {
+      const ent = entrants(w), miss = (w.players || []).filter(id => !cardOf(w, id)), od = ent.filter(id => odd(w, id).length);
+      h += `<div class="panel"><div class="kick">Admin</div><p><b>${ent.length}</b> card${ent.length === 1 ? "" : "s"} in${miss.length ? `, <b>${miss.length}</b> still to come` : ""}${od.length ? `, <b>${od.length}</b> to check` : ""}.</p>
+        <button class="btn go" data-go="week" data-w="${esc(w.id)}">Check the cards and lock the week</button></div>`;
+    }
+    h += `<h2 class="h2">Leaderboard so far <small>${esc(fmtDate(w.date, false, true))}</small></h2>${prizeHtml(w, false)}${rowsHtml(w, "overall", 0, false)}${missingHtml(w)}
+      <button class="btn quiet" data-go="week" data-w="${esc(w.id)}">See the front 9 and back 9 too</button>`;
+  } else {
+    h += `<div class="panel navy"><div class="kick">This week</div><div class="wk-t">No game set up yet</div><div class="wk-f">The admin puts the week in before you play.</div>
+      ${ADMIN() ? `<button class="btn main" data-go="setup">Set up this week's game</button>` : ""}</div>`;
+  }
+  if (l) h += `<h2 class="h2">Last week's result <small>${esc(fmtDate(l.date, false, true))}</small></h2>${prizeHtml(l, ADMIN())}${rowsHtml(l, "overall", 3, false)}${spoonHtml(l)}
+      <button class="btn quiet" data-go="week" data-w="${esc(l.id)}">See the full result</button>`;
+  const yr = seasons().slice(-1)[0];
+  if (yr) h += `<h2 class="h2">Most wins <small>${yr}</small></h2>${winHtml(yr, "wins", 5)}<button class="btn quiet" data-go="season">See all the stats</button>`;
+  return h;
+}
+/* ---------- choose a card ---------- */
+function vPick() {
+  const w = WK(R.w); if (!w) return vHome();
+  if (!ME() && !ADMIN()) { PENDING = { pick: w.id }; return vWho(); }
+  const ids = (w.players || []).length ? w.players : [];
+  const others = active().map(p => p.id).filter(id => !ids.includes(id));
+  const b = id => `<button class="${cardOf(w, id) ? "done" : ""}" data-go="card" data-w="${esc(w.id)}" data-p="${esc(id)}">${esc(nm(id))}<small>${cardOf(w, id) ? "card in ✓" : "no card yet"}</small></button>`;
+  return `${backBtn()}<h1 class="h1">Whose card?</h1><p class="sub">${esc(fmtDate(w.date, true, true))}</p>
+    ${ids.length ? `<div class="who">${ids.map(b).join("")}</div>` : ""}
+    ${R.all || !ids.length ? `<h2 class="h2">Everyone else</h2><div class="who">${others.map(b).join("")}</div>`
+      : `<button class="btn quiet" data-act="pickall">Someone not on this list</button>`}`;
+}
+/* ---------- putting in a card: one screen ---------- */
+function vCard() {
+  const w = WK(R.w), id = R.p; if (!w || !id) return vHome();
+  const c = (w.cards || {})[id] || {}, med = MED(w), mine = id === ME();
+  const lockedOut = w.locked && !ADMIN();
+  const totalOnly = R.tot != null ? R.tot : (isNum(c.total) && c.out == null && c.in == null);
+  const v = x => isNum(x) ? x : "";
+  let h = `${backBtn()}<h1 class="h1">${mine ? "Your card" : esc(nm(id)) + "'s card"}</h1>
+    <p class="sub">${esc(fmtDate(w.date, true, true))} · ${HOME}</p>`;
+  if (lockedOut) {
+    const cd = cardOf(w, id);
+    return h + `<div class="state none">This week is finished and locked.<small>Ask the admin if something's wrong.</small></div>
+      ${cd ? `<div class="tot"><b>${cd.total != null ? cd.total : "-"}</b><span>${unit(w)}</span>${cd.out != null ? `<div class="mut">Out ${cd.out} · In ${cd.in}</div>` : ""}</div>` : ""}
+      <button class="btn main" data-act="back">Done</button>`;
+  }
+  if (R.hchg || (!ADMIN() && !hcpChecked(w, id))) return h + hcpAsk(w, id);
+  h += adjHtml(w, id) + `<div class="hline">Playing off: <b>${fmtH(hcpOf(w, id))}</b> <button class="link" data-act="hchg">Change it</button></div>`;
+  h += `<div class="fmt">${med ? `Put in the <b>strokes</b><br><span class="small">gross, before handicap</span>` : `Put in the <b>points</b><br><span class="small">Stableford</span>`}</div>`;
+  const inp = (key, val) => `<input id="c${key}" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="3" value="${v(val)}" aria-label="${key}">`;
+  if (totalOnly) h += `<label class="box"><span>Total<small>all 18 holes</small></span>${inp("Total", c.total)}</label>
+      <p class="note">With only a total you can win the overall prize, but not the front 9 or back 9.</p>`;
+  else h += `<div class="halves"><label class="box"><span>Out<small>front 9</small></span>${inp("Out", c.out)}</label>
+      <label class="box"><span>In<small>back 9</small></span>${inp("In", c.in)}</label></div>`;
+  h += `<div class="tot" id="cTot"></div><div id="cHint"></div>${cardState(w, id)}
+    <button class="btn main" data-act="carddone">Done</button>
+    <button class="link" data-act="tot">${totalOnly ? "I have the front 9 and back 9" : "I only have the total"}</button>`;
+  if (ADMIN()) h += `<button class="btn quiet" data-go="hist" data-w="${esc(w.id)}" data-p="${esc(id)}">Who changed this card</button>`;
+  return h;
+}
+/* before the card: is the handicap still right? */
+function hcpAsk(w, id) {
+  const cur = isNum((w.hcp || {})[id]) ? w.hcp[id] : P(id).hcp, who = id === ME() ? "your" : esc(nm(id)) + "'s";
+  if (isNum(cur) && !R.hchg) return `<div class="panel"><div class="kick">First, ${who} playing handicap</div>
+      <div class="tot"><b>${fmtH(cur)}</b></div><p class="sub" style="font-size:1.15rem">Is that still right?</p>
+      <button class="btn main" data-act="hyes">Yes, ${fmtH(cur)} is right</button>
+      <button class="btn" data-act="hchg">No, change it</button></div>`;
+  return `<div class="panel"><div class="kick">First, ${who} playing handicap</div>
+      <label class="box"><span>Playing handicap<small>${w.locked || w.date < today() ? "what was played off that day" : "what's played off today"}</small></span><input id="hIn" type="text" inputmode="numeric" autocomplete="off" maxlength="3" value="${isNum(cur) ? fmtH(cur) : ""}"></label>
+      <div id="hMsg"></div><button class="btn main" data-act="hsave">Save the handicap</button>
+      ${isNum(cur) && R.hchg ? `<button class="btn quiet" data-act="hkeep">Keep ${fmtH(cur)}</button>` : ""}
+      <p class="note">A plus handicap? Put a + in front, like +2.</p></div>`;
+}
+/* A handicap put right after the points went in: the shots it changes, hole by hole, so the
+   points can follow (one more shot on a hole is one more point, unless it was a pick-up). */
+function hcpShift(from, to) {
+  const cd = CARD(), d = i => shotsOn(to, cd.si[i]) - shotsOn(from, cd.si[i]), holes = [...Array(18).keys()].filter(i => d(i));
+  return { f: sum([0, 1, 2, 3, 4, 5, 6, 7, 8].map(d)), b: sum([9, 10, 11, 12, 13, 14, 15, 16, 17].map(d)), holes: holes.map(i => i + 1) };
+}
+function adjHtml(w, id) {
+  const a = R.adj; if (!a || a.w !== w.id || a.p !== id) return "";
+  const c = cardOf(w, id), sh = hcpShift(a.from, a.to), n = sh.f + sh.b, more = n > 0, ab = Math.abs(n);
+  const nc = adjCard(c, sh), show = x => x.out != null && x.in != null ? `${x.out} + ${x.in} = ${x.total}` : String(x.total);
+  return `<div class="cbbox"><h4>Handicap ${fmtH(a.from)} to ${fmtH(a.to)}: ${ab} ${more ? "more" : "fewer"} shot${ab === 1 ? "" : "s"}</h4>
+    <p>On hole${sh.holes.length === 1 ? "" : "s"} ${sh.holes.join(", ")}${c.out != null ? ` (${Math.abs(sh.f)} on the front 9, ${Math.abs(sh.b)} on the back 9)` : ""}.
+    Were the points worked out off ${fmtH(a.from)}?</p>
+    <button class="btn main" data-act="adjyes">Yes: ${esc(show(c))} becomes ${esc(show(nc))}</button>
+    <button class="btn" data-act="adjno">No, the points are already right</button>
+    <p class="note">If it was a pick-up on one of those holes, the shot may not add a point: check that hole.</p></div>`;
+}
+const adjCard = (c, sh) => { const k = x => Math.max(0, x);
+  return c.out != null && c.in != null ? { out: k(c.out + sh.f), in: k(c.in + sh.b), total: k(c.out + sh.f) + k(c.in + sh.b) } : { total: k(c.total + sh.f + sh.b) }; };
+function saveH(w, id, h) {
+  const ops = [set(["players", id, "hcp"], h)];
+  if (w && !w.locked || (w && ADMIN())) { ops.unshift(set(["weeks", w.id, "hcp", id], h)); if (isNum(P(id).age) && !(w.age && isNum(w.age[id]))) ops.push(set(["weeks", w.id, "age", id], P(id).age)); }
+  save(ops, nm(id) + "'s handicap", "hcp:" + (w ? w.id : "") + ":" + id);
+}
+function readCard() {
+  const g = k => { const e = $("c" + k); if (!e) return undefined; const s = e.value.replace(/\D/g, ""); if (s !== e.value) e.value = s; return s === "" ? null : +s; };
+  const t = g("Total");
+  if (t !== undefined) return t == null ? null : { total: t };
+  const o = g("Out"), i = g("In");
+  if (o == null && i == null) return null;
+  return { out: o, in: i, total: o != null && i != null ? o + i : null };
+}
+function paintCard() {
+  const w = WK(R.w); if (!w) return;
+  const c = readCard(), med = MED(w);
+  const t = c && c.total, h_ = playH(w, R.p);
+  const q = t != null && c.out != null || (c && c.total != null && c.out == null) ? cardQuip(med ? (homeCourse(w) ? t - h_ - sum(CARD().par) : null) : 36 - t) : "";
+  $("cTot").innerHTML = t != null ? `Total<b>${t}</b><span>${unit(w)}</span>${med ? `<div class="mut">handicap ${fmtH(h_)}, so net ${t - h_}</div>` : ""}${q ? `<div class="quip">${esc(q)}</div>` : ""}`
+    : (c ? `<span class="mut">Put in both halves and the total adds up here</span>` : "");
+  const hints = [];
+  const big = [c && c.out, c && c.in, t].some(x => x > 200);
+  if (big) hints.push("That number is too big. Check it.");
+  if (c && !med && (t > 60 || c.out > 30 || c.in > 30)) hints.push("That looks like strokes. This week is points (Stableford).");
+  if (c && med && t != null && t < 50) hints.push("That looks like points. This week is strokes.");
+  $("cHint").innerHTML = hints.map(x => `<div class="hint">${esc(x)}</div>`).join("");
+  return !big;
+}
+let cardT = null;
+function cardInput(now) {
+  const ok = paintCard(); clearTimeout(cardT);
+  if (!ok) return;
+  const go_ = () => {
+    const w = WK(R.w), v = readCard(), cur = (w.cards || {})[R.p] || null;
+    const N = c => c && typeof c === "object" ? [c.out, c.in, c.total].map(x => isNum(x) ? x : null).join() : "";
+    if (N(v) === N(cur)) return;
+    save([set(["weeks", w.id, "cards", R.p], v)], nm(R.p) + "'s card", "card:" + w.id + ":" + R.p);
+  };
+  if (now) go_(); else cardT = setTimeout(go_, 700);
+}
+function cardState(w, id) {
+  if (!w) return `<div id="cState"></div>`;
+  const it = Q.find(x => x.ck === "card:" + w.id + ":" + id);
+  const has = cardOf(w, id);
+  let cls, a, b = "";
+  if (it && it.st === "no") { cls = "no"; a = "Not saved"; b = it.why; }
+  else if (it) { cls = "wait"; a = it.qid === flying ? "Saving…" : "Not saved yet, will keep trying";
+    b = savingOff ? "Saving is switched off, tell Justin. It's kept on this phone." : (noSignal ? "No signal at the moment. It's kept on this phone." : ""); }
+  else if (has) { cls = "ok"; a = "Saved ✓"; b = WORKER ? "" : "on this phone only, while trying it out"; }
+  else { cls = "none"; a = "Nothing put in yet"; }
+  return `<div class="state ${cls}" id="cState">${a}${b ? `<small>${esc(b)}</small>` : ""}</div>`;
+}
+/* ---------- a week: the full result, and the admin's checks ---------- */
+function vWeek() {
+  const w = WK(R.w); if (!w) return vWeeks();
+  let h = `${backBtn()}<div class="kick" style="text-align:center">${w.locked ? "Final result" : "Cards still coming in"}</div>
+    <h1 class="h1">${esc(fmtDate(w.date, true, true))}</h1><p class="sub">${HOME} · ${esc(fmtWords(w))}${w.tee ? ` · tee ${esc(w.tee)}` : ""}${(w.wx || []).length ? ` · ${esc(wxWords(w))}` : ""}</p>`;
+  if (!w.locked && !ADMIN() && ME()) h += `<button class="btn main" data-act="mycard" data-w="${esc(w.id)}">${ME() && cardOf(w, ME()) ? "Change my card" : "Put in my card"}</button>`;
+  if (ADMIN() && !w.locked) h += adminWeek(w);
+  h += `<h2 class="h2">The winners</h2>${prizeHtml(w, ADMIN())}`;
+  h += `<h2 class="h2">Overall <small>18 holes</small></h2>${rowsHtml(w, "overall", 0, ADMIN())}${missingHtml(w)}${spoonHtml(w)}`;
+  h += `<h2 class="h2">Front 9</h2>${rowsHtml(w, "front", 5, ADMIN())}`;
+  h += `<h2 class="h2">Back 9</h2>${rowsHtml(w, "back", 5, ADMIN())}`;
+  if (MED(w)) {
+    const g = entrants(w).filter(id => cardOf(w, id).total != null).sort((a, b) => cardOf(w, a).total - cardOf(w, b).total);
+    if (g.length) h += `<p class="note">Best gross: <b>${esc(nm(g[0]))}</b>, ${cardOf(w, g[0]).total} strokes.</p>`;
+  }
+  const tb = twosBook()[w.id];
+  if (tb && (tb.fee || tb.carryIn)) h += `<p class="note">2s: ${tb.ids.length ? tb.ids.map(id => esc(nm(id))).join(", ") : "nobody yet"}.${ADMIN() ? ` Pot ${fmtM(tb.pot)}${tb.carryIn ? `, including ${fmtM(tb.carryIn)} rolled over` : ""}.` : ""}</p>`;
+  if (ADMIN() && w.locked) h += adminWeek(w);
+  return h;
+}
+function adminWeek(w) {
+  let h = `<h2 class="h2">Admin: the cards</h2>`;
+  const ids = [...new Set([...(w.players || []), ...entrants(w)])];
+  h += ids.map(id => {
+    const c = cardOf(w, id), o = odd(w, id), pd = paidFor(w, id), fee = wEntry(w) + wTwos(w);
+    const tag = !c ? `<span class="tag out">no card</span>` : (o.length ? `<span class="tag odd">check</span>` : `<span class="tag in">card in</span>`);
+    return `<div class="chk"><div class="nm tap" data-go="card" data-w="${esc(w.id)}" data-p="${esc(id)}" style="cursor:pointer">${esc(nm(id))}
+        <span class="meta">${c ? (c.out != null ? `${c.out} + ${c.in != null ? c.in : "?"} = ` : "") + (c.total != null ? c.total : "?") + " " + unit(w) : "tap to put it in"}${o.length ? " · " + esc(o.join(", ")) : ""}</span></div>${tag}
+      ${c || pd ? `<div class="paid"><button class="${!pd ? "on" : ""}" data-act="pay" data-p="${esc(id)}" data-how="">Not paid</button>
+        <button class="${pd && pd.how === "cash" ? "on" : ""}" data-act="pay" data-p="${esc(id)}" data-how="cash">Paid cash</button>
+        <button class="${pd && pd.how === "transfer" ? "on" : ""}" data-act="pay" data-p="${esc(id)}" data-how="transfer">Paid transfer</button></div>` : ""}</div>`;
+  }).join("");
+  h += `<div class="panel"><div class="kick">The day, for the stats</div>
+    <label class="fld"><span>Tee time</span><input id="wTee" type="time" value="${esc(w.tee || "")}"></label>
+    <div class="fld"><span>The weather <small class="mut">(tap all that fit)</small></span><div class="choice wx">${WX.map(([k, l]) => `<button class="${(w.wx || []).includes(k) ? "on" : ""}" data-act="wx" data-k="${k}">${l}</button>`).join("")}</div></div></div>`;
+  h += `<p class="note">Entry ${fmtM(pence(wEntry(w)) + pence(wTwos(w)))} a man. Tap a name to change their card.</p>
+    <button class="btn" data-go="pick" data-w="${esc(w.id)}" data-all="1">Put in a card for someone else</button>`;
+  /* ties the countback numbers would settle */
+  for (const c of CATS) {
+    const n = needCB(w, c.k);
+    if (n) {
+      const f = n.field;
+      h += `<div class="cbbox"><h4>${c.label}: level, ${esc(n.ids.map(nm).join(" and "))}</h4>
+        <p>Ask them for their <b>${esc(n.step)}</b> and put the ${unit(w)} in here.</p>
+        ${n.ids.map(id => `<div class="cbrow"><div class="nm">${esc(nm(id))}</div>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" data-cb="${esc(id)}" data-f="${f}" value="${isNum(((w.cb || {})[id] || {})[f]) ? w.cb[id][f] : ""}" aria-label="${esc(n.step)}">
+          <div class="lab">${f.slice(1) === "1" ? "last hole" : f.slice(1) + " holes"}</div></div>`).join("")}</div>`;
+    }
+    const top = winnersOf(w, c.k);
+    if (top.length > 1 || (top[0] && top[0].how === "admin")) {
+      const lv = rank(w, c.k).filter(x => x.level && x.ch[0] === (top[0] && top[0].ch[0]));
+      if (lv.length > 1 && (top.length > 1 || top[0].how === "admin"))
+        h += `<div class="cbbox"><h4>${c.label}: still level after the countback</h4><p>They share it, unless you pick a winner.</p>
+          <div class="btns2">${lv.map(x => `<button class="btn" data-act="pick" data-cat="${c.k}" data-p="${esc(x.id)}">${esc(nm(x.id))} wins</button>`).join("")}
+          <button class="btn quiet" data-act="pick" data-cat="${c.k}" data-p="">They share it</button></div></div>`;
+    }
+  }
+  if (wTwos(w)) h += `<h2 class="h2">Who got a 2?</h2>` + entrants(w).map(id => `<div class="tick"><button class="${(w.twosWon || []).includes(id) ? "on" : ""}" data-act="two" data-p="${esc(id)}">${esc(nm(id))}</button><span></span></div>`).join("");
+  const pz = prizes(w);
+  h += `<h2 class="h2">The money this week</h2><div class="tots"><span>Pot (${entrants(w).length} × ${fmtM(pence(wEntry(w)))})</span><b>${fmtM(pot(w))}</b>
+    ${pz.map(z => `<span>${CAT(z.cat).label}: ${z.ids.length ? esc(z.ids.map(nm).join(" & ")) : "nobody"}</span><b>${fmtM(z.amt)}</b>`).join("")}</div>
+    <p class="note">${w.locked ? "Prizes and entries are in everyone's balance." : "Prizes and entries go into everyone's balance when you lock the week."}</p>`;
+  h += `<button class="btn" data-go="setup" data-w="${esc(w.id)}">Change the week's set-up</button>`;
+  h += w.locked ? `<button class="btn warn" data-act="lock" data-on="">Unlock this week</button><p class="note">Locked: only you can change it.</p>`
+    : `<button class="btn go" data-act="lock" data-on="1">Lock this week</button><p class="note">Lock it when the cards are all in and right. After that, only you can change it.</p>`;
+  return h;
+}
+/* ---------- all weeks ---------- */
+function vWeeks() {
+  const ws = [...DOC.weeks].reverse();
+  let h = `<h1 class="h1">Results</h1><p class="sub">Every week, newest first</p>`;
+  if (ADMIN()) h += `<button class="btn go" data-go="setup">Set up a new week</button>`;
+  if (!ws.length) return h + `<div class="empty">No weeks yet.</div>`;
+  h += `<div class="lb">` + ws.map(w => {
+    const o = winnersOf(w, "overall");
+    return `<div class="row tap" data-go="week" data-w="${esc(w.id)}"><div class="pos" style="font-size:.85rem">${esc(fmtDate(w.date)).replace(/ (\d\d)$/, "<br>$1")}</div>
+      <div class="nm">${o.length ? esc(o.map(x => nm(x.id)).join(" & ")) : "<span class='mut'>no cards yet</span>"}<span class="meta">${HOME} · ${MED(w) ? "medal" : "Stableford"} · ${entrants(w).length} played${w.locked ? "" : " · still open"}</span></div>
+      <div class="sc">${o.length ? fmtN(o[0].ch[0]) : ""}<small>${o.length ? (MED(w) ? "net" : "points") : ""}</small></div></div>`;
+  }).join("") + `</div>`;
+  return h;
+}
+/* ---------- stats ---------- */
+const fmtAvg = x => (Math.round(x * 10) / 10).toFixed(1).replace(/\.0$/, "");
+const netHtml = p => `<span class="${p < 0 ? "neg" : p > 0 ? "pos2" : ""}">${p > 0 ? "+" : ""}${fmtM(p)}</span>`;
+function winHtml(yr, by, limit) {
+  const rows = winTable(yr, by); if (!rows.length) return `<div class="empty">Nothing finished yet.</div>`;
+  const big = { wins: r => [r.wins, r.wins === 1 ? "win" : "wins"], won: r => [fmtM(r.won), "won"], net: r => [netHtml(r.net), "net"] }[SORTS[by] ? by : "wins"];
+  return `<div class="lb">` + rows.slice(0, limit || 999).map(r => { const [v, l] = big(r);
+    return `<div class="row tap${r.id === ME() ? " me" : ""}" data-go="stat" data-p="${esc(r.id)}" data-y="${esc(yr)}"><div class="pos">${r.pos}${r.eq ? "=" : ""}</div>
+      <div class="nm">${esc(nm(r.id))}<span class="meta">Front ${r.front} · Back ${r.back} · Overall ${r.overall}</span>
+      <span class="meta">Played ${r.played} · won ${fmtM(r.won)} · net ${netHtml(r.net)}</span></div><div class="sc">${v}<small>${l}</small></div></div>`; }).join("") + `</div>`;
+}
+function yearPick(yr, v) {
+  const ys = seasons(); if (ys.length < 2) return "";
+  return `<div class="choice yrs">${[...ys, "all"].map(y => `<button class="${y === yr ? "on" : ""}" data-go="${v}" data-y="${y}"${R.p ? ` data-p="${esc(R.p)}"` : ""}${R.c ? ` data-c="${esc(R.c)}"` : ""}>${y === "all" ? "All years" : y}</button>`).join("")}</div>`;
+}
+const pickYr = () => { const ys = seasons(); return R.y && (R.y === "all" || ys.includes(R.y)) ? R.y : ys.slice(-1)[0]; };
+const yrWords = yr => yr === "all" ? "All years" : yr;
+/* players-per-week bars: one series, so one colour and no legend; tap a bar for the week */
+function turnoutChart(T) {
+  if (!T.length) return "";
+  const W = 340, H = 170, L = 24, B = 22, top = 10, max = Math.max(...T.map(t => t.n), 4), ceil = Math.ceil(max / 4) * 4;
+  const step = (W - L) / T.length, bw = Math.max(2, Math.min(26, step - 2)), y = n => H - B - (H - B - top) * n / ceil;
+  const avg = T.reduce((a, t) => a + t.n, 0) / T.length;
+  let g = "";
+  for (let k = 0; k <= ceil; k += ceil / 4) g += `<line x1="${L}" x2="${W}" y1="${y(k)}" y2="${y(k)}" class="gl"/><text x="${L - 5}" y="${y(k) + 4}" class="ax" text-anchor="end">${k}</text>`;
+  const bars = T.map((t, i) => {
+    const x = L + i * step + (step - bw) / 2, h = Math.max(0, y(0) - y(t.n)), r = Math.min(4, bw / 2, h);
+    const d = h ? `M${x},${y(0)}V${y(t.n) + r}Q${x},${y(t.n)} ${x + r},${y(t.n)}H${x + bw - r}Q${x + bw},${y(t.n)} ${x + bw},${y(t.n) + r}V${y(0)}Z` : "";
+    return `<g class="bar" data-tip="${esc(tbWords(t.w))}" data-into="tbInfo"><rect x="${L + i * step}" y="${top}" width="${step}" height="${H - B - top}" class="hit"/>${d ? `<path d="${d}"/>` : ""}</g>`;
+  }).join("");
+  const first = T[0].w, last = T[T.length - 1].w;
+  const xl = `<text x="${L}" y="${H - 5}" class="ax">${fmtDate(first.date)}</text>` + (T.length > 1 ? `<text x="${W}" y="${H - 5}" class="ax" text-anchor="end">${fmtDate(last.date)}</text>` : "");
+  const av = `<line x1="${L}" x2="${W}" y1="${y(avg)}" y2="${y(avg)}" class="avg"/>`;
+  return `<figure class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Players each week">${g}${av}${bars}${xl}</svg>
+    <figcaption id="tbInfo" class="tbinfo">Dotted line: the average, ${fmtAvg(avg)} a week. Tap a bar to see that week.</figcaption></figure>`;
+}
+const tbWords = w => `${fmtDate(w.date, true)}: <b>${entrants(w).length} played</b>${w.tee ? " · tee " + esc(w.tee) : ""}${(w.wx || []).length ? " · " + esc(wxWords(w)) : ""}`;
+function avgRows(G, label) {
+  if (!G.length) return "";
+  const top = Math.max(...G.map(g => g.avg));
+  return `<table class="t av"><thead><tr><th></th><th>${label}</th><th>Weeks</th><th>Players a week</th></tr></thead><tbody>` +
+    G.map(g => `<tr><td></td><td class="n">${esc(g.label || g.k)}</td><td>${g.weeks}</td><td><div class="mbar"><i style="width:${Math.round(g.avg / top * 100)}%"></i><b>${fmtAvg(g.avg)}</b></div></td></tr>`).join("") + `</tbody></table>`;
+}
+function vSeason() {
+  const yr = pickYr(), by = SORTS[R.s] ? R.s : "wins";
+  let h = `<h1 class="h1">Stats</h1><p class="sub">${yr ? yrWords(yr) + ", finished weeks" : ""}</p>`;
+  if (!yr) return h + `<div class="empty">Nothing finished yet.</div>`;
+  h += yearPick(yr, "season") + `<button class="btn go" data-go="cmp" data-y="${esc(yr)}">Compare players, head to head</button>`;
+  h += `<h2 class="h2">Winners</h2><div class="choice srt">${Object.entries(SORTS).map(([k, v]) => `<button class="${k === by ? "on" : ""}" data-act="sort" data-s="${k}">${v[0]}</button>`).join("")}</div>
+    ${winHtml(yr, by)}<p class="note">A shared prize counts as a win. Won is prize money; net is that less the £${ENTRY} entries. Tap a name for every win.</p>`;
+  const ag = ageTable(yr);
+  if (ag.length) h += `<h2 class="h2">Shot their age</h2><div class="lb">` + ag.map(a => `<div class="row tap" data-go="stat" data-p="${esc(a.id)}" data-y="${esc(yr)}"><div class="pos">★</div>
+      <div class="nm">${esc(nm(a.id))}<span class="meta">Best ${a.best.gross} gross at ${a.best.age}, ${esc(fmtDate(a.best.w.date))}</span></div><div class="sc">${a.n}<small>${a.n === 1 ? "time" : "times"}</small></div></div>`).join("") + `</div>
+      <p class="note">Gross 18-hole score at or under their age on the day. Points weeks are worked out from the points and that day's handicap.</p>`;
+  const T = turnout(yr);
+  if (T.length) {
+    const avg = T.reduce((a, t) => a + t.n, 0) / T.length, hi = T.reduce((a, t) => t.n > a.n ? t : a), lo = T.reduce((a, t) => t.n < a.n ? t : a);
+    h += `<h2 class="h2">How many play</h2><div class="tiles"><div><b>${fmtAvg(avg)}</b>a week on average</div><div><b>${hi.n}</b>most<small>${esc(fmtDate(hi.w.date))}</small></div><div><b>${lo.n}</b>fewest<small>${esc(fmtDate(lo.w.date))}</small></div></div>
+      ${turnoutChart(T)}`;
+    const wxd = avgBy(T.filter(t => (t.w.wx || []).length), w => w.wx, WX.map(x => x[0])).map(g => Object.assign(g, { label: (WX.find(x => x[0] === g.k) || [0, g.k])[1] }));
+    const tee = avgBy(T.filter(t => t.w.tee), w => [w.tee]);
+    const day = avgBy(T, w => [dayOf(w)], DAYS);
+    const mon = avgBy(T, w => [String(w.date).slice(5, 7)]).map(g => Object.assign(g, { label: MONTHN[+g.k - 1] }));
+    h += `<h3 class="h3">By the weather</h3>${wxd.length ? avgRows(wxd, "Weather") : `<p class="note">No weather put in yet. The admin taps it in on each week.</p>`}
+      <h3 class="h3">By tee time</h3>${tee.length ? avgRows(tee, "Tee time") : `<p class="note">No tee times put in yet. The admin puts them in when setting up the week.</p>`}
+      <h3 class="h3">By day</h3>${day.length > 1 ? avgRows(day, "Day") : `<p class="note">Every week so far was a ${esc(day[0].k)}. Try another day and it shows up here to compare.</p>`}
+      <h3 class="h3">By month</h3>${avgRows(mon, "Month")}
+      <p class="note">A handful of weeks is a hint, not proof. A week that was rainy and windy counts under both.</p>
+      <h3 class="h3">Every week</h3><table class="t wl"><thead><tr><th></th><th>Date</th><th>Played</th><th>Tee</th><th>Weather</th></tr></thead><tbody>` +
+      [...T].reverse().map(t => `<tr class="tap" data-go="week" data-w="${esc(t.w.id)}"><td></td><td class="n">${esc(dayOf(t.w).slice(0, 3))} ${esc(fmtDate(t.w.date))}</td><td class="p">${t.n}</td><td>${esc(t.w.tee || "–")}</td><td class="small">${esc(wxWords(t.w) || "–")}</td></tr>`).join("") + `</tbody></table>`;
+  }
+  return h;
+}
+/* a man's finished rounds: points, gross, handicap, age */
+function roundsOf(id, yr) {
+  return byDate(DOC.weeks).filter(w => inYr(w, yr) && entrants(w).includes(id)).map(w => {
+    const c = cardOf(w, id), g = grossOf(w, id);
+    return { w, pts: !MED(w) && isNum(c.total) ? c.total : null, rel: relOf(w, id, "overall"), gross: g && isNum(g.total) ? g.total : null, h: (w.hcp || {})[id], age: ageOn(id, w.date, w), aged: shotAge(w, id) };
+  });
+}
+function ageTable(yr) {
+  const out = [];
+  for (const p of DOC.players) {
+    if (!isNum(p.age) && !DOC.weeks.some(w => w.age && isNum(w.age[p.id]))) continue;
+    const r = roundsOf(p.id, yr).filter(x => x.aged); if (!r.length) continue;
+    out.push({ id: p.id, n: r.length, best: r.reduce((a, x) => x.gross - x.age < a.gross - a.age ? x : a), list: r });
+  }
+  return out.sort((a, b) => b.n - a.n || nm(a.id).localeCompare(nm(b.id)));
+}
+/* handicap each week it was checked, oldest first */
+function hcpHist(id, yr) { return byDate(DOC.weeks).filter(w => (yr === "all" || seasonOf(w) === yr) && isNum((w.hcp || {})[id])).map(w => ({ w, h: w.hcp[id] })); }
+/* one line, one colour: no legend needed; tap a dot for the week */
+function hcpChart(H) {
+  if (H.length < 2) return `<p class="note">${H.length ? `Handicap ${fmtH(H[0].h)} on ${esc(fmtDate(H[0].w.date))}. ` : ""}The line appears once there are two weeks to go on.</p>`;
+  const W = 340, Ht = 150, L = 28, B = 22, top = 12, lo = Math.floor(Math.min(...H.map(x => x.h)) - 1), hi = Math.ceil(Math.max(...H.map(x => x.h)) + 1);
+  const x = i => L + 8 + (W - L - 16) * i / (H.length - 1), y = v => top + (Ht - B - top) * (hi - v) / (hi - lo);
+  const ticks = [...new Set([lo, Math.round((lo + hi) / 2), hi])];
+  let g = ticks.map(k => `<line x1="${L}" x2="${W}" y1="${y(k)}" y2="${y(k)}" class="gl"/><text x="${L - 5}" y="${y(k) + 4}" class="ax" text-anchor="end">${esc(fmtH(k))}</text>`).join("");
+  g += `<path class="ln" d="${H.map((p, i) => (i ? "L" : "M") + x(i).toFixed(1) + "," + y(p.h).toFixed(1)).join("")}"/>`;
+  g += H.map((p, i) => `<g class="dot" data-tip="${esc(`${fmtDate(p.w.date, true)}: <b>handicap ${fmtH(p.h)}</b>`)}" data-into="hpInfo"><circle cx="${x(i)}" cy="${y(p.h)}" r="14" class="hit"/><circle cx="${x(i)}" cy="${y(p.h)}" r="4.5"/></g>`).join("");
+  g += `<text x="${L}" y="${Ht - 5}" class="ax">${fmtDate(H[0].w.date)}</text><text x="${W}" y="${Ht - 5}" class="ax" text-anchor="end">${fmtDate(H[H.length - 1].w.date)}</text>`;
+  const d = H[H.length - 1].h - H[0].h;
+  return `<figure class="chart"><svg viewBox="0 0 ${W} ${Ht}" role="img" aria-label="Handicap each week">${g}</svg>
+    <figcaption id="hpInfo" class="tbinfo">${fmtH(H[0].h)} to ${fmtH(H[H.length - 1].h)}: ${d === 0 ? "no change" : d < 0 ? "down " + fmtN(Math.round(-d * 10) / 10) : "up " + fmtN(Math.round(d * 10) / 10)}. Tap a dot for that week.</figcaption></figure>`;
+}
+/* one man's wins, every one listed */
+function vStat() {
+  const id = R.p, yr = pickYr(); if (!id || !yr) return vSeason();
+  const r = winStats(yr).find(x => x.id === id), age = ageOn(id, today());
+  let h = `${backBtn()}<h1 class="h1">${esc(nm(id))}</h1><p class="sub">${yrWords(yr)}, finished weeks${age != null ? ` · age ${age}` : ""}</p>${yearPick(yr, "stat")}
+    <button class="btn quiet" data-go="cmp" data-c="${esc(id)}" data-y="${esc(yr)}">Compare with someone</button>`;
+  if (!r) return h + `<div class="empty">No finished weeks played${yr === "all" ? "" : " in " + yr}.</div>` + `<h2 class="h2">Handicap</h2>${hcpChart(hcpHist(id, yr))}`;
+  const R0 = roundsOf(id, yr), ages = R0.filter(x => x.aged).length, G = R0.filter(x => x.rel != null), P0 = R0.filter(x => x.pts != null);
+  h += `<div class="tiles"><div><b>${r.wins}</b>win${r.wins === 1 ? "" : "s"}<small>from ${r.played} played</small></div><div><b>${fmtM(r.won)}</b>won</div><div><b>${netHtml(r.net)}</b>net<small>after ${fmtM(r.paid)} in</small></div></div>
+    <div class="tiles"><div><b>${P0.length ? fmtAvg(sum(P0.map(x => x.pts)) / P0.length) : "–"}</b>points a round</div><div><b>${G.length ? fmtRel(Math.min(...G.map(x => x.rel))) : "–"}</b>best round<small>v handicap</small></div>
+    <div><b>${age != null ? ages : "–"}</b>${age != null ? "shot their age" : "age not given"}</div></div>
+    <table class="t"><thead><tr><th></th><th>Prize</th><th>Wins</th></tr></thead><tbody>
+    ${CATS.map(c => `<tr><td></td><td class="n">${esc(c.label)}</td><td class="p">${r[c.k]}</td></tr>`).join("")}</tbody></table>`;
+  h += `<h2 class="h2">Handicap</h2>${hcpChart(hcpHist(id, yr))}`;
+  h += `<h2 class="h2">Every win</h2>` + (r.list.length ? `<div class="lb">` + [...r.list].reverse().map(x => `<div class="row tap" data-go="week" data-w="${esc(x.w.id)}"><div class="pos">★</div>
+      <div class="nm">${x.cat === "twos" ? "2s" : esc(CAT(x.cat).label)}${x.shared ? " <small class='mut'>(shared)</small>" : ""}<span class="meta">${esc(fmtDate(x.w.date, true))}</span></div><div class="sc">${fmtM(x.p)}</div></div>`).join("") + `</div>`
+    : `<div class="empty">No wins yet. Next Saturday.</div>`);
+  h += `<h2 class="h2">Every round</h2><table class="t wl"><thead><tr><th></th><th>Date</th><th>Points</th><th>v hcp</th><th>Hcp</th></tr></thead><tbody>` +
+    [...R0].reverse().map(x => `<tr class="tap${x.aged ? " me" : ""}" data-go="week" data-w="${esc(x.w.id)}"><td>${x.aged ? "★" : ""}</td><td class="n">${esc(fmtDate(x.w.date))}</td>
+      <td>${x.pts != null ? x.pts : "–"}</td><td class="p">${fmtRel(x.rel)}</td><td>${isNum(x.h) ? esc(fmtH(x.h)) : "–"}</td></tr>`).join("") + `</tbody></table>
+    <p class="note">"v hcp" is the round against playing to handicap: 36 points is level, 37 is −1, 33 is +3.${age != null ? " ★ shot their age (gross, worked out from the points and that day's handicap on the Thorpe Hall GC card)." : ""}</p>`;
+  return h;
+}
+/* ---------- compare two or more ---------- */
+const short = id => P(id).nick || String(P(id).name || id).split(" ")[0];
+function cmpData(id, yr) {
+  const s = winStats(yr).find(x => x.id === id) || { played: 0, wins: 0, front: 0, back: 0, overall: 0, won: 0, paid: 0, net: 0 };
+  const R0 = roundsOf(id, yr), P0 = R0.filter(x => x.pts != null).map(x => x.pts), G = R0.filter(x => x.rel != null).map(x => x.rel), H = hcpHist(id, yr);
+  return Object.assign({ id }, s, { avgPts: P0.length ? sum(P0) / P0.length : null, bestPts: P0.length ? Math.max(...P0) : null,
+    avgG: G.length ? sum(G) / G.length : null, bestG: G.length ? Math.min(...G) : null, ages: R0.filter(x => x.aged).length, hasAge: isNum(P(id).age) || DOC.weeks.some(w => w.age && isNum(w.age[id])),
+    hNow: isNum(P(id).hcp) ? P(id).hcp : null, hMove: H.length > 1 ? Math.round((H[H.length - 1].h - H[0].h) * 10) / 10 : null, hFrom: H.length ? H[0].h : null });
+}
+/* who finished ahead overall, every finished week both played */
+function h2h(a, b, yr) {
+  const o = { a: 0, b: 0, lv: 0, n: 0 };
+  for (const w of DOC.weeks) {
+    if (!inYr(w, yr)) continue;
+    const r = rank(w, "overall"), x = r.find(q => q.id === a), y = r.find(q => q.id === b); if (!x || !y) continue;
+    o.n++; x.pos < y.pos ? o.a++ : y.pos < x.pos ? o.b++ : o.lv++;
+  }
+  return o;
+}
+/* the verdict: a few lines, all from the numbers, ribbing but friendly */
+function roast(D, yr) {
+  const L = [], by = (k, f) => [...D].filter(d => d[k] != null).sort((p, q) => f * (q[k] - p[k])), T = yr === "all" ? "" : " in " + yr;
+  const rich = by("net", 1)[0], poor = by("net", -1)[0];
+  if (rich && rich.net > 0) L.push(`${short(rich.id)} is ${fmtM(rich.net)} up${T}. First round's on ${short(rich.id)}.`);
+  if (poor && poor.net < 0 && poor !== rich) L.push(`${short(poor.id)} has put in ${fmtM(-poor.net)} more than they've taken out. The pot thanks ${short(poor.id)} for their service.`);
+  let pair = null;
+  for (let i = 0; i < D.length; i++) for (let j = i + 1; j < D.length; j++) { const o = h2h(D[i].id, D[j].id, yr); if (o.n && (!pair || Math.abs(o.a - o.b) > Math.abs(pair.o.a - pair.o.b))) pair = { a: D[i].id, b: D[j].id, o }; }
+  if (pair) { let { a, b, o } = pair; if (o.b > o.a) { [a, b] = [b, a]; o = { a: o.b, b: o.a, lv: o.lv, n: o.n }; }
+    L.push(o.a - o.b >= 2 ? `${short(a)} has finished ahead of ${short(b)} ${o.a} times out of ${o.n}. ${short(b)} may want a different tee time.`
+      : `${short(a)} and ${short(b)}: ${o.a} each way${o.lv ? `, ${o.lv} level` : ""}. Nothing to choose between them, sadly for both.`); }
+  for (const d of D) if (d.played >= 3 && !d.wins) L.push(`${short(d.id)}: ${d.played} Saturdays, no wins. Nobody can say ${short(d.id)} only comes for the money.`);
+  for (const d of D) if (d.hMove != null && d.hMove >= 1) L.push(`${short(d.id)}'s handicap has gone up ${fmtN(d.hMove)}${T}. Tactical, surely.`);
+    else if (d.hMove != null && d.hMove <= -1) L.push(`${short(d.id)}'s handicap has come down ${fmtN(-d.hMove)}. The rest of you would like a word.`);
+  for (const d of D) if (d.front >= 2 && d.front >= 2 * d.back) L.push(`${short(d.id)} wins the front 9 ${d.front} times, the back 9 ${d.back}. Flies out of the blocks, then the legs go.`);
+    else if (d.back >= 2 && d.back >= 2 * d.front) L.push(`${short(d.id)} wins the back 9 ${d.back} times, the front 9 ${d.front}. Only wakes up at the 10th.`);
+  const ag = [...D].filter(d => d.ages).sort((p, q) => q.ages - p.ages);
+  if (ag.length) L.push(`${ag.map((d, i) => `${short(d.id)} ${i ? "" : "has shot their age "}${d.ages} time${d.ages === 1 ? "" : "s"}`).join(", ")}. Everyone else here is younger and worse.`);
+  const pts = by("avgPts", 1); if (pts.length > 1 && pts[0].avgPts - pts[pts.length - 1].avgPts >= 1)
+    L.push(`${short(pts[pts.length - 1].id)} averages ${fmtAvg(pts[pts.length - 1].avgPts)} points to ${short(pts[0].id)}'s ${fmtAvg(pts[0].avgPts)}. Character-building.`);
+  return L.slice(0, 7);
+}
+function vCmp() {
+  const yr = pickYr(); if (!yr) return vSeason();
+  const ids = String(R.c || "").split(",").filter(id => id && P(id).id), pool = [...new Set([...winStats(yr).map(r => r.id), ...ids])].sort((a, b) => nm(a).localeCompare(nm(b)));
+  let h = `${backBtn()}<h1 class="h1">Head to head</h1><p class="sub">${yrWords(yr)}. Tap two to four names.</p>${yearPick(yr, "cmp")}
+    <div class="who cmp">${pool.map(id => `<button class="${ids.includes(id) ? "done" : ""}" data-act="ctog" data-p="${esc(id)}">${esc(nm(id))}</button>`).join("")}</div>`;
+  if (ids.length < 2) return h + `<div class="empty">Pick ${ids.length ? "one more" : "two or more"} to compare.</div>`;
+  const D = ids.map(id => cmpData(id, yr));
+  const best = (k, f) => { const v = D.map(d => d[k]).filter(x => x != null); return v.length > 1 ? (f > 0 ? Math.max(...v) : Math.min(...v)) : null; };
+  const row = (label, k, show, f) => { const b = f ? best(k, f) : null;
+    return `<tr><td class="n">${label}</td>${D.map(d => `<td class="${b != null && d[k] === b ? "best" : ""}">${d[k] == null ? "–" : show(d[k], d)}</td>`).join("")}</tr>`; };
+  const n = x => fmtN(x), avg = x => fmtAvg(x);
+  h += `<h2 class="h2">The numbers</h2><div class="cmpwrap"><table class="t cmpt"><thead><tr><th></th>${D.map(d => `<th>${esc(short(d.id))}</th>`).join("")}</tr></thead><tbody>
+    ${row("Played", "played", n)}${row("Wins", "wins", n, 1)}${row("Front 9", "front", n, 1)}${row("Back 9", "back", n, 1)}${row("Overall", "overall", n, 1)}
+    ${row("Won", "won", x => fmtM(x), 1)}${row("Net", "net", x => netHtml(x), 1)}${row("Points a round", "avgPts", avg, 1)}${row("Best points", "bestPts", n, 1)}
+    ${row("v handicap, a round", "avgG", x => fmtRel(x, 1), -1)}${row("Best v handicap", "bestG", x => fmtRel(x), -1)}${row("Handicap now", "hNow", x => esc(fmtH(x)))}
+    ${row("Handicap moved", "hMove", x => x === 0 ? "same" : (x > 0 ? "up " : "down ") + fmtN(Math.abs(x)))}
+    ${D.some(d => d.hasAge) ? row("Shot their age", "ages", (x, d) => d.hasAge ? n(x) : "–", 1) : ""}</tbody></table></div>
+    <p class="note">Gold marks the best in each row. "v handicap": 36 points is level, 37 is −1, 33 is +3.</p>`;
+  h += `<h2 class="h2">Who beat who</h2><div class="lb">`;
+  for (let i = 0; i < D.length; i++) for (let j = i + 1; j < D.length; j++) {
+    const a = D[i].id, b = D[j].id, o = h2h(a, b, yr);
+    h += `<div class="row"><div class="pos">${o.a}</div><div class="nm" style="text-align:center">${esc(short(a))} v ${esc(short(b))}<span class="meta">${o.n ? `${o.n} Saturday${o.n === 1 ? "" : "s"} together, overall${o.lv ? `, ${o.lv} level` : ""}` : "never played the same week"}</span></div><div class="sc">${o.b}</div></div>`;
+  }
+  h += `</div>`;
+  const V = roast(D, yr);
+  if (V.length) h += `<h2 class="h2">The verdict</h2><div class="panel verdict">${V.map(l => `<p>${esc(l)}</p>`).join("")}</div>`;
+  return h;
+}
+/* age: optional, a whole number, never a date of birth */
+function ageHtml(id, mine) {
+  const a = P(id).age;
+  return `<p class="note">${mine ? "If you like. Put it in and the app counts every time you shoot your age. Change it on your birthday." : "Optional, a whole number."}</p>
+    <label class="fld"><span>${mine ? "My age" : "Their age"}</span><input id="ag${esc(id)}" inputmode="numeric" maxlength="3" value="${isNum(a) ? a : ""}"></label>
+    <button class="btn" data-act="agesave" data-p="${esc(id)}">Save ${mine ? "my" : "their"} age</button>${isNum(a) ? `<button class="link" data-act="ageoff" data-p="${esc(id)}">Take it off</button>` : ""}`;
+}
+/* ---------- me ---------- */
+function vMe() {
+  const me = ME(), big = +(lsGet(K.big) || 0);
+  let h = `<h1 class="h1">Me</h1>`;
+  if (me) h += `<p class="sub">This phone is set up for <b>${esc(P(me).name)}</b>.</p>
+      <label class="fld"><span>The name others see (a nickname, if you like)</span><input id="nick" maxlength="30" value="${esc(P(me).nick || "")}" placeholder="${esc(P(me).name)}"></label>
+      <button class="btn" data-act="nick">Save my nickname</button>
+      <label class="fld"><span>My playing handicap at Thorpe Hall GC</span><input id="myH" inputmode="numeric" maxlength="3" value="${isNum(P(me).hcp) ? fmtH(P(me).hcp) : ""}"></label>
+      <div id="hMsg"></div><button class="btn" data-act="myhsave">Save my handicap</button>
+      <button class="btn quiet" data-go="stat" data-p="${esc(me)}">My wins and money</button>
+      <h2 class="h2">My age <small>if you like</small></h2>${ageHtml(me, true)}`;
+  else h += `<p class="sub">This phone isn't set up for anyone yet.</p><button class="btn go" data-act="who">Say who I am</button>`;
+  h += `<h2 class="h2">Writing size</h2><div class="choice" style="grid-template-columns:1fr 1fr 1fr">
+    ${["Normal", "Bigger", "Biggest"].map((l, i) => `<button class="${big === i ? "on" : ""}" data-act="big" data-n="${i}" style="font-size:${1 + i * .15}rem">${l}</button>`).join("")}</div>
+    <h2 class="h2">On your phone</h2><button class="btn" data-go="a2">Put the app on my home screen</button>`;
+  if (me) h += R.sure ? `<div class="panel"><p>Take <b>${esc(P(me).name)}</b> off this phone? They'll need their link again.</p>
+      <div class="btns2"><button class="btn warn" data-act="forget">Yes, take them off</button><button class="btn quiet" data-go="me">No, keep</button></div></div>`
+    : `<button class="link" data-act="sure">Someone else uses this phone</button>`;
+  if (ADMINPIN) h += `<h2 class="h2">Admin</h2><p class="mut">This phone is in admin mode, with the admin PIN.</p><button class="btn quiet" data-act="unadmin">Take admin off this phone</button>`;
+  else if (ADMIN()) h += `<h2 class="h2">Admin</h2><p class="mut">You run the app. The <b>Admin</b> button is at the bottom; nobody else has it.</p>`;
+  return h;
+}
+function vA2() {
+  lsSet(K.a2, "1");
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent), and = /Android/.test(navigator.userAgent);
+  const st = (n, t, pic) => `<div class="a2-step"><div class="a2-n">${n}</div><div>${t}${pic ? `<div class="a2-pic">${pic}</div>` : ""}</div></div>`;
+  const share = `<svg viewBox="0 0 220 70"><rect x="0" y="0" width="220" height="70" rx="8" fill="#f2f2f5"/><g fill="none" stroke="#0a7aff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M110 18v26M100 27l10-10 10 10"/><path d="M98 34h-6v24h36V34h-6"/></g><text x="110" y="68" font-size="9" text-anchor="middle" fill="#555" font-family="sans-serif">the Share button, at the bottom</text></svg>`;
+  const iosAdd = `<svg viewBox="0 0 220 60"><rect width="220" height="60" rx="8" fill="#f2f2f5"/><rect x="8" y="10" width="204" height="40" rx="8" fill="#fff"/><text x="20" y="35" font-size="14" font-family="sans-serif" fill="#111">Add to Home Screen</text><rect x="182" y="20" width="20" height="20" rx="4" fill="none" stroke="#111" stroke-width="2"/><path d="M192 25v10M187 30h10" stroke="#111" stroke-width="2"/></svg>`;
+  const addBtn = (t) => `<svg viewBox="0 0 220 50"><rect width="220" height="50" rx="8" fill="#f2f2f5"/><text x="200" y="31" font-size="15" font-weight="bold" font-family="sans-serif" fill="#0a7aff" text-anchor="end">${t}</text><text x="20" y="31" font-size="13" font-family="sans-serif" fill="#555">top right:</text></svg>`;
+  const dots = `<svg viewBox="0 0 220 60"><rect width="220" height="60" rx="8" fill="#f2f2f5"/><rect x="8" y="12" width="170" height="36" rx="18" fill="#fff"/><text x="22" y="35" font-size="12" font-family="sans-serif" fill="#777">address bar</text><circle cx="200" cy="20" r="3" fill="#111"/><circle cx="200" cy="30" r="3" fill="#111"/><circle cx="200" cy="40" r="3" fill="#111"/><circle cx="200" cy="30" r="14" fill="none" stroke="#d33" stroke-width="2"/></svg>`;
+  const andAdd = `<svg viewBox="0 0 220 60"><rect width="220" height="60" rx="8" fill="#f2f2f5"/><rect x="8" y="10" width="204" height="40" rx="6" fill="#fff"/><rect x="18" y="20" width="20" height="20" rx="3" fill="none" stroke="#111" stroke-width="2"/><text x="48" y="35" font-size="14" font-family="sans-serif" fill="#111">Add to Home screen</text></svg>`;
+  const iosH = `<h2 class="h2">iPhone</h2>${st(1, "Open this page in <b>Safari</b> (the compass).")}${st(2, "Tap the <b>Share</b> button.", share)}${st(3, "Scroll down and tap <b>Add to Home Screen</b>.", iosAdd)}${st(4, "Tap <b>Add</b>.", addBtn("Add"))}`;
+  const andH = `<h2 class="h2">Android</h2>${st(1, "Open this page in <b>Chrome</b>.")}${st(2, "Tap the <b>three dots</b>, top right.", dots)}${st(3, "Tap <b>Add to Home screen</b> (or <b>Install app</b>).", andAdd)}${st(4, "Tap <b>Add</b>.")}`;
+  return `<h1 class="h1">Put the app on your home screen</h1><p class="sub">Then it opens with one tap, like any other app. You only do this once.</p>
+    ${and ? andH + iosH : iosH + andH}<button class="btn main" data-go="home">Done</button>`;
+}
+/* ---------- signing in ---------- */
+function vWho() {
+  const ps = free();
+  if (!ps.length) return `${backBtn("home")}<h1 class="h1">Who are you?</h1><div class="empty">Everyone on the list is already set up on their phone.</div>
+    <p class="note">New to the Shankers, or a new phone? Ask the admin to send your link on WhatsApp.</p>`;
+  return `${backBtn("home")}<h1 class="h1">Who are you?</h1><p class="sub">Tap your name. Names already set up on a phone aren't shown.</p>
+    <div class="who">${ps.map(p => `<button data-act="iam" data-p="${esc(p.id)}">${esc(p.nick || p.name)}${p.nick ? `<small>${esc(p.name)}</small>` : ""}</button>`).join("")}</div>
+    <p class="note">Not on the list, or a new phone? Ask the admin to send your link.</p>`;
+}
+function vPin() {
+  const p = P(R.p);
+  return `${backBtn()}<h1 class="h1">${esc(p.name)}</h1>
+    <p class="sub">Put in your 4 numbers.<br>First time? Pick any 4 numbers and remember them.</p>
+    <label class="box" style="max-width:14rem;margin:0 auto"><input id="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off"></label>
+    <div id="pinMsg"></div><button class="btn main" data-act="pin">Go in</button>
+    <p class="note">Easier: ask the admin to send you your link on WhatsApp. One tap and you're in for good.</p>`;
+}
+function vHcp1() {
+  const me = ME(); if (!me) return vHome();
+  return `<h1 class="h1">Welcome, ${esc(nm(me))}</h1><p class="sub">One thing first: what do you play off at Thorpe Hall GC?</p>
+    <label class="box" style="max-width:14rem;margin:0 auto"><span>Playing handicap<small>as it is today</small></span><input id="hIn" type="text" inputmode="numeric" autocomplete="off" maxlength="3"></label>
+    <div id="hMsg"></div><button class="btn main" data-act="h1save">Save</button>
+    <p class="note">A plus handicap? Put a + in front, like +2. You'll be asked to check it each week before you put in your card.</p>`;
+}
+function vAdminPin() {
+  return `<h1 class="h1">Admin</h1><p class="sub">Put in the admin PIN. Your phone remembers it.</p>
+    <label class="box" style="max-width:16rem;margin:0 auto"><input id="apin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="12" autocomplete="off"></label>
+    <div id="pinMsg"></div><button class="btn main" data-act="apin">Go in as the admin</button>
+    ${WORKER ? "" : `<p class="note">Trying it out: any 6 numbers will do.</p>`}`;
+}
+/* ---------- admin ---------- */
+function vAdmin() {
+  if (!ADMIN()) return vAdminPin();
+  const w = thisWeek();
+  return `<h1 class="h1">Admin</h1><p class="sub">${esc(CFG.admin_name || "")}</p>
+    ${w ? `<button class="btn main" data-go="week" data-w="${esc(w.id)}">This week: the cards</button>` : ""}
+    <button class="btn go" data-go="setup">Set up a new week</button>
+    <button class="btn" data-go="players">Players</button>
+    <button class="btn" data-go="money">Money</button>
+    <button class="btn" data-go="weeks">Old weeks</button>
+    <button class="btn quiet" data-go="settings">Prizes, 2s and the course card</button>`;
+}
+function vPlayers() {
+  if (!ADMIN()) return vAdminPin();
+  const all = [...DOC.players].sort((a, b) => nm(a.id).localeCompare(nm(b.id)));
+  const on = all.filter(p => p.active !== false), off = all.filter(p => p.active === false);
+  const row = p => { const b = balance(p.id);
+    return `<div class="row tap" data-go="player" data-p="${esc(p.id)}"><div class="pos" style="font-size:.85rem">${isNum(p.hcp) ? fmtH(p.hcp) : "-"}</div>
+      <div class="nm">${esc(p.name)}<span class="meta">${p.nick ? "“" + esc(p.nick) + "” · " : ""}handicap ${fmtH(p.hcp)}</span></div>
+      <div class="bal ${b < 0 ? "owes" : b > 0 ? "cred" : "zero"}" style="font-size:1rem">${b < 0 ? "owes " + fmtM(-b) : b > 0 ? fmtM(b) + " credit" : ""}</div></div>`; };
+  return `${backBtn("admin")}<h1 class="h1">Players</h1><p class="sub">${on.length} on the list</p>
+    <div class="panel"><div class="kick">Add a player</div>
+      <label class="fld"><span>Name</span><input id="npName" autocomplete="off" placeholder="e.g. Dave Smith"></label>
+      <label class="fld"><span>Handicap</span><input id="npHcp" inputmode="numeric" autocomplete="off"></label>
+      <button class="btn go" data-act="addp">Add them</button></div>
+    <div class="lb">${on.map(row).join("")}</div>
+    ${off.length ? `<h2 class="h2">Not showing <small>left or stopped coming</small></h2><div class="lb">${off.map(row).join("")}</div>` : ""}`;
+}
+function vPlayer() {
+  if (!ADMIN()) return vAdminPin();
+  const p = DOC.players.find(x => x.id === R.p); if (!p) return vPlayers();
+  const L = lines(p.id), b = balance(p.id);
+  let h = `${backBtn("players")}<h1 class="h1">${esc(p.name)}</h1><p class="sub">${p.active === false ? "Not showing at the moment" : "On the list"}</p>
+    <div id="linkBox"></div>
+    <button class="btn main" data-act="link" data-p="${esc(p.id)}">Send their link on WhatsApp</button>
+    <label class="fld"><span>Name</span><input data-pf="name" value="${esc(p.name)}"></label>
+    <label class="fld"><span>Nickname</span><input data-pf="nick" maxlength="30" value="${esc(p.nick || "")}"></label>
+    <label class="fld"><span>Handicap</span><input data-pf="hcp" inputmode="decimal" value="${isNum(p.hcp) ? fmtH(p.hcp) : ""}"></label>
+    <p class="note">Changes save as you go. Players keep their own handicap up to date and check it each week; you only need this to put one right.</p>
+    <h2 class="h2">Age</h2>${ageHtml(p.id, false)}
+    ${p.active === false ? `<button class="btn go" data-act="active" data-on="1">Bring them back</button>`
+      : `<button class="btn quiet" data-act="active" data-on="">Stop showing them</button><p class="note">Their old scores and money stay in the records.</p>`}
+    <h2 class="h2">Signing in</h2>
+    ${R.sure2 === p.id ? `<div class="panel"><p>Reset <b>${esc(p.name)}</b>'s sign-in? Their phone is signed out, their old link stops working,
+      and their name goes back on "Who are you?" to tap and choose new numbers. Or send them a new link.</p>
+      <div class="btns2"><button class="btn warn" data-act="resetpin" data-p="${esc(p.id)}">Yes, reset it</button><button class="btn quiet" data-act="resetno">No, leave it</button></div></div>`
+    : `<p class="note">${CLAIMED.includes(p.id) ? "Set up on their phone." : "Not set up on a phone yet."} New phone or forgotten numbers? Reset it, then they tap their name again, or send their link.</p>
+      <button class="btn quiet" data-act="resetpin" data-p="${esc(p.id)}">Reset their sign-in</button>`}
+    <h2 class="h2">Money <small class="bal ${b < 0 ? "owes" : b > 0 ? "cred" : "zero"}">${b < 0 ? "owes " + fmtM(-b) : b > 0 ? "in credit " + fmtM(b) : "all square"}</small></h2>
+    <div class="panel"><label class="fld"><span>Amount, £</span><input id="mAmt" inputmode="decimal" autocomplete="off"></label>
+      <div class="btns2"><button class="btn" data-act="money" data-k="cash">They paid cash</button><button class="btn" data-act="money" data-k="transfer">They paid by transfer</button>
+      <button class="btn" data-act="money" data-k="out">I paid them out</button><button class="btn quiet" data-act="money" data-k="fix">Put it right (+ or −)</button></div></div>`;
+  h += L.length ? L.slice().reverse().map(l => `<div class="led"><div>${esc(l.what)}<div class="d">${esc(fmtDate(l.date, true))}${l.wk ? " · from the result" : ""}</div></div>
+      <div class="a" style="color:${l.p < 0 ? "var(--red)" : "var(--green)"}">${l.p > 0 ? "+" : ""}${fmtM(l.p)}</div>
+      ${l.mid ? `<div class="x">${R.del === l.mid ? `<div class="btns2"><button class="btn warn" data-act="delm" data-m="${esc(l.mid)}">Yes, remove it</button><button class="btn quiet" data-act="deln">Keep it</button></div>`
+        : `<button class="link" data-act="askdel" data-m="${esc(l.mid)}" style="min-height:0;padding:.2rem 0;font-size:.9rem">Remove this line</button>`}</div>` : ""}</div>`).join("")
+    : `<div class="empty">No money yet.</div>`;
+  return h;
+}
+function vMoney() {
+  if (!ADMIN()) return vAdminPin();
+  const ys = [...new Set(DOC.weeks.map(seasonOf))].sort(), yr = R.y && ys.includes(R.y) ? R.y : ys.slice(-1)[0];
+  const t = { entry: 0, prize: 0, twos: 0, cash: 0, transfer: 0, out: 0 }, tb = twosBook();
+  for (const w of DOC.weeks) if (w.locked && seasonOf(w) === yr) {
+    t.entry += (pence(wEntry(w)) + pence(wTwos(w))) * entrants(w).length;
+    for (const z of prizes(w)) t.prize += z.each * z.ids.length;
+    t.twos += tb[w.id].each * tb[w.id].ids.length;
+  }
+  for (const m of DOC.money) if (String(m.date || "").slice(0, 4) === yr) {
+    if (m.how === "cash" && m.amt > 0) t.cash += pence(m.amt); else if (m.how === "transfer" && m.amt > 0) t.transfer += pence(m.amt);
+    else if (m.amt < 0) t.out += -pence(m.amt);
+  }
+  const bals = DOC.players.map(p => ({ id: p.id, b: balance(p.id) })).filter(x => x.b !== 0).sort((a, b) => a.b - b.b);
+  const owed = bals.filter(x => x.b < 0).reduce((a, x) => a - x.b, 0), cred = bals.filter(x => x.b > 0).reduce((a, x) => a + x.b, 0);
+  return `${backBtn("admin")}<h1 class="h1">Money</h1><p class="sub">${yr || ""}</p>
+    ${ys.length > 1 ? `<div class="choice">${ys.map(y => `<button class="${y === yr ? "on" : ""}" data-go="money" data-y="${y}">${y}</button>`).join("")}</div>` : ""}
+    <h2 class="h2">The season's totals</h2><div class="tots">
+      <span>Entries (finished weeks)</span><b>${fmtM(t.entry)}</b><span>Prizes won</span><b>${fmtM(t.prize)}</b>
+      ${t.twos ? `<span>2s won</span><b>${fmtM(t.twos)}</b>` : ""}<span>Left over from rounding</span><b>${fmtM(t.entry - t.prize - t.twos)}</b>
+      <span>Paid in cash</span><b>${fmtM(t.cash)}</b><span>Paid by transfer</span><b>${fmtM(t.transfer)}</b><span>Paid out by you</span><b>${fmtM(t.out)}</b></div>
+    <h2 class="h2">Who owes, who's in credit</h2>
+    <div class="tots"><span>Owed to the pot</span><b style="color:var(--red)">${fmtM(owed)}</b><span>Held in credit</span><b style="color:var(--green)">${fmtM(cred)}</b></div>
+    <div class="lb" style="margin-top:.6rem">${bals.map(x => `<div class="row tap" data-go="player" data-p="${esc(x.id)}"><div class="pos"></div><div class="nm">${esc(P(x.id).name)}</div>
+      <div class="bal ${x.b < 0 ? "owes" : "cred"}">${x.b < 0 ? "owes " + fmtM(-x.b) : fmtM(x.b) + " credit"}</div></div>`).join("") || `<div class="empty">Everyone's square.</div>`}</div>
+    <p class="note">Each man's balance is every finished week's entry and prizes, plus the payments you've put in. Tap a name to see every line.</p>`;
+}
+/* ---------- setting up a week ---------- */
+let DRAFT = null;
+function vSetup() {
+  if (!ADMIN()) return vAdminPin();
+  const w = R.w ? WK(R.w) : null;
+  if (!DRAFT || DRAFT.for !== (R.w || "new")) {
+    const prev = lastWeek() || thisWeek();
+    DRAFT = w ? { for: w.id, date: w.date, format: w.format, players: [...(w.players || [])], tee: w.tee || "" }
+      : { for: "new", date: nextSaturday(), format: DOC.settings.format || "stableford", players: [], tee: (prev && prev.tee) || "" };
+  }
+  const d = DRAFT, ps = active(), prev = lastWeek();
+  return `${backBtn()}<h1 class="h1">${w ? "Change the week" : "Set up a new week"}</h1>
+    <label class="fld"><span>Date</span><input id="sDate" type="date" value="${esc(d.date)}"></label>
+    <p class="note">At ${HOME}.</p>
+    <div class="fld"><span>Scoring</span><div class="choice"><button class="${d.format !== "gross" ? "on" : ""}" data-act="sfmt" data-f="stableford">Points<br><small>Stableford</small></button>
+      <button class="${d.format === "gross" ? "on" : ""}" data-act="sfmt" data-f="gross">Strokes<br><small>medal, net after handicap</small></button></div></div>
+    <label class="fld"><span>Tee time</span><input id="sTee" type="time" value="${esc(d.tee)}"></label>
+    <div class="fld"><span>Who's playing <small class="mut">(${d.players.length} ticked)</small></span>
+      <div class="btns2">${prev ? `<button class="btn quiet" data-act="slast">Same as last week</button>` : ""}<button class="btn quiet" data-act="snone">Untick everyone</button></div>
+      ${ps.map(p => `<div class="tick"><button class="${d.players.includes(p.id) ? "on" : ""}" data-act="stick" data-p="${esc(p.id)}">${esc(nm(p.id))}</button>
+        <div class="mut small" style="text-align:center">${fmtH(p.hcp)}</div></div>`).join("")}</div>
+    <p class="note">Anyone not ticked can still put in a card; they're added when they do. Players check their own handicap each week before their card goes in.</p>
+    <button class="btn main" data-act="ssave">${w ? "Save the changes" : "Save this week"}</button>`;
+}
+function vSettings() {
+  if (!ADMIN()) return vAdminPin();
+  const s = DOC.settings, pr = s.prizes || { overall: 50, front: 25, back: 25 };
+  return `${backBtn("admin")}<h1 class="h1">Prizes and the card</h1><p class="sub">Entry is always £${ENTRY} a man. These are used for new weeks; weeks already set up keep what they had.</p>
+    <label class="fld"><span>Overall winner gets, % of the pot</span><input data-st="p.overall" inputmode="numeric" value="${pr.overall}"></label>
+    <label class="fld"><span>Front 9 winner gets, %</span><input data-st="p.front" inputmode="numeric" value="${pr.front}"></label>
+    <label class="fld"><span>Back 9 winner gets, %</span><input data-st="p.back" inputmode="numeric" value="${pr.back}"></label>
+    <label class="fld"><span>2s, £ a man (0 for no 2s)</span><input data-st="twos" inputmode="decimal" value="${isNum(s.twos) ? s.twos : 0}"></label>
+    <p class="note">Changes save as you go.</p>
+    <h2 class="h2">The ${HOME} card</h2><p class="note">Used for medal weeks against par, and to work out gross from points for "shot their age".
+      If the club changes its card, tell Justin.</p>
+    <table class="t card18"><thead><tr><th>Hole</th><th>Par</th><th>Index</th><th>Hole</th><th>Par</th><th>Index</th></tr></thead><tbody>
+    ${[0, 1, 2, 3, 4, 5, 6, 7, 8].map(i => `<tr><td>${i + 1}</td><td>${CARD().par[i]}</td><td>${CARD().si[i]}</td><td>${i + 10}</td><td>${CARD().par[i + 9]}</td><td>${CARD().si[i + 9]}</td></tr>`).join("")}
+    <tr><td>Out</td><td><b>${sum(CARD().par.slice(0, 9))}</b></td><td></td><td>In</td><td><b>${sum(CARD().par.slice(9))}</b></td><td></td></tr></tbody></table>`;
+}
+function vHist() {
+  if (!ADMIN()) return vAdminPin();
+  const w = WK(R.w), id = R.p; if (!w) return vHome();
+  const path = ["weeks", w.id, "cards", id];
+  if (!HIST || HIST.key !== path.join("/")) { loadHist(path); return `${backBtn()}<h1 class="h1">${esc(nm(id))}'s card</h1><div class="empty">Looking it up…</div>`; }
+  const show = v => { const c = v && typeof v === "object" ? v : null; if (!c) return "no card";
+    return (isNum(c.out) || isNum(c.in) ? `${isNum(c.out) ? c.out : "?"} + ${isNum(c.in) ? c.in : "?"} = ` : "") + (isNum(c.total) ? c.total : "?") + " " + unit(w); };
+  const cur = JSON.stringify((w.cards || {})[id] ?? null);
+  let h = `${backBtn()}<h1 class="h1">${esc(nm(id))}'s card</h1><p class="sub">${esc(fmtDate(w.date, true, true))}: every change, newest first</p>`;
+  if (HIST.err) return h + `<div class="empty">${esc(HIST.err)}</div>`;
+  if (!HIST.list.length) return h + `<div class="empty">No changes found.</div>`;
+  h += HIST.list.map(c => {
+    const d = c.date ? new Date(c.date) : null;
+    return `<div class="hist"><div class="v">${esc(show(c.value))}</div><div class="mut">${c.first ? "before then: " : ""}${d ? esc(fmtDate(d.getFullYear() + "-" + p2(d.getMonth() + 1) + "-" + p2(d.getDate()), true) + " " + fmtTime(d)) : ""}${c.who ? " · " + esc(c.who) : ""}</div>
+      ${JSON.stringify(c.value ?? null) !== cur ? `<button class="btn" data-act="putback" data-v="${esc(JSON.stringify(c.value ?? null))}">Put it back to this</button>` : `<div class="tag in" style="display:inline-block;margin-top:.3rem">what it says now</div>`}</div>`;
+  }).join("");
+  return h;
+}
+let HIST = null;
+async function loadHist(path) {
+  const key = path.join("/");
+  if (!WORKER) {
+    const all = (jget(K.hist) || []).filter(x => x.path.join("/") === key).reverse().map(x => ({ date: x.t, who: x.who, value: x.value }));
+    all.push({ date: null, who: "", value: valueAt(BASE, path), first: true });
+    HIST = { key, list: all.filter((c, i, a) => i === 0 || JSON.stringify(c.value) !== JSON.stringify(a[i - 1].value)) };
+    return setTimeout(render, 0);
+  }
+  try { const r = await post("/history", Object.assign(adminCred(), { path }));
+    HIST = r.ok ? { key, list: r.changes } : { key, list: [], err: r.status === 401 ? "The admin PIN wasn't accepted." : "Couldn't look it up. Try again in a minute." };
+  } catch (e) { HIST = { key, list: [], err: "No signal at the moment. Try again in a minute." }; }
+  if (R.v === "hist") render();
+}
+
+const VIEWS = { home: vHome, pick: vPick, card: vCard, week: vWeek, weeks: vWeeks, season: vSeason, stat: vStat, cmp: vCmp, me: vMe, a2: vA2,
+  who: vWho, pin: vPin, hcp1: vHcp1, admin: vAdmin, players: vPlayers, player: vPlayer, money: vMoney, setup: vSetup, settings: vSettings, hist: vHist };
+
+/* ======================= taps ======================= */
+let toastT;
+function toast(t) { const e = $("toast"); e.textContent = t; e.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => e.classList.remove("show"), 2600); }
+function slug(name) { let b = String(name).toLowerCase().replace(/[^a-z0-9]+/g, "").slice(0, 16) || "p", id = b, n = 2; while (DOC.players.some(p => p.id === id)) id = b + n++; return id; }
+const num = s => { s = String(s).trim().replace(",", "."); return s === "" || isNaN(+s) ? null : +s; };
+function wire() {
+  const v = $("view");
+  if (R.v === "card") {
+    ["Out", "In", "Total"].forEach(k => { const e = $("c" + k); if (!e) return;
+      e.addEventListener("input", () => cardInput(false)); e.addEventListener("blur", () => cardInput(true)); });
+    if ($("cTot")) paintCard();
+    const f = $("cOut") || $("cTotal"); if (f && !f.value) setTimeout(() => { try { f.focus(); } catch (e) {} }, 60);
+  }
+  v.querySelectorAll("[data-pf]").forEach(e => e.addEventListener("change", () => {
+    const k = e.dataset.pf; let val = e.value.trim();
+    if (k === "hcp") { val = parseH(val); if (val == null) return toast("Put in a playing handicap like 16, or +2"); }
+    if (k === "name" && !val) return;
+    save([set(["players", R.p, k], val)], P(R.p).name + ": " + k); toast("Saved");
+  }));
+  v.querySelectorAll("[data-st]").forEach(e => e.addEventListener("change", () => {
+    const k = e.dataset.st, s = clone(DOC.settings); let val = e.value;
+    if (k.startsWith("p.")) { s.prizes = Object.assign({ overall: 50, front: 25, back: 25 }, s.prizes); s.prizes[k.slice(2)] = num(val) || 0; }
+    else { val = num(val); if (val == null) return toast("That needs to be a number"); s[k] = val; }
+    save([set(["settings"], s)], "Settings"); toast("Saved");
+  }));
+  v.querySelectorAll("[data-cb]").forEach(e => e.addEventListener("change", () => {
+    const w = WK(R.w), n = num(e.value); const val = n == null ? null : Math.round(n);
+    save([set(["weeks", w.id, "cb", e.dataset.cb, e.dataset.f], val)], nm(e.dataset.cb) + ": countback"); render();
+  }));
+  ["sDate", "sTee"].forEach(k => { const e = $(k); if (e) e.addEventListener("change", () => {
+    if (k === "sDate") DRAFT.date = e.value; else DRAFT.tee = e.value; }); });
+  const tee = $("wTee"); if (tee) tee.addEventListener("change", () => { const w = WK(R.w), t = tee.value;
+    if (t && !/^\d\d:\d\d$/.test(t)) return toast("Put the time in like 08:30");
+    save([t ? set(["weeks", w.id, "tee"], t) : { op: "del", path: ["weeks", w.id, "tee"] }], "Tee time " + fmtDate(w.date)); toast("Saved"); });
+  v.querySelectorAll("[data-tip]").forEach(g => { const show = () => { const i = $(g.dataset.into); if (!i) return;
+    v.querySelectorAll("[data-into='" + g.dataset.into + "'].on").forEach(x => x.classList.remove("on")); g.classList.add("on"); i.innerHTML = g.dataset.tip; };
+    g.addEventListener("click", show); g.addEventListener("mouseenter", show); });
+  const hi = $("hIn"); if (hi) { hi.addEventListener("keydown", e => { if (e.key === "Enter") act(R.v === "hcp1" ? "h1save" : "hsave", {}); }); setTimeout(() => { try { hi.focus(); } catch (e) {} }, 60); }
+  const pin = $("pin") || $("apin"); if (pin) { pin.addEventListener("keydown", e => { if (e.key === "Enter") act(pin.id === "pin" ? "pin" : "apin", {}); }); setTimeout(() => { try { pin.focus(); } catch (e) {} }, 60); }
+}
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-go],[data-act]"); if (!t || !document.body.contains(t)) return;
+  if (t.closest("#splash")) return;
+  const d = t.dataset;
+  if (d.go) { const a = {}; if (d.w) a.w = d.w; if (d.p) a.p = d.p; if (d.y) a.y = d.y; if (d.c) a.c = d.c; if (d.all) a.all = 1; if (d.go === "setup" && !d.w) DRAFT = null; go(d.go, a); return; }
+  act(d.act, d, t);
+});
+async function act(a, d, el) {
+  const w = R.w ? WK(R.w) : null;
+  switch (a) {
+    case "back": return back();
+    case "clearno": Q = Q.filter(x => x.st !== "no"); persistQ(); view(); return render();
+    case "mycard": { const wk = d.w ? WK(d.w) : thisWeek(); if (!wk) return;
+      if (!ME()) { PENDING = { w: wk.id }; return go("who"); } return go("card", { w: wk.id, p: ME() }); }
+    case "pickall": R.all = 1; return render();
+    case "carddone": cardInput(true); return back();
+    case "tot": cardInput(true); R.tot = !!$("cOut"); return render();
+    case "who": return go("who");
+    case "iam": if (!WORKER) { AUTH = { id: d.p }; jset(K.auth, AUTH); toast("Hello, " + nm(d.p)); return afterSignIn(); }
+      return go("pin", { p: d.p });
+    case "pin": { const pin = ($("pin").value || "").replace(/\D/g, "");
+      if (pin.length !== 4) { $("pinMsg").innerHTML = `<div class="hint">It needs 4 numbers.</div>`; return; }
+      let r; try { r = await post("/login", { player: R.p, pin }); } catch (e) { r = { net: true }; }
+      if (r.ok) { AUTH = { id: R.p, pin, admin: r.role === "admin" }; jset(K.auth, AUTH); await pull(); toast(r.claimed ? "Done. Remember your 4 numbers." : "Hello, " + nm(R.p)); return afterSignIn(); }
+      $("pinMsg").innerHTML = `<div class="hint">${r.net ? "No signal at the moment. Try again in a minute." : r.status === 429 ? "Too many goes. Wait 15 minutes, or ask the admin." : "Those aren't the right numbers. Try again, or ask the admin to send your link."}</div>`; return; }
+    case "apin": { const pin = ($("apin").value || "").replace(/\D/g, "");
+      if (pin.length < 6) { $("pinMsg").innerHTML = `<div class="hint">The admin PIN is 6 numbers or more.</div>`; return; }
+      if (WORKER) { let r; try { r = await post("/login", { player: "admin", pin }); } catch (e) { r = { net: true }; }
+        if (!r.ok) { $("pinMsg").innerHTML = `<div class="hint">${r.net ? "No signal at the moment. Try again in a minute." : r.status === 429 ? "Too many goes. Wait 15 minutes." : "That's not the admin PIN."}</div>`; return; } }
+      ADMINPIN = pin; lsSet(K.admin, pin); toast("You're in as the admin"); flush(); return go("admin"); }
+    case "unadmin": ADMINPIN = null; lsDel(K.admin); return go("me");
+    case "sure": R.sure = 1; return render();
+    case "forget": AUTH = null; lsDel(K.auth); if (WORKER) lsDel(K.srv); return go("me");
+    case "big": lsSet(K.big, d.n); applyBig(); return render();
+    case "nick": { const v = ($("nick").value || "").trim().slice(0, 30); save([set(["players", ME(), "nick"], v)], "Your nickname"); toast("Saved"); return render(); }
+    case "addp": { const name = ($("npName").value || "").trim(); if (!name) return toast("Put in their name first");
+      const h = num($("npHcp").value);
+      const p = { id: slug(name), name, active: true }; if (h != null) p.hcp = h;      // no phone numbers: nothing private kept
+      save([{ op: "push", path: ["players"], value: p }], "Add " + name); toast(name + " added"); return render(); }
+    case "active": save([set(["players", R.p, "active"], !!d.on)], P(R.p).name + (d.on ? ": back on the list" : ": not showing")); toast(d.on ? "Back on the list" : "Not showing now"); return render();
+    case "resetpin": {
+      if (!R.sure2) { R.sure2 = d.p; return render(); }
+      R.sure2 = null; let r = { ok: true };
+      if (WORKER) { try { r = await post("/admin/reset-pin", Object.assign(adminCred(), { player: d.p })); } catch (e) { r = {}; } }
+      if (r.ok) { CLAIMED = CLAIMED.filter(x => x !== d.p); jset("ts.claimed.v1", CLAIMED); }
+      toast(r.ok ? "Done. Their name is back on the list." : "Couldn't do it just now. Try again."); return render(); }
+    case "resetno": R.sure2 = null; return render();
+    case "link": return sendLink(d.p);
+    case "money": { const amt = num($("mAmt").value); if (amt == null || amt === 0) return toast("Put in the amount first");
+      const k = d.k, m = { id: uid("m"), date: today(), p: R.p };
+      if (k === "cash" || k === "transfer") Object.assign(m, { amt: Math.abs(amt), what: "Paid " + k, how: k });
+      else if (k === "out") Object.assign(m, { amt: -Math.abs(amt), what: "Paid out by the admin", how: "cash" });
+      else Object.assign(m, { amt, what: "Put right by the admin" });
+      save([{ op: "push", path: ["money"], value: m }], P(R.p).name + ": money"); toast("Saved"); return render(); }
+    case "askdel": R.del = d.m; return render();
+    case "deln": R.del = null; return render();
+    case "delm": save([{ op: "del", path: ["money", d.m] }], "Remove a money line"); R.del = null; return render();
+    case "pay": { const cur = paidFor(w, d.p), ops = [];
+      if (cur) ops.push({ op: "del", path: ["money", cur.id] });
+      if (d.how) ops.push({ op: "push", path: ["money"], value: { id: uid("m"), date: w.date, p: d.p, amt: wEntry(w) + wTwos(w), what: "Paid " + d.how, how: d.how, wk: w.id } });
+      if (!ops.length) return;
+      save(ops, nm(d.p) + ": entry"); return render(); }
+    case "two": { const l = new Set(w.twosWon || []); l.has(d.p) ? l.delete(d.p) : l.add(d.p);
+      save([set(["weeks", w.id, "twosWon"], [...l])], "2s"); return render(); }
+    case "pick": { const lv = rank(w, d.cat).filter(x => x.level && x.ch[0] === winnersOf(w, d.cat)[0].ch[0]).map(x => x.id);
+      const order = d.p ? [d.p, ...lv.filter(x => x !== d.p)] : [];
+      save([d.p ? set(["weeks", w.id, "pick", d.cat], order) : { op: "del", path: ["weeks", w.id, "pick", d.cat] }], CAT(d.cat).label + " tie");
+      return render(); }
+    case "lock": save([set(["weeks", w.id, "locked"], !!d.on)], d.on ? "Lock the week" : "Unlock the week"); toast(d.on ? "Locked" : "Unlocked"); return render();
+    case "sfmt": DRAFT.format = d.f; return render();
+    case "wx": { const now = new Set(w.wx || []); now.has(d.k) ? now.delete(d.k) : now.add(d.k);
+      save([set(["weeks", w.id, "wx"], WX.map(x => x[0]).filter(k => now.has(k)))], "Weather " + fmtDate(w.date)); return render(); }
+    case "ctog": { const c = String(R.c || "").split(",").filter(Boolean), i = c.indexOf(d.p);
+      if (i >= 0) c.splice(i, 1); else { if (c.length >= 4) return toast("Four at a time"); c.push(d.p); }
+      R.c = c.join(","); try { history.replaceState(R, ""); } catch (e) {} return render(); }
+    case "agesave": { const id = d.p, v = ($("ag" + id).value || "").trim();
+      if (!/^\d{2,3}$/.test(v) || +v < 18 || +v > 110) return toast("Put the age in as a whole number, like 82");
+      const ops = [set(["players", id, "age"], +v)], tw = thisWeek(); if (tw && !tw.locked && cardOf(tw, id)) ops.push(set(["weeks", tw.id, "age", id], +v));
+      save(ops, nm(id) + ": age", "age" + id); toast("Saved"); return render(); }
+    case "ageoff": save([set(["players", d.p, "age"], null)], nm(d.p) + ": age", "age" + d.p); toast("Taken off"); return render();
+    case "sort": R.s = d.s; try { history.replaceState(R, ""); } catch (e) {} return render();
+    case "stick": { const i = DRAFT.players.indexOf(d.p); i >= 0 ? DRAFT.players.splice(i, 1) : DRAFT.players.push(d.p); return render(); }
+    case "slast": { const l = lastWeek(); DRAFT.players = [...((l && (l.players && l.players.length ? l.players : entrants(l))) || [])].filter(id => P(id).active !== false); return render(); }
+    case "snone": DRAFT.players = []; return render();
+    case "ssave": {
+      const D = DRAFT; if (!D.date) return toast("Put in the date");
+      const order = DOC.players.map(p => p.id), pl = [...D.players].sort((a, b) => order.indexOf(a) - order.indexOf(b));
+      if (D.for === "new") {
+        let id = "w" + D.date, n = 2; while (WK(id)) id = "w" + D.date + "-" + n++;
+        const wk = { id, date: D.date, course: HOME, format: D.format, players: pl, hcp: {}, ...(D.tee ? { tee: D.tee } : {}),
+          twos: isNum(DOC.settings.twos) ? DOC.settings.twos : 0, prizes: clone(DOC.settings.prizes || { overall: 50, front: 25, back: 25 }), cards: {}, locked: false };
+        save([{ op: "push", path: ["weeks"], value: wk }], "New week " + fmtDate(D.date)); DRAFT = null; toast("Week saved"); return go("week", { w: id });
+      }
+      const ex = WK(D.for);
+      const ops = [set(["weeks", ex.id, "date"], D.date), set(["weeks", ex.id, "course"], HOME), set(["weeks", ex.id, "format"], D.format),
+        set(["weeks", ex.id, "players"], pl), D.tee ? set(["weeks", ex.id, "tee"], D.tee) : { op: "del", path: ["weeks", ex.id, "tee"] }];
+      save(ops, "Week " + fmtDate(D.date)); DRAFT = null; toast("Saved"); return go("week", { w: ex.id });
+    }
+    case "hyes": saveH(w, R.p, isNum((w.hcp || {})[R.p]) ? w.hcp[R.p] : P(R.p).hcp); R.hchg = 0; return render();
+    case "hchg": R.hchg = 1; R.adj = null; return render();
+    case "adjyes": { const a = R.adj, c = cardOf(w, R.p); if (!a || !c) return render();
+      const nc = adjCard(c, hcpShift(a.from, a.to)); R.adj = null;
+      save([set(["weeks", w.id, "cards", R.p], nc)], nm(R.p) + "'s points, after the handicap change"); toast("Points put right"); return render(); }
+    case "adjno": R.adj = null; return render();
+    case "hkeep": R.hchg = 0; if (!hcpChecked(w, R.p)) saveH(w, R.p, P(R.p).hcp); return render();
+    case "hsave": case "h1save": case "myhsave": {
+      const inp = $(a === "myhsave" ? "myH" : "hIn"), h = parseH(inp && inp.value);
+      if (h == null) { $("hMsg").innerHTML = `<div class="hint">Put in the playing handicap, a whole number between +10 and 54, like 16.</div>`; return; }
+      if (a === "hsave") {
+        const from = playH(w, R.p), c = cardOf(w, R.p);
+        saveH(w, R.p, h); R.hchg = 0;
+        if (c && !MED(w) && from !== Math.round(h) && hcpShift(from, Math.round(h)).holes.length) R.adj = { w: w.id, p: R.p, from, to: Math.round(h) };
+        return render(); }
+      saveH(null, ME(), h); toast("Saved");
+      return a === "h1save" ? afterSignIn() : render(); }
+    case "putback": { const v = JSON.parse(d.v); save([set(["weeks", R.w, "cards", R.p], v)], nm(R.p) + "'s card, put back"); HIST = null; toast("Put back"); return render(); }
+  }
+}
+async function sendLink(id) {
+  const p = P(id); let key;
+  if (WORKER) { let r; try { r = await post("/admin/make-link", Object.assign(adminCred(), { player: id })); } catch (e) { r = {}; }
+    if (!r.ok) return toast("Couldn't make the link just now. Try again."); key = r.key; }
+  else key = "TRYOUTLINK" + id.toUpperCase().replace(/[^A-Z0-9]/g, "") + "0000000";
+  const base = CFG.live_url || location.href.split("#")[0];
+  const msg = `Hello ${p.name.split(" ")[0]}, here is your own link for ${CFG.app_name}. Tap it once and your phone is set up for good, nothing to type:\n${base}#k=${key}`;
+  $("linkBox").innerHTML = `<div class="panel"><p><b>The message is ready.</b> Tap the button, pick ${esc(p.name.split(" ")[0])} in WhatsApp, then press send.</p>
+    <a class="btn main" href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">Open WhatsApp</a>
+    <p class="note">No phone numbers are kept in the app. This link replaces any old one.</p></div>`;
+}
+let PENDING = null;
+/* the admin reset this man's sign-in (or his link was replaced): off this phone, back to "Who are you?" */
+function signedOut() {
+  AUTH = null; lsDel(K.auth); lsDel(K.srv);
+  post("/claimed", {}).then(r => { if (r.ok) { CLAIMED = r.ids; FREEP = r.free || []; jset("ts.claimed.v1", CLAIMED); jset("ts.free.v1", FREEP); } }).catch(() => {}).then(() => {
+    if (splashUp) buildSplash(); else go("who"); toast("Your sign-in was reset. Tap your name to set up again."); });
+}
+function afterSignIn() {
+  if (ME() && !isNum(P(ME()).hcp) && !(PENDING && PENDING.w) && R.v !== "hcp1") return go("hcp1");
+  if (PENDING && PENDING.w) { const w = PENDING.w; PENDING = null; return go("card", { w, p: ME() }); }
+  if (PENDING && PENDING.pick) { const w = PENDING.pick; PENDING = null; return go("pick", { w }); }
+  if (shouldA2()) return go("a2");
+  go("home");
+}
+const standalone = () => (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
+const shouldA2 = () => HOSTED && !standalone() && !lsGet(K.a2);
+function applyBig() { const n = +(lsGet(K.big) || 0); document.documentElement.classList.toggle("big1", n === 1); document.documentElement.classList.toggle("big2", n === 2); }
+
+/* ======================= the splash ======================= */
+const splashEl = $("splash"), splash2 = $("splash2");
+let splashUp = true, splashT = null;
+function buildSplash() {
+  const me = ME();
+  let h = `<div class="in">${MONO}<div class="sp-t">${esc(CFG.app_name)}</div>${CFG.tagline ? `<div class="sp-tag">${esc(CFG.tagline)}</div>` : ""}${jibe() ? `<div class="sp-jibe">${esc(jibe())}</div>` : ""}`;
+  if (me || ADMIN()) h += `<div class="sp-hi">Hello, ${esc(me ? nm(me) : (CFG.admin_name || "admin"))}</div><button class="btn main" data-sp="in">Go in</button>`;
+  else { const f = free();
+    h += f.length ? `<div class="sp-q">Who are you?</div><div class="who">${f.map(p => `<button data-sp="iam" data-p="${esc(p.id)}">${esc(p.nick || p.name)}</button>`).join("")}</div>
+      <div class="sp-tag">Your name not here? It's set up on another phone. Ask the admin to send your link.</div>`
+      : `<div class="sp-q">Everyone on the list is set up.</div><div class="sp-tag">New to the Shankers? Ask the admin to add you and send your link.</div>`;
+    if (!WORKER) h += `<button class="btn quiet" data-sp="look">Just looking</button>`; }
+  splashEl.innerHTML = h + `</div>`;
+}
+function leaveSplash(then) {
+  if (!splashUp) return; splashUp = false; clearTimeout(splashT);
+  splashEl.classList.add("gone");
+  if (splash2) { splash2.classList.remove("gone"); setTimeout(() => splash2.classList.add("gone"), 3500); }
+  then ? then() : (shouldA2() && (ME() || ADMIN()) ? go("a2") : render());
+}
+if (splash2) splash2.addEventListener("click", () => splash2.classList.add("gone"));
+splashEl.addEventListener("click", e => {
+  const b = e.target.closest("[data-sp]"); if (!b) return;
+  const k = b.dataset.sp;
+  if (k === "in" || k === "look") leaveSplash();
+  else if (k === "admin") leaveSplash(() => go("admin"));
+  else if (k === "iam") leaveSplash(() => act("iam", { p: b.dataset.p }));
+});
+
+/* ======================= start ======================= */
+async function boot() {
+  applyBig();
+  try { history.replaceState(R, ""); } catch (e) {}
+  const m = String(location.hash || "").match(/[#&]k=([A-Za-z0-9]{16,64})/);
+  if (m) {                                               // the personal link from WhatsApp
+    try { history.replaceState(R, "", location.pathname + location.search); } catch (e) {}
+    if (WORKER) {
+      let r; try { r = await post("/login", { key: m[1] }); } catch (e) { r = { net: true }; }
+      if (r.ok && r.id) { AUTH = { id: r.id, key: m[1], admin: r.role === "admin" }; jset(K.auth, AUTH); if (!SRV.doc.players.some(p => p.id === r.id)) await pull(); }
+      else if (r.net) { AUTH = { id: null, key: m[1] }; }   // no signal: keep the key, sort out who on the next read
+      else toast("That link has been replaced. Ask the admin for a new one.");
+    } else {
+      const id = (DOC.players.find(p => m[1] === "TRYOUTLINK" + p.id.toUpperCase().replace(/[^A-Z0-9]/g, "") + "0000000") || {}).id;
+      if (id) { AUTH = { id }; jset(K.auth, AUTH); }
+    }
+  }
+  if (/^#admin$/.test(location.hash || "")) { R = { v: "admin" }; try { history.replaceState(R, "", location.pathname + location.search); } catch (e) {} }
+  buildSplash(); render();
+  if (ME() || ADMIN()) splashT = setTimeout(() => leaveSplash(), 2500);
+  if (WORKER && !ME()) post("/claimed", {}).then(r => { if (r.ok && Array.isArray(r.ids)) { CLAIMED = r.ids; FREEP = r.free || []; jset("ts.claimed.v1", CLAIMED); jset("ts.free.v1", FREEP); if (splashUp && !ME()) buildSplash(); if (R.v === "who") render(); } }).catch(() => {});
+  if (WORKER) {
+    /* ask the relay who this phone is, so the admin is the admin (and stops being one if Justin takes him off the list) */
+    pull().then(() => { if (AUTH && (AUTH.key || AUTH.pin)) post("/login", AUTH.key ? { key: AUTH.key } : { player: AUTH.id, pin: AUTH.pin, check: true })
+      .then(r => { if (r.ok) { AUTH.id = r.id || AUTH.id; AUTH.admin = r.role === "admin"; jset(K.auth, AUTH); render(); }
+        else if (r.status === 401) signedOut(); }).catch(() => {}); });
+    flush();
+    const live = () => { const w = thisWeek(); return w && Math.abs(new Date(w.date + "T12:00:00") - Date.now()) < 36e5 * 30; };
+    setInterval(() => { if (document.visibilityState === "visible" && Date.now() - lastPull > (live() ? 30000 : 60000)) pull(); }, 10000);
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") { pull(); flush(); } });
+    window.addEventListener("focus", () => { if (Date.now() - lastPull > 10000) pull(); });
+    window.addEventListener("online", () => { retryN = 0; flush(); pull(); });
+  } else flush();
+  if (HOSTED && "serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+}
+boot();
+
+</script>
+</body>
+</html>
