@@ -310,9 +310,9 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
    Saving: every change is a small op ({op, path, value}) sent to the relay (worker/worker.js),
    never the whole document (the NTRC v38 lesson). Changes show at once, queue on the phone
    while there's no signal, retry by themselves, and say plainly whether they're saved. */
-const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "2.5", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
+const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "2.7", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
 const BASE = {"settings": {"twos": 0, "prizes": {"overall": 50, "front": 25, "back": 25}, "course": "Thorpe Hall GC", "format": "stableford"}, "players": [], "weeks": [], "money": [], "updatedAt": ""};               // data baked in at build time: the fallback copy
-const BUILD = "v2.5 · 11-26";
+const BUILD = "v2.7 · 11-26";
 const MONO = "<svg class=\"sp-mono\" role=\"img\" aria-label=\"TS\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"56\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"60\" cy=\"60\" r=\"50\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"/><text x=\"60\" y=\"74\" text-anchor=\"middle\" font-family=\"Charter,Georgia,serif\" font-weight=\"700\" font-size=\"42\" fill=\"currentColor\" letter-spacing=\"2\">TS<\/text><\/svg>";              // the monogram, inline SVG
 let WORKER = String(CFG.worker_url || "").replace(/\/+$/, "");
 const HOSTED = typeof location !== "undefined" && /^https?:$/.test(location.protocol);
@@ -427,6 +427,7 @@ function plainWhy(r, as) {
   if (r.status === 403) return "Only the admin can change that.";
   if (r.status === 400) return "Those numbers don't look right. Check them and put them in again.";
   if (r.status === 404) return "That week or player isn't there any more.";
+  if (r.status === 409) return "That's already on the list, so it wasn't added twice.";
   return "It was turned down. Ask the admin.";
 }
 function later(ms) {
@@ -462,8 +463,8 @@ function localApply(it) {
       if (it.as !== "admin") {
         const w = p[0] === "weeks" ? step(d.weeks, p[1]) : null;
         if (w && w.locked) throw { status: 403, error: "locked" };
-        const ok = op.op === "set" && ((p.length === 4 && p[0] === "weeks" && (p[2] === "cards" || p[2] === "hcp"))
-          || (p.length === 3 && p[0] === "players" && p[2] === "hcp") || (p.length === 4 && p[0] === "weeks" && p[2] === "age") || (p.length === 3 && p[0] === "players" && p[1] === ME() && (p[2] === "nick" || p[2] === "age")));
+        const ok = op.op === "set" && ((p.length === 4 && p[0] === "weeks" && (p[2] === "cards" || p[2] === "hcp") && p[3] === ME())
+          || (p.length === 3 && p[0] === "players" && p[1] === ME() && p[2] === "hcp") || (p.length === 4 && p[0] === "weeks" && p[2] === "age" && p[3] === ME()) || (p.length === 3 && p[0] === "players" && p[1] === ME() && (p[2] === "nick" || p[2] === "age")));
         if (!ok) throw { status: 403 };
       }
       applyOp(d, op);
@@ -485,7 +486,9 @@ async function pull() {
     if (res.status >= 500) { savingOff = true; paint(); return; }
     if (res.status === 401 && AUTH && !ADMINPIN) { signedOut(); return; }
     const j = await res.json();
-    if (j && j.doc) { SRV = { doc: j.doc, sha: j.sha }; jset(K.srv, SRV); noSignal = false; view(); softRender(); paint(); }
+    // GitHub can hand back a copy a few seconds old (from before our own last save): never go backwards
+    if (j && j.doc && String(j.doc.updatedAt || "") >= String((SRV.doc && SRV.doc.updatedAt) || "")) { SRV = { doc: j.doc, sha: j.sha }; jset(K.srv, SRV); noSignal = false; view(); softRender(); paint(); }
+    else if (j && j.doc) noSignal = false;
   } catch (e) { noSignal = true; paint(); }
 }
 
@@ -862,7 +865,7 @@ function vHome() {
     h += `<div class="panel navy"><div class="kick">This week</div><div class="wk-t">${esc(fmtDate(w.date, true, true))}</div>
       <div class="wk-f">${HOME} · ${esc(fmtWords(w))}</div>
       ${me || ADMIN() ? `<button class="btn main" data-act="mycard">${mine ? `Change my card (${mine.total != null ? mine.total : "…"} ${unit(w)})` : "Put in my card"}</button>
-      <button class="btn" data-go="pick" data-w="${esc(w.id)}" style="background:transparent;color:#f4f1e8;border-color:rgba(226,209,159,.6)">Put in a card for someone else</button>`
+      ${ADMIN() ? `<button class="btn" data-go="pick" data-w="${esc(w.id)}" style="background:transparent;color:#f4f1e8;border-color:rgba(226,209,159,.6)">Put in a card for someone else</button>` : ""}`
       : `<p class="wk-f" style="margin-top:.8rem">You're just looking. Playing? Ask the admin to send your link.</p>`}</div>`;
     if (ADMIN()) {
       const ent = entrants(w), miss = (w.players || []).filter(id => !cardOf(w, id)), od = ent.filter(id => odd(w, id).length);
@@ -883,6 +886,7 @@ function vHome() {
 }
 /* ---------- choose a card ---------- */
 function vPick() {
+  if (!ADMIN()) return vHome();                         // only the admins put in other people's cards
   const w = WK(R.w); if (!w) return vHome();
   if (!ME() && !ADMIN()) { PENDING = { pick: w.id }; return vWho(); }
   const ids = (w.players || []).length ? w.players : [];
@@ -902,13 +906,14 @@ function vCard() {
   const v = x => isNum(x) ? x : "";
   let h = `${backBtn()}<h1 class="h1">${mine ? "Your card" : esc(nm(id)) + "'s card"}</h1>
     <p class="sub">${esc(fmtDate(w.date, true, true))} · ${HOME}</p>`;
+  if (id !== ME() && !ADMIN()) return h + `<div class="state none">Only your own card.<small>The admin puts in anyone else's.</small></div><button class="btn main" data-act="back">Done</button>`;
   if (lockedOut) {
     const cd = cardOf(w, id);
     return h + `<div class="state none">This week is finished and locked.<small>Ask the admin if something's wrong.</small></div>
       ${cd ? `<div class="tot"><b>${cd.total != null ? cd.total : "-"}</b><span>${unit(w)}</span>${cd.out != null ? `<div class="mut">Out ${cd.out} · In ${cd.in}</div>` : ""}</div>` : ""}
       <button class="btn main" data-act="back">Done</button>`;
   }
-  if (R.hchg || (!ADMIN() && !hcpChecked(w, id))) return h + hcpAsk(w, id);
+  if (R.hchg || (!hcpChecked(w, id) && !w.locked)) return h + hcpAsk(w, id);   // the admin, keeping someone's card, checks it too
   h += adjHtml(w, id) + `<div class="hline">Playing off: <b>${fmtH(hcpOf(w, id))}</b> <button class="link" data-act="hchg">Change it</button></div>`;
   h += `<div class="fmt">${med ? `Put in the <b>strokes</b><br><span class="small">gross, before handicap</span>` : `Put in the <b>points</b><br><span class="small">Stableford</span>`}</div>`;
   const inp = (key, val) => `<input id="c${key}" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="3" value="${v(val)}" aria-label="${key}">`;
@@ -1613,6 +1618,8 @@ async function act(a, d, el) {
     case "big": lsSet(K.big, d.n); applyBig(); return render();
     case "nick": { const v = ($("nick").value || "").trim().slice(0, 30); save([set(["players", ME(), "nick"], v)], "Your nickname"); toast("Saved"); return render(); }
     case "addp": { const name = ($("npName").value || "").trim(); if (!name) return toast("Put in their name first");
+      const twin = DOC.players.find(p => String(p.name).trim().toLowerCase() === name.toLowerCase());
+      if (twin) return toast(twin.active === false ? name + " is on the list but not showing: tap their name, then Bring them back" : name + " is already on the list");
       const h = num($("npHcp").value);
       const p = { id: slug(name), name, active: true }; if (h != null) p.hcp = h;      // no phone numbers: nothing private kept
       save([{ op: "push", path: ["players"], value: p }], "Add " + name); toast(name + " added"); return render(); }
