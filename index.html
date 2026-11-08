@@ -347,6 +347,9 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
 .nextl{margin-top:.6rem;font-size:.9rem;opacity:.85;}
 .teerow{display:flex;align-items:center;gap:.8rem;margin:0 0 .6rem;}
 .teerow select{max-width:12rem;}
+.cardsat{margin-top:.9rem;font-weight:700;color:var(--gold-pale);font-size:1.05rem;}
+.cardin{margin-top:.9rem;font-size:1.05rem;}
+.panel.navy .cardin b{color:var(--gold-pale);}
 
 </style>
 </head>
@@ -367,9 +370,9 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
    Saving: every change is a small op ({op, path, value}) sent to the relay (worker/worker.js),
    never the whole document (the NTRC v38 lesson). Changes show at once, queue on the phone
    while there's no signal, retry by themselves, and say plainly whether they're saved. */
-const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "5.4", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"], "thoughts": ["The ball doesn't know your handicap. Neither, judging by Saturday, do you.", "Every round starts level. It's the next 18 holes that are the problem.", "A bad round of golf still beats a good day at work.", "Keep your head down. Partly for the swing, partly for the embarrassment.", "The hole is four and a quarter inches wide. Some weeks it shrinks.", "Play the shot you've got, not the one you saw on telly.", "Nobody remembers your score. Everybody remembers your shank.", "The fairway is the wide green bit. Worth a visit now and then.", "Tempo beats power. So does a decent lie.", "Count every shot. Your playing partners already are.", "Bunkers are only sand with ambition.", "The best putt is the one you've already holed in your head.", "Practice swings are free. The real one costs a tenner.", "Golf is a game of misses. The trick is missing in the right direction.", "Every Stableford point is a small act of defiance.", "There's no such thing as a gimme in a countback.", "A good walk spoiled is still a good walk.", "Aim small, miss small. Aim at the trees, hit the trees.", "The 19th hole has never lost a ball.", "Swing easy. Easy is the hardest bit.", "Your handicap is a statement of fact, not a target.", "Respect the course, repair the pitch mark, blame the wind.", "Talent hits the ball. Character finds it.", "One good shot is all it takes to come back next Saturday.", "Fast greens, slow hands.", "If in doubt, take one more club. If still in doubt, take two.", "Out of bounds is only a suggestion until it isn't.", "The last 3 holes are worth more than you think. Ask anyone who's lost on countback.", "Good golf is mostly patience. Shankers golf is mostly optimism.", "Lose the ball, keep the sense of humour.", "Read the putt, then trust it. Then blame the green.", "A par is a par. How you got there is between you and your God.", "Never up, never in. Always up, sometimes in the bunker behind.", "Hit it, find it, hit it again. The whole game in nine words.", "The scorecard never lies, but it does leave out the excuses.", "Smooth is fast. Quick is a hook.", "Every round has one shot that brings you back. Find it, then go home.", "There are no bad lies, only interesting ones.", "Golf builds character. So does the walk back to the tee.", "The wind is the same for everybody. It just knows where you are."]};
+const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "5.6", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"], "thoughts": ["The ball doesn't know your handicap. Neither, judging by Saturday, do you.", "Every round starts level. It's the next 18 holes that are the problem.", "A bad round of golf still beats a good day at work.", "Keep your head down. Partly for the swing, partly for the embarrassment.", "The hole is four and a quarter inches wide. Some weeks it shrinks.", "Play the shot you've got, not the one you saw on telly.", "Nobody remembers your score. Everybody remembers your shank.", "The fairway is the wide green bit. Worth a visit now and then.", "Tempo beats power. So does a decent lie.", "Count every shot. Your playing partners already are.", "Bunkers are only sand with ambition.", "The best putt is the one you've already holed in your head.", "Practice swings are free. The real one costs a tenner.", "Golf is a game of misses. The trick is missing in the right direction.", "Every Stableford point is a small act of defiance.", "There's no such thing as a gimme in a countback.", "A good walk spoiled is still a good walk.", "Aim small, miss small. Aim at the trees, hit the trees.", "The 19th hole has never lost a ball.", "Swing easy. Easy is the hardest bit.", "Your handicap is a statement of fact, not a target.", "Respect the course, repair the pitch mark, blame the wind.", "Talent hits the ball. Character finds it.", "One good shot is all it takes to come back next Saturday.", "Fast greens, slow hands.", "If in doubt, take one more club. If still in doubt, take two.", "Out of bounds is only a suggestion until it isn't.", "The last 3 holes are worth more than you think. Ask anyone who's lost on countback.", "Good golf is mostly patience. Shankers golf is mostly optimism.", "Lose the ball, keep the sense of humour.", "Read the putt, then trust it. Then blame the green.", "A par is a par. How you got there is between you and your God.", "Never up, never in. Always up, sometimes in the bunker behind.", "Hit it, find it, hit it again. The whole game in nine words.", "The scorecard never lies, but it does leave out the excuses.", "Smooth is fast. Quick is a hook.", "Every round has one shot that brings you back. Find it, then go home.", "There are no bad lies, only interesting ones.", "Golf builds character. So does the walk back to the tee.", "The wind is the same for everybody. It just knows where you are."]};
 const BASE = {"settings": {"twos": 0, "prizes": {"overall": 50, "front": 25, "back": 25}, "course": "Thorpe Hall GC", "format": "stableford"}, "players": [], "weeks": [], "money": [], "updatedAt": ""};               // data baked in at build time: the fallback copy
-const BUILD = "v5.4 · 11-26";
+const BUILD = "v5.6 · 11-26";
 const MONO = "<svg class=\"sp-mono\" role=\"img\" aria-label=\"TS\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"56\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"60\" cy=\"60\" r=\"50\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"/><text x=\"60\" y=\"74\" text-anchor=\"middle\" font-family=\"Charter,Georgia,serif\" font-weight=\"700\" font-size=\"42\" fill=\"currentColor\" letter-spacing=\"2\">TS<\/text><\/svg>";              // the monogram, inline SVG
 let WORKER = String(CFG.worker_url || "").replace(/\/+$/, "");
 const HOSTED = typeof location !== "undefined" && /^https?:$/.test(location.protocol);
@@ -1027,6 +1030,22 @@ function saveGroups(w, G, label) {
   const t = (G.find(g => g.tee) || {}).tee; if (t) ops.push(set(["weeks", w.id, "tee"], t));
   save(ops, label || "Groups " + fmtDate(w.date));
 }
+/* Cards open 4 hours after the week's first tee time (Justin: nobody's finished before then), 08:00 if there's no
+   tee time yet. Before that, players see when they'll open instead of the card button. Admins can still put in a card
+   from Admin → the week. */
+const CARDS_AFTER_H = 4;
+function cardsOpenAt(w) { const t = weekTee(w) || "08:00"; const d = new Date(String(w.date).slice(0, 10) + "T" + t + ":00"); d.setHours(d.getHours() + CARDS_AFTER_H); return d; }
+const cardsOpen = w => Date.now() >= cardsOpenAt(w).getTime();
+/* the card button: there until his card is in (complete: it has a total), whether he or an admin put it in */
+const cardDone = (w, id) => { const c = cardOf(w, id); return !!(c && c.total != null); };
+const showCard = c => c.out != null && c.in != null ? `${c.out} + ${c.in} = ${c.total}` : String(c.total);
+function myCardHtml(w, me, cls) {
+  if (!me || w.locked) return "";
+  if (!cardsOpen(w)) return `<p class="${cls || "sub"} cardsat">${esc(cardsWhen(w))}.</p>`;
+  if (cardDone(w, me)) return `<p class="${cls || "sub"} cardin">Your card's in: <b>${esc(showCard(cardOf(w, me)))} ${unit(w)}</b>. Wrong? Ask ${esc(ADM)}.</p>`;
+  return `<button class="btn main" data-act="mycard" data-w="${esc(w.id)}">${cardOf(w, me) ? "Finish my card" : "Put in my card"}</button>`;
+}
+const cardsWhen = w => { const d = cardsOpenAt(w); return `Cards open at ${fmtTime(d)}${String(w.date).slice(0, 10) === today() ? " today" : " on " + fmtDate(w.date, true, true)}`; };
 /* set up, slots maybe booked, nobody in yet: waiting on Kevin's in/out poll */
 const awaitingPoll = w => !w.locked && !weekIds(w).length && !inPot(w).length;
 const teeList = w => (w.groups || []).map(g => g.tee).filter(Boolean).sort();
@@ -1097,7 +1116,7 @@ function vHome() {
       ${awaitingPoll(w) ? pollHtml(w) : teeList(w).length ? `<div class="wk-f">Tee times: ${teeList(w).map(esc).join(" · ")}</div>` : ""}
       ${forecastHtml(w)}${myWeekHtml(w, me)}
       ${nextWeeks().map(nw => `<div class="wk-f nextl">Next: ${esc(fmtDate(nw.date, true, true))}${awaitingPoll(nw) ? ", slots booked" : ""}${teeList(nw).length ? " (" + teeList(nw).map(esc).join(" · ") + ")" : ""}</div>`).join("")}
-      ${awaitingPoll(w) ? "" : me ? `<button class="btn main" data-act="mycard">${mine ? `Change my card (${mine.total != null ? mine.total : "…"} ${unit(w)})` : "Put in my card"}</button>`
+      ${awaitingPoll(w) ? "" : me ? myCardHtml(w, me, "wk-f")
       : `<p class="wk-f" style="margin-top:.8rem">You're just looking. Playing? Ask ${ADM} to send your link.</p>`}</div>`;
     if (entrants(w).length) h += `<h2 class="h2">So far <small>${esc(fmtDate(w.date, false, true))}</small></h2>${prizeHtml(w, false)}
       <button class="btn quiet" data-go="week" data-w="${esc(w.id)}">See the leaderboard</button>`;
@@ -1154,12 +1173,14 @@ function vCard() {
   let h = `${backBtn()}<h1 class="h1">${mine ? "Your card" : esc(nm(id)) + "'s card"}</h1>
     <p class="sub">${esc(fmtDate(w.date, true, true))} · ${HOME}</p>`;
   if (id !== ME() && !ADMIN()) return h + `<div class="state none">Only your own card.<small>The admin puts in anyone else's.</small></div><button class="btn main" data-act="back">Done</button>`;
+  if (!cardsOpen(w) && !ADMIN() && !cardOf(w, id)) return h + `<div class="state none">${esc(cardsWhen(w))}.<small>Four hours after the first tee.</small></div><button class="btn main" data-act="back">OK</button>`;
   if (lockedOut) {
     const cd = cardOf(w, id);
     return h + `<div class="state none">This week is finished and locked.<small>${ADMIN() ? "To change it: Admin → Change a week → this week → Unlock." : "Ask " + ADM + " if something's wrong."}</small></div>
       ${cd ? `<div class="tot"><b>${cd.total != null ? cd.total : "-"}</b><span>${unit(w)}</span>${cd.out != null ? `<div class="mut">Out ${cd.out} · In ${cd.in}</div>` : ""}</div>` : ""}
       <button class="btn main" data-act="back">Done</button>`;
-  }
+  }  if (!ADMIN() && id === ME() && cardDone(w, id) && !R.edit) return h + `<div class="state ok">Your card's in: ${esc(showCard(cardOf(w, id)))} ${unit(w)}.<small>Wrong? Ask ${esc(ADM)} to put it right.</small></div><button class="btn main" data-act="back">Done</button>`;
+
   if (R.hchg || (!hcpChecked(w, id) && !w.locked)) return h + hcpAsk(w, id);   // the admin, keeping someone's card, checks it too
   h += adjHtml(w, id) + `<div class="hline">Playing off: <b>${fmtH(hcpOf(w, id))}</b> <button class="link" data-act="hchg">Change it</button></div>`;
   h += `<div class="fmt">${med ? `Put in the <b>strokes</b><br><span class="small">gross, before handicap</span>` : `Put in the <b>points</b><br><span class="small">Stableford</span>`}</div>`;
@@ -1264,7 +1285,7 @@ function cardState(w, id) {
 function vWeek() {
   const w = WK(R.w); if (!w) return vWeeks();
   let h = weekHead(w);
-  if (!w.locked && ME()) h += `<button class="btn main" data-act="mycard" data-w="${esc(w.id)}">${cardOf(w, ME()) ? "Change my card" : "Put in my card"}</button>`;
+  h += myCardHtml(w, ME());
   return h + weekBody(w, false);
 }
 const weekHead = (w, kick) => `${backBtn()}<div class="kick" style="text-align:center">${kick || (w.locked ? "Final result" : "Cards still coming in")}</div>
@@ -1925,7 +1946,9 @@ async function act(a, d, el) {
     case "back": return back();
     case "clearno": Q = Q.filter(x => x.st !== "no"); persistQ(); view(); return render();
     case "mycard": { const wk = d.w ? WK(d.w) : thisWeek(); if (!wk) return;
-      if (!ME()) { PENDING = { w: wk.id }; return go("who"); } return go("card", { w: wk.id, p: ME() }); }
+      if (!cardsOpen(wk) && !ADMIN()) return toast(cardsWhen(wk));
+      if (cardDone(wk, ME()) && !ADMIN()) return toast("Your card's in. Wrong? Ask " + ADM + ".");
+      if (!ME()) { PENDING = { w: wk.id }; return go("who"); } return go("card", { w: wk.id, p: ME(), edit: 1 }); }
     case "pickall": R.all = 1; return render();
     case "carddone": cardInput(true); return back();
     case "tot": cardInput(true); R.tot = !!$("cOut"); return render();
