@@ -306,9 +306,9 @@ table.card18 td,table.card18 th{text-align:center !important;font-size:.95rem;}
    Saving: every change is a small op ({op, path, value}) sent to the relay (worker/worker.js),
    never the whole document (the NTRC v38 lesson). Changes show at once, queue on the phone
    while there's no signal, retry by themselves, and say plainly whether they're saved. */
-const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "2.1", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
+const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "2.2", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
 const BASE = {"settings": {"twos": 0, "prizes": {"overall": 50, "front": 25, "back": 25}, "course": "Thorpe Hall GC", "format": "stableford"}, "players": [], "weeks": [], "money": [], "updatedAt": ""};               // data baked in at build time: the fallback copy
-const BUILD = "v2.1 · 11-26";
+const BUILD = "v2.2 · 11-26";
 const MONO = "<svg class=\"sp-mono\" role=\"img\" aria-label=\"TS\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"56\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"60\" cy=\"60\" r=\"50\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"/><text x=\"60\" y=\"74\" text-anchor=\"middle\" font-family=\"Charter,Georgia,serif\" font-weight=\"700\" font-size=\"42\" fill=\"currentColor\" letter-spacing=\"2\">TS<\/text><\/svg>";              // the monogram, inline SVG
 let WORKER = String(CFG.worker_url || "").replace(/\/+$/, "");
 const HOSTED = typeof location !== "undefined" && /^https?:$/.test(location.protocol);
@@ -506,9 +506,9 @@ const today = () => { const d = new Date(); return d.getFullYear() + "-" + Strin
 function nextSaturday() { const d = new Date(); d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7));
   return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
 const MED = w => w.format === "gross";
-/* Thorpe Hall GC, yellow and white tees (the same pars and stroke indexes on both): from The Social Golfer,
-   11-2026. Par 71: 35 out, 36 in. Thorpe Hall GC is the only course (Justin: "exclusively"). */
-const HALL = { par: [4, 4, 3, 5, 3, 4, 3, 5, 4, 4, 5, 4, 3, 5, 4, 3, 4, 4], si: [9, 5, 15, 13, 7, 1, 17, 3, 11, 10, 14, 2, 18, 8, 6, 12, 4, 16] };
+/* Thorpe Hall GC, yellow and white tees: pars from The Social Golfer (11-2026); stroke indexes as corrected
+   by Justin 08-11-2026 (holes 4 and 7 swapped about a year ago: 4 is now 17, 7 is now 13). Par 71: 35 out, 36 in. Thorpe Hall GC is the only course (Justin: "exclusively"). */
+const HALL = { par: [4, 4, 3, 5, 3, 4, 3, 5, 4, 4, 5, 4, 3, 5, 4, 3, 4, 4], si: [9, 5, 15, 17, 7, 1, 13, 3, 11, 10, 14, 2, 18, 8, 6, 12, 4, 16] };
 const HOME = "Thorpe Hall GC";
 const okArr = a => Array.isArray(a) && a.length === 18 && a.every(isNum);
 const CARD = () => { const c = DOC.settings.card || {}; return { par: okArr(c.par) ? c.par : HALL.par, si: okArr(c.si) ? c.si : HALL.si }; };
