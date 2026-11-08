@@ -329,6 +329,9 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
 .subtabs{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:.2rem 0 1rem;border:2px solid var(--navy);border-radius:10px;overflow:hidden;}
 .subtabs button{min-height:var(--tap);border:0;background:#fff;color:var(--navy);font-weight:700;font-size:1.05rem;cursor:pointer;}
 .subtabs button.on{background:var(--navy);color:#fff;}
+.tiles.two{grid-template-columns:1fr 1fr;}
+.thought{margin:2rem 0 .5rem;padding:1rem 1.1rem;border-top:2px solid var(--navy);border-bottom:2px solid var(--navy);text-align:center;}
+.thought p{font-family:var(--serif);font-style:italic;font-size:1.2rem;color:var(--navy);margin:.4rem 0 0;line-height:1.45;}
 
 </style>
 </head>
@@ -349,9 +352,9 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
    Saving: every change is a small op ({op, path, value}) sent to the relay (worker/worker.js),
    never the whole document (the NTRC v38 lesson). Changes show at once, queue on the phone
    while there's no signal, retry by themselves, and say plainly whether they're saved. */
-const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "4.6", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
+const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "4.7", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"], "thoughts": ["The ball doesn't know your handicap. Neither, judging by Saturday, do you.", "Every round starts level. It's the next 18 holes that are the problem.", "A bad round of golf still beats a good day at work.", "Keep your head down. Partly for the swing, partly for the embarrassment.", "The hole is four and a quarter inches wide. Some weeks it shrinks.", "Play the shot you've got, not the one you saw on telly.", "Nobody remembers your score. Everybody remembers your shank.", "The fairway is the wide green bit. Worth a visit now and then.", "Tempo beats power. So does a decent lie.", "Count every shot. Your playing partners already are.", "Bunkers are only sand with ambition.", "The best putt is the one you've already holed in your head.", "Practice swings are free. The real one costs a tenner.", "Golf is a game of misses. The trick is missing in the right direction.", "Every Stableford point is a small act of defiance.", "There's no such thing as a gimme in a countback.", "A good walk spoiled is still a good walk.", "Aim small, miss small. Aim at the trees, hit the trees.", "The 19th hole has never lost a ball.", "Swing easy. Easy is the hardest bit.", "Your handicap is a statement of fact, not a target.", "Respect the course, repair the pitch mark, blame the wind.", "Talent hits the ball. Character finds it.", "One good shot is all it takes to come back next Saturday.", "Fast greens, slow hands.", "If in doubt, take one more club. If still in doubt, take two.", "Out of bounds is only a suggestion until it isn't.", "The last 3 holes are worth more than you think. Ask anyone who's lost on countback.", "Good golf is mostly patience. Shankers golf is mostly optimism.", "Lose the ball, keep the sense of humour.", "Read the putt, then trust it. Then blame the green.", "A par is a par. How you got there is between you and your God.", "Never up, never in. Always up, sometimes in the bunker behind.", "Hit it, find it, hit it again. The whole game in nine words.", "The scorecard never lies, but it does leave out the excuses.", "Smooth is fast. Quick is a hook.", "Every round has one shot that brings you back. Find it, then go home.", "There are no bad lies, only interesting ones.", "Golf builds character. So does the walk back to the tee.", "The wind is the same for everybody. It just knows where you are."]};
 const BASE = {"settings": {"twos": 0, "prizes": {"overall": 50, "front": 25, "back": 25}, "course": "Thorpe Hall GC", "format": "stableford"}, "players": [], "weeks": [], "money": [], "updatedAt": ""};               // data baked in at build time: the fallback copy
-const BUILD = "v4.6 · 11-26";
+const BUILD = "v4.7 · 11-26";
 const MONO = "<svg class=\"sp-mono\" role=\"img\" aria-label=\"TS\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"56\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"60\" cy=\"60\" r=\"50\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"/><text x=\"60\" y=\"74\" text-anchor=\"middle\" font-family=\"Charter,Georgia,serif\" font-weight=\"700\" font-size=\"42\" fill=\"currentColor\" letter-spacing=\"2\">TS<\/text><\/svg>";              // the monogram, inline SVG
 let WORKER = String(CFG.worker_url || "").replace(/\/+$/, "");
 const HOSTED = typeof location !== "undefined" && /^https?:$/.test(location.protocol);
@@ -1033,6 +1036,8 @@ function missingHtml(w) {
 }
 
 /* ---------- home ---------- */
+/* HOME: the same for everyone, admins included (Justin: setting up and checking live in Admin only).
+   This week, then your best, then last week in brief, then a thought for the day. */
 function vHome() {
   const w = thisWeek(), l = lastWeek(), me = ME();
   let h = "";
@@ -1041,25 +1046,39 @@ function vHome() {
     h += `<div class="panel navy"><div class="kick">This week</div><div class="wk-t">${esc(fmtDate(w.date, true, true))}</div>
       <div class="wk-f">${HOME} · ${esc(fmtWords(w))}${weekTee(w) ? " · first tee " + esc(weekTee(w)) : ""}</div>
       ${forecastHtml(w)}${myWeekHtml(w, me)}
-      ${me || ADMIN() ? `<button class="btn main" data-act="mycard">${mine ? `Change my card (${mine.total != null ? mine.total : "…"} ${unit(w)})` : "Put in my card"}</button>
-      ${ADMIN() ? `<button class="btn" data-go="pick" data-w="${esc(w.id)}" style="background:transparent;color:#f4f1e8;border-color:rgba(226,209,159,.6)">Put in a card for someone else</button>` : ""}`
+      ${me ? `<button class="btn main" data-act="mycard">${mine ? `Change my card (${mine.total != null ? mine.total : "…"} ${unit(w)})` : "Put in my card"}</button>`
       : `<p class="wk-f" style="margin-top:.8rem">You're just looking. Playing? Ask the admin to send your link.</p>`}</div>`;
-    if (ADMIN()) {
-      const ent = entrants(w), miss = weekIds(w).filter(id => !cardOf(w, id)), od = ent.filter(id => odd(w, id).length);
-      h += `<div class="panel"><div class="kick">Admin</div><p><b>${ent.length}</b> card${ent.length === 1 ? "" : "s"} in${miss.length ? `, <b>${miss.length}</b> still to come` : ""}${od.length ? `, <b>${od.length}</b> to check` : ""}.</p>
-        <button class="btn go" data-go="aweek" data-w="${esc(w.id)}">Check the cards and lock the week</button></div>`;
-    }
-    h += `<h2 class="h2">Leaderboard so far <small>${esc(fmtDate(w.date, false, true))}</small></h2>${prizeHtml(w, false)}${rowsHtml(w, "overall", 0, false)}${missingHtml(w)}
-      <button class="btn quiet" data-go="week" data-w="${esc(w.id)}">See the front 9 and back 9 too</button>`;
+    if (entrants(w).length) h += `<h2 class="h2">So far <small>${esc(fmtDate(w.date, false, true))}</small></h2>${prizeHtml(w, false)}
+      <button class="btn quiet" data-go="week" data-w="${esc(w.id)}">See the leaderboard</button>`;
   } else {
-    h += `<div class="panel navy"><div class="kick">This week</div><div class="wk-t">No game set up yet</div><div class="wk-f">The admin puts the week in before you play.</div>
-      ${ADMIN() ? `<button class="btn main" data-go="setup">Set up this week's game</button>` : ""}</div>`;
+    h += `<div class="panel navy"><div class="kick">This week</div><div class="wk-t">No game set up yet</div><div class="wk-f">The admin puts the week in before you play.</div></div>`;
   }
-  if (l) h += `<h2 class="h2">Last week's result <small>${esc(fmtDate(l.date, false, true))}</small></h2>${prizeHtml(l, ADMIN())}${rowsHtml(l, "overall", 3, false)}${spoonHtml(l)}
+  if (me) h += myBestHtml(me);
+  if (l) h += `<h2 class="h2">Last week <small>${esc(fmtDate(l.date, false, true))}</small></h2>${prizeHtml(l, true)}${spoonHtml(l)}
       <button class="btn quiet" data-go="week" data-w="${esc(l.id)}">See the full result</button>`;
-  const yr = seasons().slice(-1)[0];
-  if (yr) h += `<h2 class="h2">Most wins <small>${yr}</small></h2>${winHtml(yr, "wins", 5)}<button class="btn quiet" data-go="season">See all the stats</button>`;
+  h += thoughtHtml();
   return h;
+}
+/* the best of the signed-in man's stats this year, in a few tiles */
+function myBestHtml(me) {
+  const yr = seasons().slice(-1)[0];
+  const head = `<h2 class="h2">Your best <small>${yr || ""}</small></h2>`;
+  const r = yr && winStats(yr).find(x => x.id === me);
+  if (!r) return head + `<p class="note">Your highlights appear here once you've played a finished week.</p>`;
+  const R0 = roundsOf(me, yr).filter(x => x.pts != null), best = R0.reduce((a, x) => !a || x.pts > a.pts ? x : a, null), A = attendance(me, yr);
+  const rel = roundsOf(me, yr).filter(x => x.rel != null), bestRel = rel.length ? Math.min(...rel.map(x => x.rel)) : null;
+  return head + `<div class="tiles"><div><b>${best ? best.pts : "–"}</b>best round<small>${best ? esc(fmtDate(best.w.date)) : ""}${bestRel != null ? " · net " + relHtml(bestRel) : ""}</small></div>
+      <div><b>${r.wins}</b>win${r.wins === 1 ? "" : "s"}<small>${r.cbw ? `${r.cbw} on countback` : `from ${r.played} played`}</small></div>
+      <div><b>${netHtml(r.net)}</b>up or down</div></div>
+    <div class="tiles two"><div><b>${A.held ? Math.round(A.played / A.held * 100) : 0}%</b>turned up<small>${A.played} of ${A.held}</small></div>
+      <div><b>${A.best}</b>longest run<small>${A.cur ? `${A.cur} in a row now` : "in a row"}</small></div></div>
+    <button class="btn quiet" data-go="me" data-tab="stats">All my stats</button>`;
+}
+/* a golf thought for the day: a different one each day (config.json "thoughts") */
+function thoughtHtml() {
+  const T = CFG.thoughts || []; if (!T.length) return "";
+  const n = Math.floor((new Date() - new Date(2026, 0, 1)) / 864e5);
+  return `<div class="thought"><div class="kick">Thought for the day</div><p>${esc(T[((n * 7) % T.length + T.length) % T.length])}</p></div>`;
 }
 /* ---------- choose a card ---------- */
 function vPick() {
