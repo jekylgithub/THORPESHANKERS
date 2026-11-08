@@ -317,6 +317,8 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
 .rel.wor{color:#111;}
 .cbn.wait{color:var(--amber);border-color:#e6cf91;background:var(--amber-wash);}
 .cbtag{color:var(--gold);font-weight:700;}
+.picked{font-size:.95rem;color:var(--mut);margin:.2rem 0 .6rem;}
+.picked .link{min-height:2.4rem;padding:0 .3rem;font-size:.95rem;}
 
 </style>
 </head>
@@ -337,9 +339,9 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
    Saving: every change is a small op ({op, path, value}) sent to the relay (worker/worker.js),
    never the whole document (the NTRC v38 lesson). Changes show at once, queue on the phone
    while there's no signal, retry by themselves, and say plainly whether they're saved. */
-const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "3.7", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
+const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "3.9", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
 const BASE = {"settings": {"twos": 0, "prizes": {"overall": 50, "front": 25, "back": 25}, "course": "Thorpe Hall GC", "format": "stableford"}, "players": [], "weeks": [], "money": [], "updatedAt": ""};               // data baked in at build time: the fallback copy
-const BUILD = "v3.7 · 11-26";
+const BUILD = "v3.9 · 11-26";
 const MONO = "<svg class=\"sp-mono\" role=\"img\" aria-label=\"TS\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"56\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"60\" cy=\"60\" r=\"50\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"/><text x=\"60\" y=\"74\" text-anchor=\"middle\" font-family=\"Charter,Georgia,serif\" font-weight=\"700\" font-size=\"42\" fill=\"currentColor\" letter-spacing=\"2\">TS<\/text><\/svg>";              // the monogram, inline SVG
 let WORKER = String(CFG.worker_url || "").replace(/\/+$/, "");
 const HOSTED = typeof location !== "undefined" && /^https?:$/.test(location.protocol);
@@ -1192,6 +1194,10 @@ function tiesHtml(w) {
           <div class="lab">${f.slice(1) === "1" ? "last hole" : f.slice(1) + " holes"}</div></div>`).join("")}</div>`;
     }
     const top = winnersOf(w, c.k);
+    if (top.length === 1 && top[0].how === "admin" && R.tie !== c.k) {
+      h += `<p class="picked">${esc(c.label)}: <b>${esc(nm(top[0].id))}</b>, picked by you from a tie. <button class="link" data-act="tiechg" data-c="${c.k}">Change</button></p>`;
+      continue;
+    }
     if (top.length > 1 || (top[0] && top[0].how === "admin")) {
       const lv = rank(w, c.k).filter(x => x.level && x.ch[0] === (top[0] && top[0].ch[0]));
       if (lv.length > 1 && (top.length > 1 || top[0].how === "admin"))
@@ -1823,7 +1829,8 @@ async function act(a, d, el) {
     case "pick": { const lv = rank(w, d.cat).filter(x => x.level && x.ch[0] === winnersOf(w, d.cat)[0].ch[0]).map(x => x.id);
       const order = d.p ? [d.p, ...lv.filter(x => x !== d.p)] : [];
       save([d.p ? set(["weeks", w.id, "pick", d.cat], order) : { op: "del", path: ["weeks", w.id, "pick", d.cat] }], CAT(d.cat).label + " tie");
-      toast(d.p ? `${CAT(d.cat).label}: ${nm(d.p)} wins` : `${CAT(d.cat).label}: shared`); return render(); }
+      R.tie = null; toast(d.p ? `${CAT(d.cat).label}: ${nm(d.p)} wins` : `${CAT(d.cat).label}: shared`); return render(); }
+    case "tiechg": R.tie = d.c; return render();
     case "dbl": save([set(["weeks", w.id, "dbl", d.p], d.c)], nm(d.p) + " takes the " + (d.c === "front" ? "front 9" : "back 9"));
       toast(nm(d.p) + " takes the " + (d.c === "front" ? "front 9" : "back 9")); return render();
     case "lock": save([set(["weeks", w.id, "locked"], !!d.on)], d.on ? "Lock the week" : "Unlock the week"); toast(d.on ? "Locked" : "Unlocked"); return render();
