@@ -321,13 +321,21 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
 .picked .link{min-height:2.4rem;padding:0 .3rem;font-size:.95rem;}
 .tag.nr{background:#eee9dc;color:var(--navy);}
 .nrbtn{display:block;margin:.2rem 0 .4rem;font-size:.95rem;min-height:2.6rem;}
+.chrome-in{position:relative;}
+.wxnow{position:absolute;right:1rem;font-size:.95rem;font-weight:700;color:#f4f1e8;white-space:nowrap;}
+.fcast{display:flex;align-items:center;gap:.6rem;margin:.6rem 0 .1rem;font-size:1rem;color:#f4f1e8;}
+.fcast .fpic{font-size:1.6rem;line-height:1;}
+.fcast b{color:var(--gold-pale);}
+.subtabs{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:.2rem 0 1rem;border:2px solid var(--navy);border-radius:10px;overflow:hidden;}
+.subtabs button{min-height:var(--tap);border:0;background:#fff;color:var(--navy);font-weight:700;font-size:1.05rem;cursor:pointer;}
+.subtabs button.on{background:var(--navy);color:#fff;}
 
 </style>
 </head>
 <body>
 <div id="splash"></div>
 
-<header class="chrome"><div class="chrome-in"><svg class="mono-h" role="img" aria-label="TS" viewBox="0 0 120 120"><circle cx="60" cy="60" r="56" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="60" cy="60" r="50" fill="none" stroke="currentColor" stroke-width="1"/><text x="60" y="74" text-anchor="middle" font-family="Charter,Georgia,serif" font-weight="700" font-size="42" fill="currentColor" letter-spacing="2">TS</text></svg><span class="brand">Thorpe SHANKERS</span></div></header>
+<header class="chrome"><div class="chrome-in"><svg class="mono-h" role="img" aria-label="TS" viewBox="0 0 120 120"><circle cx="60" cy="60" r="56" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="60" cy="60" r="50" fill="none" stroke="currentColor" stroke-width="1"/><text x="60" y="74" text-anchor="middle" font-family="Charter,Georgia,serif" font-weight="700" font-size="42" fill="currentColor" letter-spacing="2">TS</text></svg><span class="brand">Thorpe SHANKERS</span><span id="wxNow" class="wxnow" aria-label="Weather at the course now"></span></div></header>
 <div id="flags"></div>
 <main class="wrap" id="view"></main>
 <nav class="nav" id="nav"></nav>
@@ -341,9 +349,9 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
    Saving: every change is a small op ({op, path, value}) sent to the relay (worker/worker.js),
    never the whole document (the NTRC v38 lesson). Changes show at once, queue on the phone
    while there's no signal, retry by themselves, and say plainly whether they're saved. */
-const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "4.0", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
+const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "4.3", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
 const BASE = {"settings": {"twos": 0, "prizes": {"overall": 50, "front": 25, "back": 25}, "course": "Thorpe Hall GC", "format": "stableford"}, "players": [], "weeks": [], "money": [], "updatedAt": ""};               // data baked in at build time: the fallback copy
-const BUILD = "v4.0 · 11-26";
+const BUILD = "v4.3 · 11-26";
 const MONO = "<svg class=\"sp-mono\" role=\"img\" aria-label=\"TS\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"56\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"60\" cy=\"60\" r=\"50\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"/><text x=\"60\" y=\"74\" text-anchor=\"middle\" font-family=\"Charter,Georgia,serif\" font-weight=\"700\" font-size=\"42\" fill=\"currentColor\" letter-spacing=\"2\">TS<\/text><\/svg>";              // the monogram, inline SVG
 let WORKER = String(CFG.worker_url || "").replace(/\/+$/, "");
 const HOSTED = typeof location !== "undefined" && /^https?:$/.test(location.protocol);
@@ -598,9 +606,12 @@ function cardOf(w, id) {
   return { out, in: inn, total };
 }
 const entrants = w => Object.keys(w.cards || {}).filter(id => cardOf(w, id));
-/* played and paid his £10 but kept his card to himself (a nightmare round): in the pot and the entry, not ranked */
-const noCard = (w, id) => !!(w.nr && w.nr[id]) && !cardOf(w, id);
-const inPot = w => [...new Set([...entrants(w), ...Object.keys(w.nr || {}).filter(id => noCard(w, id))])];
+/* PAYING is what puts a man in (Justin: "cash in is essential"); handing in a card is his choice. In the pot: anyone who
+   has paid for the week, has a card in, or is marked DNR (did not return a card). A DNR is in the pot and pays his
+   entry but isn't ranked; once the week is locked, anyone paid with no card is a DNR too. */
+const paidIds = w => DOC.money.filter(m => m && m.wk === w.id && /^Paid /.test(m.what || "")).map(m => m.p);
+const noCard = (w, id) => !cardOf(w, id) && (!!(w.nr && w.nr[id]) || (w.locked && paidIds(w).includes(id)));
+const inPot = w => [...new Set([...entrants(w), ...Object.keys(w.nr || {}).filter(id => w.nr[id] && !cardOf(w, id)), ...paidIds(w)])];
 function hcpOf(w, id) { const h = (w.hcp || {})[id]; return isNum(h) ? h : (isNum(P(id).hcp) ? P(id).hcp : 0); }
 /* playing handicaps are whole numbers; rounding only guards against anything older */
 const playH = (w, id) => Math.round(hcpOf(w, id));
@@ -831,7 +842,7 @@ function render() {
   const v = WORKER && !ME() && !ADMINPIN && !["who", "pin", "admin"].includes(R.v) ? vGate : (VIEWS[R.v] || VIEWS.home);
   let h; try { h = v(); } catch (e) { console.error(e); h = `<div class="empty">Something went wrong drawing this page.</div><button class="btn" data-go="home">Back to the start</button>`; }
   $("view").innerHTML = qbar() + h + `<div class="foot">${esc(CFG.app_name)} · ${esc(BUILD)}${CFG.built_by ? `<br>Built by ${esc(CFG.built_by)}` : ""}${CFG.admin_by ? ` · Admin by ${esc(CFG.admin_by)}` : ""}</div>`;
-  paintNav(); paint(); wire();
+  paintNav(); paint(); wire(); paintWx();
 }
 function paintNav() {
   const tabs = [["home", "Home"], ["weeks", "Results"], ["season", "Stats"], ["me", "Me"]];
@@ -997,10 +1008,43 @@ function myWeekHtml(w, me) {
   if (inn) return `<div class="mine"><b>You're down to play.</b><span>Groups to follow.</span><button class="btn ghost" data-act="avail" data-on="">I can't make it now</button></div>`;
   return `<div class="mine"><b>Playing on Saturday?</b><div class="btns2"><button class="btn ghost" data-act="avail" data-on="1">I can play</button><button class="btn ghost" data-act="avail" data-on="">Can't this week</button></div></div>`;
 }
+/* ---- the weather at Thorpe Hall GC: now (in the header) and the forecast for the tee time (Home).
+   From Open-Meteo: free, no account. Only the course's location is sent, nothing about anyone. ---- */
+const COURSE_AT = { lat: 51.544, lon: 0.760 };              // Thorpe Hall GC, Thorpe Bay
+let WXD = (jget("ts.wx.v1") || {}).d || null;
+const wxCode = c => c === 0 ? "sun" : c <= 2 ? "hazy" : c === 3 ? "cloud" : c <= 48 ? "fog" : c >= 95 ? "storm"
+  : (c >= 71 && c <= 77) || c === 85 || c === 86 ? "snow" : c >= 51 ? "rain" : "cloud";
+const wxPic = k => k === "snow" ? "❄️" : wxOf(k)[1];
+async function loadWx() {
+  const c = jget("ts.wx.v1"); if (c && c.d && Date.now() - c.t < 30 * 60e3) { WXD = c.d; return paintWx(); }
+  try {
+    const u = `https://api.open-meteo.com/v1/forecast?latitude=${COURSE_AT.lat}&longitude=${COURSE_AT.lon}&current=temperature_2m,weather_code,wind_speed_10m`
+      + `&hourly=temperature_2m,weather_code,precipitation_probability,wind_speed_10m&wind_speed_unit=mph&timezone=Europe%2FLondon&forecast_days=16`;
+    const r = await fetch(u); if (!r.ok) return; WXD = await r.json(); jset("ts.wx.v1", { t: Date.now(), d: WXD }); paintWx(); if (R.v === "home") softRender();
+  } catch (e) {}                                              // no signal: just no weather
+}
+function paintWx() {
+  const e = $("wxNow"); if (!e || !WXD || !WXD.current) return;
+  const c = WXD.current, k = wxCode(c.weather_code);
+  e.textContent = `${wxPic(k)}${c.wind_speed_10m >= 25 ? "💨" : ""} ${Math.round(c.temperature_2m)}°`;
+  e.title = `Thorpe Hall GC now: ${Math.round(c.temperature_2m)}°C, wind ${Math.round(c.wind_speed_10m)} mph`;
+}
+/* the forecast for the week's (first) tee time, if it's within reach (about 16 days) */
+function forecastFor(w) {
+  if (!WXD || !WXD.hourly || w.locked) return null;
+  const tee = weekTee(w) || "08:00", hr = p2(Math.min(23, +tee.slice(0, 2) + (+tee.slice(3, 5) >= 30 ? 1 : 0)));
+  const i = WXD.hourly.time.indexOf(String(w.date).slice(0, 10) + "T" + hr + ":00"); if (i < 0) return null;
+  const H = WXD.hourly;
+  return { tee, k: wxCode(H.weather_code[i]), t: Math.round(H.temperature_2m[i]), rain: H.precipitation_probability[i], wind: Math.round(H.wind_speed_10m[i]) };
+}
+function forecastHtml(w) {
+  const f = forecastFor(w); if (!f) return "";
+  return `<div class="fcast"><span class="fpic">${wxPic(f.k)}${f.wind >= 25 ? "💨" : ""}</span><span>Forecast for ${esc(f.tee)}: <b>${f.t}°</b>${f.rain != null ? ` · rain ${f.rain}%` : ""} · wind ${f.wind} mph</span></div>`;
+}
 function missingHtml(w) {
   const miss = weekIds(w).filter(id => !cardOf(w, id) && !noCard(w, id)), nr = inPot(w).filter(id => noCard(w, id));
   return (miss.length ? `<p class="missing">Still to come in: ${miss.map(id => esc(nm(id))).join(", ")}</p>` : "")
-    + (nr.length ? `<p class="missing">Played, paid, no card returned: ${nr.map(id => esc(nm(id))).join(", ")}</p>` : "");
+    + (nr.length ? `<p class="missing">DNR (paid, no card): ${nr.map(id => esc(nm(id))).join(", ")}</p>` : "");
 }
 
 /* ---------- home ---------- */
@@ -1011,7 +1055,7 @@ function vHome() {
     const mine = me && cardOf(w, me);
     h += `<div class="panel navy"><div class="kick">This week</div><div class="wk-t">${esc(fmtDate(w.date, true, true))}</div>
       <div class="wk-f">${HOME} · ${esc(fmtWords(w))}${weekTee(w) ? " · first tee " + esc(weekTee(w)) : ""}</div>
-      ${myWeekHtml(w, me)}
+      ${forecastHtml(w)}${myWeekHtml(w, me)}
       ${me || ADMIN() ? `<button class="btn main" data-act="mycard">${mine ? `Change my card (${mine.total != null ? mine.total : "…"} ${unit(w)})` : "Put in my card"}</button>
       ${ADMIN() ? `<button class="btn" data-go="pick" data-w="${esc(w.id)}" style="background:transparent;color:#f4f1e8;border-color:rgba(226,209,159,.6)">Put in a card for someone else</button>` : ""}`
       : `<p class="wk-f" style="margin-top:.8rem">You're just looking. Playing? Ask the admin to send your link.</p>`}</div>`;
@@ -1221,13 +1265,13 @@ function adminWeek(w) {
   h += ids.map(id => {
     const c = cardOf(w, id), o = odd(w, id), pd = paidFor(w, id), fee = wEntry(w) + wTwos(w);
     const nr = noCard(w, id);
-    const tag = !c ? (nr ? `<span class="tag nr">no card returned</span>` : `<span class="tag out">no card</span>`) : (o.length ? `<span class="tag odd">check</span>` : `<span class="tag in">card in</span>`);
+    const tag = !c ? (nr ? `<span class="tag nr">DNR</span>` : `<span class="tag out">no card yet</span>`) : (o.length ? `<span class="tag odd">check</span>` : `<span class="tag in">card in</span>`);
     return `<div class="chk"><div class="nm tap" data-go="card" data-w="${esc(w.id)}" data-p="${esc(id)}" style="cursor:pointer">${esc(nm(id))}
         <span class="meta">${c ? (c.out != null ? `${c.out} + ${c.in != null ? c.in : "?"} = ` : "") + (c.total != null ? c.total : "?") + " " + unit(w) : "tap to put it in"}${o.length ? " · " + esc(o.join(", ")) : ""}</span></div>${tag}
-      ${!c ? `<button class="link nrbtn" data-act="nr" data-p="${esc(id)}" data-on="${nr ? "" : "1"}">${nr ? "Undo: not playing after all" : "Played, paid £10, no card returned"}</button>` : ""}
-      ${c || pd || nr ? `<div class="paid"><button class="${!pd ? "on" : ""}" data-act="pay" data-p="${esc(id)}" data-how="">Not paid</button>
+      ${!c ? `<button class="link nrbtn" data-act="nr" data-p="${esc(id)}" data-on="${w.nr && w.nr[id] ? "" : "1"}">${w.nr && w.nr[id] ? "Undo DNR" : "DNR: he played but isn't handing in a card"}</button>` : ""}
+      ${`<div class="paid"><button class="${!pd ? "on" : ""}" data-act="pay" data-p="${esc(id)}" data-how="">Not paid</button>
         <button class="${pd && pd.how === "cash" ? "on" : ""}" data-act="pay" data-p="${esc(id)}" data-how="cash">Paid cash</button>
-        <button class="${pd && pd.how === "transfer" ? "on" : ""}" data-act="pay" data-p="${esc(id)}" data-how="transfer">Paid transfer</button></div>` : ""}</div>`;
+        <button class="${pd && pd.how === "transfer" ? "on" : ""}" data-act="pay" data-p="${esc(id)}" data-how="transfer">Paid transfer</button></div>`}</div>`;
   }).join("");
   h += `<div class="panel"><div class="kick">The day, for the stats</div>
     ${(w.groups || []).some(g => g.tee) ? `<p class="note">First tee: <b>${esc(weekTee(w))}</b> (from the groups)</p>` : `<label class="fld"><span>Tee time</span>${teeSel("wTee", w.tee || "")}</label>`}
@@ -1272,7 +1316,7 @@ function winHtml(yr, by, limit) {
 }
 function yearPick(yr, v) {
   const ys = seasons(); if (ys.length < 2) return "";
-  return `<div class="choice yrs">${[...ys, "all"].map(y => `<button class="${y === yr ? "on" : ""}" data-go="${v}" data-y="${y}"${R.p ? ` data-p="${esc(R.p)}"` : ""}${R.c ? ` data-c="${esc(R.c)}"` : ""}>${y === "all" ? "All years" : y}</button>`).join("")}</div>`;
+  return `<div class="choice yrs">${[...ys, "all"].map(y => `<button class="${y === yr ? "on" : ""}" data-go="${v}" data-y="${y}"${R.p ? ` data-p="${esc(R.p)}"` : ""}${R.c ? ` data-c="${esc(R.c)}"` : ""}${R.tab ? ` data-tab="${esc(R.tab)}"` : ""}>${y === "all" ? "All years" : y}</button>`).join("")}</div>`;
 }
 const pickYr = () => { const ys = seasons(); return R.y && (R.y === "all" || ys.includes(R.y)) ? R.y : ys.slice(-1)[0]; };
 const yrWords = yr => yr === "all" ? "All years" : yr;
@@ -1367,13 +1411,40 @@ function hcpChart(H) {
 /* one man's wins, every one listed */
 function vStat() {
   const id = R.p, yr = pickYr(); if (!id || !yr) return vSeason();
-  const r = winStats(yr).find(x => x.id === id), age = ageOn(id, today());
-  let h = `${backBtn()}<h1 class="h1">${esc(nm(id))}</h1><p class="sub">${yrWords(yr)}, finished weeks${age != null ? ` · age ${age}` : ""}</p>${yearPick(yr, "stat")}
-    <button class="btn quiet" data-go="cmp" data-c="${esc(id)}" data-y="${esc(yr)}">Compare with someone</button>`;
+  const age = ageOn(id, today());
+  return `${backBtn()}<h1 class="h1">${esc(nm(id))}</h1><p class="sub">${yrWords(yr)}, finished weeks${age != null ? ` · age ${age}` : ""}</p>${yearPick(yr, "stat")}
+    <button class="btn quiet" data-go="cmp" data-c="${esc(id)}" data-y="${esc(yr)}">Compare with someone</button>` + statBody(id, yr);
+}
+/* attendance: Saturdays held (finished), how many he played, streaks */
+function attendance(id, yr) {
+  const W = byDate(DOC.weeks.filter(w => inYr(w, yr))), on = W.map(w => inPot(w).includes(id));
+  let cur = 0, best = 0, run = 0; on.forEach(x => { run = x ? run + 1 : 0; best = Math.max(best, run); });
+  for (let i = on.length - 1; i >= 0 && on[i]; i--) cur++;
+  const last = [...W].reverse().find(w => inPot(w).includes(id));
+  return { held: W.length, played: on.filter(Boolean).length, cur, best, last, dnr: W.filter(w => noCard(w, id)).length,
+    out: W.filter(w => isOut(w, id)).length };
+}
+/* everything about one man: attendance, scoring, money, wins, countbacks, handicap, every round */
+function statBody(id, yr) {
+  const r = winStats(yr).find(x => x.id === id);
+  let h = "";
   if (!r) return h + `<div class="empty">No finished weeks played${yr === "all" ? "" : " in " + yr}.</div>` + `<h2 class="h2">Handicap</h2>${hcpChart(hcpHist(id, yr))}`;
+  const A = attendance(id, yr), RR = roundsOf(id, yr), pts = RR.filter(x => x.pts != null), cardsF = RR.map(x => cardOf(x.w, id)).filter(c => c && c.out != null && c.in != null && !MED(RR[0].w));
+  const av = a => a.length ? fmtAvg(sum(a) / a.length) : "–", mx = a => a.length ? Math.max(...a) : "–", mn = a => a.length ? Math.min(...a) : "–";
+  const outs = RR.filter(x => !MED(x.w)).map(x => cardOf(x.w, id)).filter(c => c && c.out != null && c.in != null);
+  const rels = RR.filter(x => x.rel != null).map(x => x.rel);
+  const pay = DOC.money.filter(m => m && m.p === id), cash = sum(pay.filter(m => m.how === "cash" && m.amt > 0).map(m => pence(m.amt))), bank = sum(pay.filter(m => m.how === "transfer" && m.amt > 0).map(m => pence(m.amt))), bal = balance(id);
+  h += `<h2 class="h2">Turning up</h2><div class="tiles"><div><b>${A.played}</b>played<small>of ${A.held} Saturdays</small></div><div><b>${A.held ? Math.round(A.played / A.held * 100) : 0}%</b>attendance</div><div><b>${A.best}</b>longest run<small>in a row${A.cur ? `, ${A.cur} now` : ""}</small></div></div>
+    <p class="note">${A.last ? `Last played ${esc(fmtDate(A.last.date, true))}.` : ""}${A.dnr ? ` ${A.dnr} DNR (paid, no card).` : ""}${A.out ? ` Couldn't make it ${A.out} time${A.out === 1 ? "" : "s"}.` : ""}</p>
+    <h2 class="h2">Scoring</h2><div class="tiles"><div><b>${av(pts.map(x => x.pts))}</b>points a round</div><div><b>${mx(pts.map(x => x.pts))}</b>best round</div><div><b>${mn(pts.map(x => x.pts))}</b>worst round</div></div>
+    <div class="tiles"><div><b>${av(outs.map(c => c.out))}</b>front 9 average<small>best ${mx(outs.map(c => c.out))}</small></div><div><b>${av(outs.map(c => c.in))}</b>back 9 average<small>best ${mx(outs.map(c => c.in))}</small></div>
+      <div><b>${rels.length ? fmtRel(sum(rels) / rels.length, 1) : "–"}</b>v handicap<small>${rels.filter(x => x <= 0).length} of ${rels.length} level or better</small></div></div>
+    <h2 class="h2">Money</h2><div class="tiles"><div><b>${fmtM(r.paid)}</b>entries</div><div><b>${fmtM(r.won)}</b>prizes won</div><div><b>${netHtml(r.net)}</b>up or down</div></div>
+    <div class="tiles"><div><b>${fmtM(cash)}</b>paid in cash</div><div><b>${fmtM(bank)}</b>by transfer</div><div><b>${bal < 0 ? `<span class="neg">owes ${fmtM(-bal)}</span>` : bal > 0 ? `<span class="pos2">${fmtM(bal)}</span>` : "square"}</b>${bal > 0 ? "in credit" : "balance now"}<small>all time</small></div></div>
+    <h2 class="h2">Wins</h2>`;
   const R0 = roundsOf(id, yr), ages = R0.filter(x => x.aged).length, G = R0.filter(x => x.rel != null), P0 = R0.filter(x => x.pts != null);
-  h += `<div class="tiles"><div><b>${r.wins}</b>win${r.wins === 1 ? "" : "s"}<small>from ${r.played} played</small></div><div><b>${fmtM(r.won)}</b>won</div><div><b>${netHtml(r.net)}</b>net<small>after ${fmtM(r.paid)} in</small></div></div>
-    <div class="tiles"><div><b>${P0.length ? fmtAvg(sum(P0.map(x => x.pts)) / P0.length) : "–"}</b>points a round</div><div><b>${G.length ? fmtRel(Math.min(...G.map(x => x.rel))) : "–"}</b>best round<small>v handicap</small></div>
+  const age = ageOn(id, today());
+  h += `<div class="tiles"><div><b>${r.wins}</b>win${r.wins === 1 ? "" : "s"}<small>from ${r.played} played</small></div><div><b>${r.played ? Math.round(r.wins / r.played * 100) : 0}%</b>of Saturdays won</div>
     <div><b>${age != null ? ages : "–"}</b>${age != null ? "shot their age" : "age not given"}</div></div>
     <table class="t"><thead><tr><th></th><th>Prize</th><th>Wins</th></tr></thead><tbody>
     ${CATS.map(c => `<tr><td></td><td class="n">${esc(c.label)}</td><td class="p">${r[c.k]}</td></tr>`).join("")}
@@ -1480,8 +1551,10 @@ function vMyPin() {
 }
 /* ---------- me ---------- */
 function vMe() {
-  const me = ME(), big = +(lsGet(K.big) || 0);
+  const me = ME(), big = +(lsGet(K.big) || 0), tab = me && R.tab === "stats" ? "stats" : "profile";
   let h = `<h1 class="h1">Me</h1>`;
+  if (me) h += `<div class="subtabs"><button class="${tab === "profile" ? "on" : ""}" data-go="me">Profile</button><button class="${tab === "stats" ? "on" : ""}" data-go="me" data-tab="stats">My stats</button></div>`;
+  if (tab === "stats") { const yr = pickYr(); return h + (yr ? `<p class="sub">${yrWords(yr)}, finished weeks</p>${yearPick(yr, "me")}<button class="btn quiet" data-go="cmp" data-c="${esc(me)}" data-y="${esc(yr)}">Compare me with someone</button>` + statBody(me, yr) : `<div class="empty">No finished weeks yet.</div>`); }
   if (me) h += `<p class="sub">This phone is set up for <b>${esc(P(me).name)}</b>.</p>
       <label class="fld"><span>My full name</span><input id="fullName" maxlength="40" autocomplete="name" value="${esc(P(me).name || "")}"></label>
       <button class="btn" data-act="fullname">Save my name</button>
@@ -1489,7 +1562,6 @@ function vMe() {
       <button class="btn" data-act="nick">Save my nickname</button>
       <label class="fld"><span>My playing handicap at Thorpe Hall GC</span><input id="myH" inputmode="numeric" maxlength="3" value="${isNum(P(me).hcp) ? fmtH(P(me).hcp) : ""}"></label>
       <div id="hMsg"></div><button class="btn" data-act="myhsave">Save my handicap</button>
-      <button class="btn quiet" data-go="stat" data-p="${esc(me)}">My wins and money</button>
       <h2 class="h2">My age <small>if you like</small></h2>${ageHtml(me, true)}
       ${WORKER ? `<h2 class="h2">My 4 numbers</h2><p class="note">For the home-screen app, another phone or a computer.</p><button class="btn quiet" data-go="mypin">Choose new 4 numbers</button>` : ""}`;
   else h += `<p class="sub">This phone isn't set up for anyone yet.</p><button class="btn go" data-act="who">Say who I am</button>`;
@@ -1763,7 +1835,7 @@ document.addEventListener("click", e => {
   const t = e.target.closest("[data-go],[data-act]"); if (!t || !document.body.contains(t)) return;
   if (t.closest("#splash")) return;
   const d = t.dataset;
-  if (d.go) { const a = {}; if (d.w) a.w = d.w; if (d.p) a.p = d.p; if (d.y) a.y = d.y; if (d.c) a.c = d.c; if (d.all) a.all = 1; if (d.go === "setup" && !d.w) DRAFT = null; go(d.go, a); return; }
+  if (d.go) { const a = {}; if (d.w) a.w = d.w; if (d.p) a.p = d.p; if (d.y) a.y = d.y; if (d.c) a.c = d.c; if (d.tab) a.tab = d.tab; if (d.all) a.all = 1; if (d.go === "setup" && !d.w) DRAFT = null; go(d.go, a); return; }
   act(d.act, d, t);
 });
 async function act(a, d, el) {
@@ -1838,8 +1910,8 @@ async function act(a, d, el) {
       const order = d.p ? [d.p, ...lv.filter(x => x !== d.p)] : [];
       save([d.p ? set(["weeks", w.id, "pick", d.cat], order) : { op: "del", path: ["weeks", w.id, "pick", d.cat] }], CAT(d.cat).label + " tie");
       R.tie = null; toast(d.p ? `${CAT(d.cat).label}: ${nm(d.p)} wins` : `${CAT(d.cat).label}: shared`); return render(); }
-    case "nr": save([set(["weeks", w.id, "nr", d.p], !!d.on)], nm(d.p) + (d.on ? ": played, no card returned" : ": not in the pot"));
-      toast(d.on ? `${nm(d.p)}: in the pot, no card` : "Taken off"); return render();
+    case "nr": save([set(["weeks", w.id, "nr", d.p], !!d.on)], nm(d.p) + (d.on ? ": DNR" : ": not DNR"));
+      toast(d.on ? `${nm(d.p)}: DNR, still in the pot` : "DNR taken off"); return render();
     case "tiechg": R.tie = d.c; return render();
     case "dbl": save([set(["weeks", w.id, "dbl", d.p], d.c)], nm(d.p) + " takes the " + (d.c === "front" ? "front 9" : "back 9"));
       toast(nm(d.p) + " takes the " + (d.c === "front" ? "front 9" : "back 9")); return render();
@@ -1996,6 +2068,7 @@ async function boot() {
   }
   if (/^#admin$/.test(location.hash || "")) { R = { v: "admin" }; try { history.replaceState(R, "", location.pathname + location.search); } catch (e) {} }
   buildSplash(); render();
+  if (HOSTED || WORKER) { loadWx(); setInterval(() => { if (document.visibilityState === "visible") loadWx(); }, 30 * 60e3); }
   if (ME() || ADMIN()) splashT = setTimeout(() => leaveSplash(), 2500);
   if (WORKER && !ME()) post("/claimed", {}).then(r => { if (r.ok && Array.isArray(r.ids)) { CLAIMED = r.ids; FREEP = r.free || []; jset("ts.claimed.v1", CLAIMED); jset("ts.free.v1", FREEP); if (splashUp && !ME()) buildSplash(); if (R.v === "who") render(); } }).catch(() => {});
   if (WORKER) {
