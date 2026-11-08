@@ -310,9 +310,9 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
    Saving: every change is a small op ({op, path, value}) sent to the relay (worker/worker.js),
    never the whole document (the NTRC v38 lesson). Changes show at once, queue on the phone
    while there's no signal, retry by themselves, and say plainly whether they're saved. */
-const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "2.8", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
+const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "3.0", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
 const BASE = {"settings": {"twos": 0, "prizes": {"overall": 50, "front": 25, "back": 25}, "course": "Thorpe Hall GC", "format": "stableford"}, "players": [], "weeks": [], "money": [], "updatedAt": ""};               // data baked in at build time: the fallback copy
-const BUILD = "v2.8 · 11-26";
+const BUILD = "v3.0 · 11-26";
 const MONO = "<svg class=\"sp-mono\" role=\"img\" aria-label=\"TS\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"56\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"60\" cy=\"60\" r=\"50\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"/><text x=\"60\" y=\"74\" text-anchor=\"middle\" font-family=\"Charter,Georgia,serif\" font-weight=\"700\" font-size=\"42\" fill=\"currentColor\" letter-spacing=\"2\">TS<\/text><\/svg>";              // the monogram, inline SVG
 let WORKER = String(CFG.worker_url || "").replace(/\/+$/, "");
 const HOSTED = typeof location !== "undefined" && /^https?:$/.test(location.protocol);
@@ -730,7 +730,7 @@ function odd(w, id) {
   }
   if (c.total == null) o.push("total missing");
   else if (c.out == null || c.in == null) o.push("only a total: can't win the front or back 9");
-  if ((w.players || []).length && !(w.players || []).includes(id)) o.push("wasn't on the list for this week");
+  // (a card from someone not ticked for the week is fine: anyone who plays counts. No flag.)
   if (!hcpChecked(w, id)) o.push("handicap not checked this week");
   return o;
 }
@@ -743,7 +743,17 @@ window.addEventListener("popstate", e => { R = (e.state && e.state.v) ? e.state 
 const typing = () => { const a = document.activeElement; return a && /INPUT|SELECT|TEXTAREA/.test(a.tagName) && $("view").contains(a); };
 let wantRender = false;
 function softRender() { if (R.v === "card" || R.v === "setup" || typing()) { wantRender = true; paint(); return; } render(); }
-document.addEventListener("focusout", () => setTimeout(() => { if (wantRender && !typing() && R.v !== "card" && R.v !== "setup") { wantRender = false; render(); } }, 50));
+/* A redraw that waited for typing to stop must not land mid-tap: leaving a box by pressing a button would
+   otherwise redraw the page between press and release, and the button's tap is lost (Justin: "2 tries"). */
+let pressing = false;
+document.addEventListener("pointerdown", () => { pressing = true; }, true);
+const released = () => setTimeout(() => { pressing = false; }, 400);      // after the click has gone through
+document.addEventListener("pointerup", released, true); document.addEventListener("pointercancel", released, true);
+function laterRender() {
+  if (pressing) return setTimeout(laterRender, 150);
+  if (wantRender && !typing() && R.v !== "card" && R.v !== "setup") { wantRender = false; render(); }
+}
+document.addEventListener("focusout", () => setTimeout(laterRender, 50));
 
 /* live, and not signed in: the scores are private, so just the way in */
 function vGate() {
