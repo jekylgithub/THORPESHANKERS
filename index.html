@@ -319,6 +319,8 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
 .cbtag{color:var(--gold);font-weight:700;}
 .picked{font-size:.95rem;color:var(--mut);margin:.2rem 0 .6rem;}
 .picked .link{min-height:2.4rem;padding:0 .3rem;font-size:.95rem;}
+.tag.nr{background:#eee9dc;color:var(--navy);}
+.nrbtn{display:block;margin:.2rem 0 .4rem;font-size:.95rem;min-height:2.6rem;}
 
 </style>
 </head>
@@ -339,9 +341,9 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
    Saving: every change is a small op ({op, path, value}) sent to the relay (worker/worker.js),
    never the whole document (the NTRC v38 lesson). Changes show at once, queue on the phone
    while there's no signal, retry by themselves, and say plainly whether they're saved. */
-const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "3.9", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
+const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "4.0", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
 const BASE = {"settings": {"twos": 0, "prizes": {"overall": 50, "front": 25, "back": 25}, "course": "Thorpe Hall GC", "format": "stableford"}, "players": [], "weeks": [], "money": [], "updatedAt": ""};               // data baked in at build time: the fallback copy
-const BUILD = "v3.9 · 11-26";
+const BUILD = "v4.0 · 11-26";
 const MONO = "<svg class=\"sp-mono\" role=\"img\" aria-label=\"TS\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"56\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"60\" cy=\"60\" r=\"50\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"/><text x=\"60\" y=\"74\" text-anchor=\"middle\" font-family=\"Charter,Georgia,serif\" font-weight=\"700\" font-size=\"42\" fill=\"currentColor\" letter-spacing=\"2\">TS<\/text><\/svg>";              // the monogram, inline SVG
 let WORKER = String(CFG.worker_url || "").replace(/\/+$/, "");
 const HOSTED = typeof location !== "undefined" && /^https?:$/.test(location.protocol);
@@ -596,6 +598,9 @@ function cardOf(w, id) {
   return { out, in: inn, total };
 }
 const entrants = w => Object.keys(w.cards || {}).filter(id => cardOf(w, id));
+/* played and paid his £10 but kept his card to himself (a nightmare round): in the pot and the entry, not ranked */
+const noCard = (w, id) => !!(w.nr && w.nr[id]) && !cardOf(w, id);
+const inPot = w => [...new Set([...entrants(w), ...Object.keys(w.nr || {}).filter(id => noCard(w, id))])];
 function hcpOf(w, id) { const h = (w.hcp || {})[id]; return isNum(h) ? h : (isNum(P(id).hcp) ? P(id).hcp : 0); }
 /* playing handicaps are whole numbers; rounding only guards against anything older */
 const playH = (w, id) => Math.round(hcpOf(w, id));
@@ -685,7 +690,7 @@ const ENTRY = 10;                       // £ a man, always (Justin: "that doesn
 const wEntry = () => ENTRY;
 const wTwos = w => isNum(w.twos) ? w.twos : (isNum(DOC.settings.twos) ? DOC.settings.twos : 0);
 const wPrizes = w => w.prizes || DOC.settings.prizes || { overall: 50, front: 25, back: 25 };
-function pot(w) { return pence(wEntry(w)) * entrants(w).length; }
+function pot(w) { return pence(wEntry(w)) * inPot(w).length; }
 function prizes(w) {
   const total = pot(w), pr = wPrizes(w);
   return CATS.map(c => {
@@ -698,7 +703,7 @@ function prizes(w) {
 function twosBook() {
   const out = {}; let carry = 0;
   for (const w of DOC.weeks) {
-    const fee = pence(wTwos(w)), n = entrants(w).length, potv = fee * n + carry;
+    const fee = pence(wTwos(w)), n = inPot(w).length, potv = fee * n + carry;
     const won = (w.twosWon || []).filter(id => cardOf(w, id));
     out[w.id] = { fee, pot: potv, carryIn: carry, ids: won, each: won.length ? Math.floor(potv / won.length) : 0 };
     if (w.locked) carry = won.length ? 0 : potv;
@@ -709,7 +714,7 @@ function twosBook() {
 function lines(id) {
   const L = [], tb = twosBook();
   for (const w of DOC.weeks) {
-    if (!w.locked || !cardOf(w, id)) continue;
+    if (!w.locked || !(cardOf(w, id) || noCard(w, id))) continue;
     const fee = pence(wEntry(w)) + pence(wTwos(w));
     if (fee) L.push({ date: w.date, what: "Entry " + fmtDate(w.date), p: -fee, wk: w.id });
     for (const z of prizes(w)) if (z.ids.includes(id) && z.each)
@@ -733,7 +738,7 @@ function winStats(yr) {
   for (const w of byDate(DOC.weeks)) {
     if (!inYr(w, yr)) continue;
     const fee = pence(wEntry(w)) + pence(wTwos(w));
-    for (const id of entrants(w)) { const t = T[id] = T[id] || { id, played: 0, wins: 0, front: 0, back: 0, overall: 0, won: 0, paid: 0, list: [], cbw: 0, cbl: 0, lost: [] }; t.played++; t.paid += fee; }
+    for (const id of inPot(w)) { const t = T[id] = T[id] || { id, played: 0, wins: 0, front: 0, back: 0, overall: 0, won: 0, paid: 0, list: [], cbw: 0, cbl: 0, lost: [] }; t.played++; t.paid += fee; }
     for (const z of prizes(w)) {
       const cb = cbHow(w, z.cat);                       // how a tie for the top was settled, if there was one
       for (const id of z.ids) { const t = T[id]; t.wins++; t[z.cat]++; t.won += z.each; if (cb) t.cbw++; t.list.push({ w, cat: z.cat, p: z.each, shared: z.ids.length > 1, cb }); }
@@ -767,7 +772,7 @@ const wxWords = w => (w.wx || []).map(k => wxOf(k)[1] || wxOf(k)[2]).join(" "); 
 const wxLong = w => (w.wx || []).map(k => (wxOf(k)[1] + " " + wxOf(k)[2]).trim()).join(", ");
 const dayOf = w => DAYS[new Date(String(w.date).slice(0, 10) + "T12:00:00").getDay()];
 const MONTHN = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-function turnout(yr) { return byDate(DOC.weeks.filter(w => inYr(w, yr))).map(w => ({ w, n: entrants(w).length })); }
+function turnout(yr) { return byDate(DOC.weeks.filter(w => inYr(w, yr))).map(w => ({ w, n: inPot(w).length })); }
 /* average turnout grouped by something; a week can sit in more than one group (hazy and foggy) */
 function avgBy(T, keys, order) {
   const G = {};
@@ -993,8 +998,9 @@ function myWeekHtml(w, me) {
   return `<div class="mine"><b>Playing on Saturday?</b><div class="btns2"><button class="btn ghost" data-act="avail" data-on="1">I can play</button><button class="btn ghost" data-act="avail" data-on="">Can't this week</button></div></div>`;
 }
 function missingHtml(w) {
-  const miss = weekIds(w).filter(id => !cardOf(w, id));
-  return miss.length ? `<p class="missing">Still to come in: ${miss.map(id => esc(nm(id))).join(", ")}</p>` : "";
+  const miss = weekIds(w).filter(id => !cardOf(w, id) && !noCard(w, id)), nr = inPot(w).filter(id => noCard(w, id));
+  return (miss.length ? `<p class="missing">Still to come in: ${miss.map(id => esc(nm(id))).join(", ")}</p>` : "")
+    + (nr.length ? `<p class="missing">Played, paid, no card returned: ${nr.map(id => esc(nm(id))).join(", ")}</p>` : "");
 }
 
 /* ---------- home ---------- */
@@ -1211,13 +1217,15 @@ function tiesHtml(w) {
 function adminWeek(w) {
   let h = w.locked ? "" : groupsHtml(w);
   h += `<h2 class="h2">Admin: the cards</h2>`;
-  const ids = [...new Set([...weekIds(w), ...entrants(w)])];
+  const ids = [...new Set([...weekIds(w), ...inPot(w)])];
   h += ids.map(id => {
     const c = cardOf(w, id), o = odd(w, id), pd = paidFor(w, id), fee = wEntry(w) + wTwos(w);
-    const tag = !c ? `<span class="tag out">no card</span>` : (o.length ? `<span class="tag odd">check</span>` : `<span class="tag in">card in</span>`);
+    const nr = noCard(w, id);
+    const tag = !c ? (nr ? `<span class="tag nr">no card returned</span>` : `<span class="tag out">no card</span>`) : (o.length ? `<span class="tag odd">check</span>` : `<span class="tag in">card in</span>`);
     return `<div class="chk"><div class="nm tap" data-go="card" data-w="${esc(w.id)}" data-p="${esc(id)}" style="cursor:pointer">${esc(nm(id))}
         <span class="meta">${c ? (c.out != null ? `${c.out} + ${c.in != null ? c.in : "?"} = ` : "") + (c.total != null ? c.total : "?") + " " + unit(w) : "tap to put it in"}${o.length ? " · " + esc(o.join(", ")) : ""}</span></div>${tag}
-      ${c || pd ? `<div class="paid"><button class="${!pd ? "on" : ""}" data-act="pay" data-p="${esc(id)}" data-how="">Not paid</button>
+      ${!c ? `<button class="link nrbtn" data-act="nr" data-p="${esc(id)}" data-on="${nr ? "" : "1"}">${nr ? "Undo: not playing after all" : "Played, paid £10, no card returned"}</button>` : ""}
+      ${c || pd || nr ? `<div class="paid"><button class="${!pd ? "on" : ""}" data-act="pay" data-p="${esc(id)}" data-how="">Not paid</button>
         <button class="${pd && pd.how === "cash" ? "on" : ""}" data-act="pay" data-p="${esc(id)}" data-how="cash">Paid cash</button>
         <button class="${pd && pd.how === "transfer" ? "on" : ""}" data-act="pay" data-p="${esc(id)}" data-how="transfer">Paid transfer</button></div>` : ""}</div>`;
   }).join("");
@@ -1228,7 +1236,7 @@ function adminWeek(w) {
     <button class="btn" data-go="pick" data-w="${esc(w.id)}" data-all="1">Put in a card for someone else</button>`;
   if (wTwos(w)) h += `<h2 class="h2">Who got a 2?</h2>` + entrants(w).map(id => `<div class="tick"><button class="${(w.twosWon || []).includes(id) ? "on" : ""}" data-act="two" data-p="${esc(id)}">${esc(nm(id))}</button><span></span></div>`).join("");
   const pz = prizes(w);
-  h += `<h2 class="h2">The money this week</h2><div class="tots"><span>Pot (${entrants(w).length} × ${fmtM(pence(wEntry(w)))})</span><b>${fmtM(pot(w))}</b>
+  h += `<h2 class="h2">The money this week</h2><div class="tots"><span>Pot (${inPot(w).length} × ${fmtM(pence(wEntry(w)))})</span><b>${fmtM(pot(w))}</b>
     ${pz.map(z => `<span>${CAT(z.cat).label}: ${z.ids.length ? esc(z.ids.map(nm).join(" & ")) : "nobody"}</span><b>${fmtM(z.amt)}</b>`).join("")}</div>
     <p class="note">${w.locked ? "Prizes and entries are in everyone's balance." : "Prizes and entries go into everyone's balance when you lock the week."}</p>`;
   h += `<button class="btn" data-go="setup" data-w="${esc(w.id)}">Change the week's set-up</button>`;
@@ -1246,7 +1254,7 @@ function vWeeks() {
   h += `<div class="lb">` + ws.map(w => {
     const o = winnersOf(w, "overall");
     return `<div class="row tap" data-go="week" data-w="${esc(w.id)}"><div class="pos" style="font-size:.85rem">${esc(fmtDate(w.date)).replace(/ (\d\d)$/, "<br>$1")}</div>
-      <div class="nm">${o.length ? esc(o.map(x => nm(x.id)).join(" & ")) : "<span class='mut'>no cards yet</span>"}<span class="meta">${HOME} · ${MED(w) ? "medal" : "Stableford"} · ${entrants(w).length} played${w.locked ? "" : " · still open"}</span></div>
+      <div class="nm">${o.length ? esc(o.map(x => nm(x.id)).join(" & ")) : "<span class='mut'>no cards yet</span>"}<span class="meta">${HOME} · ${MED(w) ? "medal" : "Stableford"} · ${inPot(w).length} played${w.locked ? "" : " · still open"}</span></div>
       <div class="sc">${o.length ? fmtN(o[0].ch[0]) : ""}<small>${o.length ? (MED(w) ? "net" : "points") : ""}</small></div></div>`;
   }).join("") + `</div>`;
   return h;
@@ -1287,7 +1295,7 @@ function turnoutChart(T) {
   return `<figure class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Players each week">${g}${av}${bars}${xl}</svg>
     <figcaption id="tbInfo" class="tbinfo">Dotted line: the average, ${fmtAvg(avg)} a week. Tap a bar to see that week.</figcaption></figure>`;
 }
-const tbWords = w => `${fmtDate(w.date, true)}: <b>${entrants(w).length} played</b>${weekTee(w) ? " · tee " + esc(weekTee(w)) : ""}${(w.wx || []).length ? " · " + esc(wxWords(w)) : ""}`;
+const tbWords = w => `${fmtDate(w.date, true)}: <b>${inPot(w).length} played</b>${weekTee(w) ? " · tee " + esc(weekTee(w)) : ""}${(w.wx || []).length ? " · " + esc(wxWords(w)) : ""}`;
 function avgRows(G, label) {
   if (!G.length) return "";
   const top = Math.max(...G.map(g => g.avg));
@@ -1606,7 +1614,7 @@ function vMoney() {
   const ys = [...new Set(DOC.weeks.map(seasonOf))].sort(), yr = R.y && ys.includes(R.y) ? R.y : ys.slice(-1)[0];
   const t = { entry: 0, prize: 0, twos: 0, cash: 0, transfer: 0, out: 0 }, tb = twosBook();
   for (const w of DOC.weeks) if (w.locked && seasonOf(w) === yr) {
-    t.entry += (pence(wEntry(w)) + pence(wTwos(w))) * entrants(w).length;
+    t.entry += (pence(wEntry(w)) + pence(wTwos(w))) * inPot(w).length;
     for (const z of prizes(w)) t.prize += z.each * z.ids.length;
     t.twos += tb[w.id].each * tb[w.id].ids.length;
   }
@@ -1830,6 +1838,8 @@ async function act(a, d, el) {
       const order = d.p ? [d.p, ...lv.filter(x => x !== d.p)] : [];
       save([d.p ? set(["weeks", w.id, "pick", d.cat], order) : { op: "del", path: ["weeks", w.id, "pick", d.cat] }], CAT(d.cat).label + " tie");
       R.tie = null; toast(d.p ? `${CAT(d.cat).label}: ${nm(d.p)} wins` : `${CAT(d.cat).label}: shared`); return render(); }
+    case "nr": save([set(["weeks", w.id, "nr", d.p], !!d.on)], nm(d.p) + (d.on ? ": played, no card returned" : ": not in the pot"));
+      toast(d.on ? `${nm(d.p)}: in the pot, no card` : "Taken off"); return render();
     case "tiechg": R.tie = d.c; return render();
     case "dbl": save([set(["weeks", w.id, "dbl", d.p], d.c)], nm(d.p) + " takes the " + (d.c === "front" ? "front 9" : "back 9"));
       toast(nm(d.p) + " takes the " + (d.c === "front" ? "front 9" : "back 9")); return render();
