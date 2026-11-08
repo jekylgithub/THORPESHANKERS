@@ -334,6 +334,17 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
 .thought p{font-family:var(--serif);font-style:italic;font-size:1.2rem;color:var(--navy);margin:.4rem 0 0;line-height:1.45;}
 .sp-tap{margin-top:1.4rem;font-size:1rem;font-weight:600;color:var(--mut);letter-spacing:.04em;animation-delay:.6s;}
 #splash{cursor:pointer;}
+.poll{margin:.7rem 0 .2rem;padding:.6rem .8rem;border:1px dashed rgba(226,209,159,.7);border-radius:8px;}
+.poll b{display:block;font-family:var(--serif);color:var(--gold-pale);font-size:1.1rem;}
+.poll span{display:block;margin-top:.2rem;}
+.nextwk .poll{border-color:var(--gold);}
+.nextwk .poll b{color:var(--gold);}
+.wk-t2{font-family:var(--serif);font-weight:700;font-size:1.25rem;color:var(--navy);}
+.nextwk .mine{background:var(--gold-wash);color:var(--ink);border-color:var(--gold-pale);}
+.nextwk .mine b{color:var(--navy);}
+.nextwk .btn.ghost{color:var(--navy);border-color:var(--navy);}
+.choice.slots{grid-template-columns:repeat(7,1fr);gap:.4rem;}
+.nextl{margin-top:.6rem;font-size:.9rem;opacity:.85;}
 
 </style>
 </head>
@@ -354,9 +365,9 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
    Saving: every change is a small op ({op, path, value}) sent to the relay (worker/worker.js),
    never the whole document (the NTRC v38 lesson). Changes show at once, queue on the phone
    while there's no signal, retry by themselves, and say plainly whether they're saved. */
-const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "5.1", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"], "thoughts": ["The ball doesn't know your handicap. Neither, judging by Saturday, do you.", "Every round starts level. It's the next 18 holes that are the problem.", "A bad round of golf still beats a good day at work.", "Keep your head down. Partly for the swing, partly for the embarrassment.", "The hole is four and a quarter inches wide. Some weeks it shrinks.", "Play the shot you've got, not the one you saw on telly.", "Nobody remembers your score. Everybody remembers your shank.", "The fairway is the wide green bit. Worth a visit now and then.", "Tempo beats power. So does a decent lie.", "Count every shot. Your playing partners already are.", "Bunkers are only sand with ambition.", "The best putt is the one you've already holed in your head.", "Practice swings are free. The real one costs a tenner.", "Golf is a game of misses. The trick is missing in the right direction.", "Every Stableford point is a small act of defiance.", "There's no such thing as a gimme in a countback.", "A good walk spoiled is still a good walk.", "Aim small, miss small. Aim at the trees, hit the trees.", "The 19th hole has never lost a ball.", "Swing easy. Easy is the hardest bit.", "Your handicap is a statement of fact, not a target.", "Respect the course, repair the pitch mark, blame the wind.", "Talent hits the ball. Character finds it.", "One good shot is all it takes to come back next Saturday.", "Fast greens, slow hands.", "If in doubt, take one more club. If still in doubt, take two.", "Out of bounds is only a suggestion until it isn't.", "The last 3 holes are worth more than you think. Ask anyone who's lost on countback.", "Good golf is mostly patience. Shankers golf is mostly optimism.", "Lose the ball, keep the sense of humour.", "Read the putt, then trust it. Then blame the green.", "A par is a par. How you got there is between you and your God.", "Never up, never in. Always up, sometimes in the bunker behind.", "Hit it, find it, hit it again. The whole game in nine words.", "The scorecard never lies, but it does leave out the excuses.", "Smooth is fast. Quick is a hook.", "Every round has one shot that brings you back. Find it, then go home.", "There are no bad lies, only interesting ones.", "Golf builds character. So does the walk back to the tee.", "The wind is the same for everybody. It just knows where you are."]};
+const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "5.2", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"], "thoughts": ["The ball doesn't know your handicap. Neither, judging by Saturday, do you.", "Every round starts level. It's the next 18 holes that are the problem.", "A bad round of golf still beats a good day at work.", "Keep your head down. Partly for the swing, partly for the embarrassment.", "The hole is four and a quarter inches wide. Some weeks it shrinks.", "Play the shot you've got, not the one you saw on telly.", "Nobody remembers your score. Everybody remembers your shank.", "The fairway is the wide green bit. Worth a visit now and then.", "Tempo beats power. So does a decent lie.", "Count every shot. Your playing partners already are.", "Bunkers are only sand with ambition.", "The best putt is the one you've already holed in your head.", "Practice swings are free. The real one costs a tenner.", "Golf is a game of misses. The trick is missing in the right direction.", "Every Stableford point is a small act of defiance.", "There's no such thing as a gimme in a countback.", "A good walk spoiled is still a good walk.", "Aim small, miss small. Aim at the trees, hit the trees.", "The 19th hole has never lost a ball.", "Swing easy. Easy is the hardest bit.", "Your handicap is a statement of fact, not a target.", "Respect the course, repair the pitch mark, blame the wind.", "Talent hits the ball. Character finds it.", "One good shot is all it takes to come back next Saturday.", "Fast greens, slow hands.", "If in doubt, take one more club. If still in doubt, take two.", "Out of bounds is only a suggestion until it isn't.", "The last 3 holes are worth more than you think. Ask anyone who's lost on countback.", "Good golf is mostly patience. Shankers golf is mostly optimism.", "Lose the ball, keep the sense of humour.", "Read the putt, then trust it. Then blame the green.", "A par is a par. How you got there is between you and your God.", "Never up, never in. Always up, sometimes in the bunker behind.", "Hit it, find it, hit it again. The whole game in nine words.", "The scorecard never lies, but it does leave out the excuses.", "Smooth is fast. Quick is a hook.", "Every round has one shot that brings you back. Find it, then go home.", "There are no bad lies, only interesting ones.", "Golf builds character. So does the walk back to the tee.", "The wind is the same for everybody. It just knows where you are."]};
 const BASE = {"settings": {"twos": 0, "prizes": {"overall": 50, "front": 25, "back": 25}, "course": "Thorpe Hall GC", "format": "stableford"}, "players": [], "weeks": [], "money": [], "updatedAt": ""};               // data baked in at build time: the fallback copy
-const BUILD = "v5.1 · 11-26";
+const BUILD = "v5.2 · 11-26";
 const MONO = "<svg class=\"sp-mono\" role=\"img\" aria-label=\"TS\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"56\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"60\" cy=\"60\" r=\"50\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"/><text x=\"60\" y=\"74\" text-anchor=\"middle\" font-family=\"Charter,Georgia,serif\" font-weight=\"700\" font-size=\"42\" fill=\"currentColor\" letter-spacing=\"2\">TS<\/text><\/svg>";              // the monogram, inline SVG
 let WORKER = String(CFG.worker_url || "").replace(/\/+$/, "");
 const HOSTED = typeof location !== "undefined" && /^https?:$/.test(location.protocol);
@@ -554,6 +565,8 @@ function fmtDate(s, long, noYr) {
 }
 const fmtTime = d => p2(d.getHours()) + ":" + p2(d.getMinutes());
 const today = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+/* the next Saturday that hasn't got a week yet (Friday's booking is for the Saturday after tomorrow's) */
+function freeSaturday() { let d = nextSaturday(); while (DOC.weeks.some(w => w.date === d)) { const x = new Date(d + "T12:00:00"); x.setDate(x.getDate() + 7); d = x.getFullYear() + "-" + p2(x.getMonth() + 1) + "-" + p2(x.getDate()); } return d; }
 function nextSaturday() { const d = new Date(); d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7));
   return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
 const MED = w => w.format === "gross";
@@ -598,7 +611,12 @@ const fmtRel = (x, dp) => x == null ? "–" : Math.abs(x) < .05 ? "level" : (x <
 const shotAge = (w, id) => { const g = grossOf(w, id), a = ageOn(id, w.date, w); return !!(g && isNum(g.total) && a != null && g.total <= a); };
 const unit = w => MED(w) ? "strokes" : "points";
 const fmtWords = w => MED(w) ? "Medal: strokes (net after handicap)" : "Stableford: points";
-const thisWeek = () => { const open = DOC.weeks.filter(w => !w.locked); return open.length ? open[open.length - 1] : null; };
+/* "This week" = the earliest open week from three days ago on (Sunday's cards still come in); a week set up early for
+   the Saturday after is the NEXT week, shown underneath on Home (Justin: slots are booked 8 days ahead). */
+const openWeeks = () => DOC.weeks.filter(w => !w.locked).sort((a, b) => String(a.date).localeCompare(String(b.date)));
+const daysAgo = n => { const d = new Date(); d.setDate(d.getDate() - n); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+const thisWeek = () => { const o = openWeeks(); return o.find(w => String(w.date) >= daysAgo(3)) || o[o.length - 1] || null; };
+const nextWeeks = () => { const t = thisWeek(); return t ? openWeeks().filter(w => w !== t && String(w.date) > String(t.date)) : []; };
 const lastWeek = () => { const l = DOC.weeks.filter(w => w.locked); return l.length ? l[l.length - 1] : null; };
 const set = (path, value) => ({ op: "set", path, value });
 
@@ -962,6 +980,8 @@ const weekIds = w => [...new Set([...(w.players || []), ...(w.groups || []).flat
   ...Object.keys(w.avail || {}).filter(id => w.avail[id] === true)])].filter(id => !isOut(w, id) && P(id).active !== false);
 const unplaced = w => weekIds(w).filter(id => groupIx(w, id) < 0);
 const weekTee = w => (w.groups || []).map(g => g.tee).filter(Boolean).sort()[0] || w.tee || "";   // the earliest group, else the week's
+/* n tee times from the first, 8 minutes apart */
+function slotTees(first, n) { const [h, m] = String(first).split(":").map(Number); const o = []; for (let i = 0; i < n; i++) { const t = h * 60 + m + 8 * i; o.push(p2(Math.floor(t / 60)) + ":" + p2(t % 60)); } return o; }
 function teeSel(id, val) {
   const opts = [...new Set([...(val && !TEES.includes(val) ? [val] : []), ...TEES])].sort();
   return `<select id="${id}" data-tee="${id}"><option value="">No time yet</option>${opts.map(t => `<option${t === val ? " selected" : ""}>${t}</option>`).join("")}<option value="__type">Type a time…</option></select>`;
@@ -1000,15 +1020,23 @@ function saveGroups(w, G, label) {
   const t = (G.find(g => g.tee) || {}).tee; if (t) ops.push(set(["weeks", w.id, "tee"], t));
   save(ops, label || "Groups " + fmtDate(w.date));
 }
+/* set up, slots maybe booked, nobody in yet: waiting on Kevin's in/out poll */
+const awaitingPoll = w => !w.locked && !weekIds(w).length && !inPot(w).length;
+const teeList = w => (w.groups || []).map(g => g.tee).filter(Boolean).sort();
+function pollHtml(w) {
+  const T = teeList(w);
+  return `<div class="poll"><b>${T.length ? "Slots booked" : "Game set up"}, awaiting the hokey cokey poll</b>
+    ${T.length ? `<span>Tee times: ${T.map(esc).join(" · ")}</span>` : ""}</div>`;
+}
 function myWeekHtml(w, me) {
   if (!me || w.locked) return "";
   const out = isOut(w, me), gi = groupIx(w, me), G = rawGroups(w), inn = weekIds(w).includes(me);
-  if (out) return `<div class="mine"><b>You've said you can't make it.</b><button class="btn ghost" data-act="avail" data-on="1">I can play after all</button></div>`;
+  if (out) return `<div class="mine"><b>You've said you can't make it.</b><button class="btn ghost" data-act="avail" data-on="1" data-w="${esc(w.id)}">I can play after all</button></div>`;
   if (gi >= 0) { const g = G[gi], mates = g.players.filter(id => id !== me && !isOut(w, id));
     return `<div class="mine"><b>You're in: Group ${gi + 1}${g.tee ? " · " + esc(g.tee) : ""}</b>${mates.length ? `<span>with ${esc(mates.map(nm).join(", ").replace(/, ([^,]*)$/, " and $1"))}</span>` : ""}
-      <button class="btn ghost" data-act="avail" data-on="">I can't make it now</button></div>`; }
-  if (inn) return `<div class="mine"><b>You're down to play.</b><span>Groups to follow.</span><button class="btn ghost" data-act="avail" data-on="">I can't make it now</button></div>`;
-  return `<div class="mine"><b>Playing on Saturday?</b><div class="btns2"><button class="btn ghost" data-act="avail" data-on="1">I can play</button><button class="btn ghost" data-act="avail" data-on="">Can't this week</button></div></div>`;
+      <button class="btn ghost" data-act="avail" data-on="" data-w="${esc(w.id)}">I can't make it now</button></div>`; }
+  if (inn) return `<div class="mine"><b>You're down to play.</b><span>Groups to follow.</span><button class="btn ghost" data-act="avail" data-on="" data-w="${esc(w.id)}">I can't make it now</button></div>`;
+  return `<div class="mine"><b>Playing on Saturday?</b><div class="btns2"><button class="btn ghost" data-act="avail" data-on="1" data-w="${esc(w.id)}">I can play</button><button class="btn ghost" data-act="avail" data-on="" data-w="${esc(w.id)}">Can't this week</button></div></div>`;
 }
 /* ---- the weather at Thorpe Hall GC: now (in the header) and the forecast for the tee time (Home).
    From Open-Meteo: free, no account. Only the course's location is sent, nothing about anyone. ---- */
@@ -1059,8 +1087,10 @@ function vHome() {
     const mine = me && cardOf(w, me);
     h += `<div class="panel navy"><div class="kick">This week</div><div class="wk-t">${esc(fmtDate(w.date, true, true))}</div>
       <div class="wk-f">${HOME} · ${esc(fmtWords(w))}${weekTee(w) ? " · first tee " + esc(weekTee(w)) : ""}</div>
+      ${awaitingPoll(w) ? pollHtml(w) : teeList(w).length ? `<div class="wk-f">Tee times: ${teeList(w).map(esc).join(" · ")}</div>` : ""}
       ${forecastHtml(w)}${myWeekHtml(w, me)}
-      ${me ? `<button class="btn main" data-act="mycard">${mine ? `Change my card (${mine.total != null ? mine.total : "…"} ${unit(w)})` : "Put in my card"}</button>`
+      ${nextWeeks().map(nw => `<div class="wk-f nextl">Next: ${esc(fmtDate(nw.date, true, true))}${awaitingPoll(nw) ? ", slots booked" : ""}${teeList(nw).length ? " (" + teeList(nw).map(esc).join(" · ") + ")" : ""}</div>`).join("")}
+      ${awaitingPoll(w) ? "" : me ? `<button class="btn main" data-act="mycard">${mine ? `Change my card (${mine.total != null ? mine.total : "…"} ${unit(w)})` : "Put in my card"}</button>`
       : `<p class="wk-f" style="margin-top:.8rem">You're just looking. Playing? Ask the admin to send your link.</p>`}</div>`;
     if (entrants(w).length) h += `<h2 class="h2">So far <small>${esc(fmtDate(w.date, false, true))}</small></h2>${prizeHtml(w, false)}
       <button class="btn quiet" data-go="week" data-w="${esc(w.id)}">See the leaderboard</button>`;
@@ -1756,7 +1786,7 @@ function vSetup() {
   if (!DRAFT || DRAFT.for !== (R.w || "new")) {
     const prev = lastWeek() || thisWeek();
     DRAFT = w ? { for: w.id, date: w.date, format: w.format, players: [...(w.players || [])], tee: w.tee || "" }
-      : { for: "new", date: nextSaturday(), format: DOC.settings.format || "stableford", players: [], tee: (prev && prev.tee) || "" };
+      : { for: "new", date: freeSaturday(), format: DOC.settings.format || "stableford", players: [], tee: (prev && prev.tee) || "" };
   }
   const d = DRAFT, ps = active(), prev = lastWeek();
   return `${backBtn()}<h1 class="h1">${w ? "Change the week" : "Set up a new week"}</h1>
@@ -1764,7 +1794,11 @@ function vSetup() {
     <p class="note">At ${HOME}.</p>
     <div class="fld"><span>Scoring</span><div class="choice"><button class="${d.format !== "gross" ? "on" : ""}" data-act="sfmt" data-f="stableford">Points<br><small>Stableford</small></button>
       <button class="${d.format === "gross" ? "on" : ""}" data-act="sfmt" data-f="gross">Strokes<br><small>medal, net after handicap</small></button></div></div>
-    <label class="fld"><span>First tee time <small class="mut">(optional; the groups can have their own)</small></span>${teeSel("sTee", d.tee)}</label>
+    <label class="fld"><span>Tee times booked <small class="mut">(if known: the first one, and how many)</small></span>${teeSel("sTee", d.tee)}</label>
+    ${w && (w.groups || []).length ? `<p class="note">This week already has ${w.groups.length} group${w.groups.length === 1 ? "" : "s"}: change them in Admin → the week, under Groups going out.</p>`
+      : `<div class="fld"><span>How many slots <small class="mut">(8 minutes apart)</small></span><div class="choice slots">${[0, 1, 2, 3, 4, 5, 6].map(n => `<button class="${(d.slots || 0) === n ? "on" : ""}" data-act="sslots" data-n="${n}">${n || "–"}</button>`).join("")}</div>
+      ${d.tee && d.slots ? `<p class="note">${slotTees(d.tee, d.slots).join(" · ")}</p>` : ""}</div>`}
+    <p class="note">Names can wait: set up the week and its slots now, and put the players in once the poll's back.</p>
     <div class="fld"><span>Who's playing <small class="mut">(${d.players.length} ticked)</small></span>
       <div class="btns2">${prev ? `<button class="btn quiet" data-act="slast">Same as last week</button>` : ""}<button class="btn quiet" data-act="snone">Untick everyone</button></div>
       ${ps.map(p => `<div class="tick"><button class="${d.players.includes(p.id) ? "on" : ""}" data-act="stick" data-p="${esc(p.id)}">${esc(nm(p.id))}</button>
@@ -1957,6 +1991,7 @@ async function act(a, d, el) {
     case "unl": R.unl = w.id; return render();
     case "unlno": R.unl = null; return render();
     case "sfmt": DRAFT.format = d.f; return render();
+    case "sslots": DRAFT.slots = +d.n; return render();
     case "wx": { const now = new Set(w.wx || []); now.has(d.k) ? now.delete(d.k) : now.add(d.k);
       save([set(["weeks", w.id, "wx"], WX.map(x => x[0]).filter(k => now.has(k)))], "Weather " + fmtDate(w.date)); return render(); }
     case "ctog": { const c = String(R.c || "").split(",").filter(Boolean), i = c.indexOf(d.p);
@@ -1989,7 +2024,7 @@ async function act(a, d, el) {
       $("gwaBox").innerHTML = `<div class="panel"><p><b>The groups message is ready.</b> Tap the button, pick the Shankers chat, then press send.</p>
         <a class="btn main" href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">Open WhatsApp</a>
         <pre class="gmsg">${esc(msg)}</pre></div>`; return; }
-    case "avail": { const tw = thisWeek() && !thisWeek().locked ? thisWeek() : null; if (!tw || !ME()) return;
+    case "avail": { const tw = (d.w && WK(d.w)) || (thisWeek() && !thisWeek().locked ? thisWeek() : null); if (!tw || tw.locked || !ME()) return;
       save([set(["weeks", tw.id, "avail", ME()], !!d.on)], d.on ? "I can play" : "I can't make it");
       toast(d.on ? "Great, you're down to play" : "Thanks. You're out this week"); return render(); }
     case "sort": R.s = d.s; try { history.replaceState(R, ""); } catch (e) {} return render();
@@ -2002,13 +2037,15 @@ async function act(a, d, el) {
       if (D.for === "new") {
         let id = "w" + D.date, n = 2; while (WK(id)) id = "w" + D.date + "-" + n++;
         const wk = { id, date: D.date, course: HOME, format: D.format, players: pl, hcp: {}, ...(D.tee ? { tee: D.tee } : {}),
+          ...(D.tee && D.slots ? { groups: slotTees(D.tee, D.slots).map(t => ({ tee: t, players: [] })) } : {}),
           prizes: clone(DOC.settings.prizes || { overall: 50, front: 25, back: 25 }), cards: {}, locked: false };
-        save([{ op: "push", path: ["weeks"], value: wk }], "New week " + fmtDate(D.date)); DRAFT = null; toast("Week saved"); return go("week", { w: id });
+        save([{ op: "push", path: ["weeks"], value: wk }], "New week " + fmtDate(D.date)); DRAFT = null; toast("Week saved"); return go("aweek", { w: id });
       }
       const ex = WK(D.for);
       const ops = [set(["weeks", ex.id, "date"], D.date), set(["weeks", ex.id, "course"], HOME), set(["weeks", ex.id, "format"], D.format),
         set(["weeks", ex.id, "players"], pl), D.tee ? set(["weeks", ex.id, "tee"], D.tee) : { op: "del", path: ["weeks", ex.id, "tee"] }];
-      save(ops, "Week " + fmtDate(D.date)); DRAFT = null; toast("Saved"); return go("week", { w: ex.id });
+      if (D.tee && D.slots && !(ex.groups || []).length) ops.push(set(["weeks", ex.id, "groups"], slotTees(D.tee, D.slots).map(t => ({ tee: t, players: [] }))));
+      save(ops, "Week " + fmtDate(D.date)); DRAFT = null; toast("Saved"); return go("aweek", { w: ex.id });
     }
     case "hyes": saveH(w, R.p, isNum((w.hcp || {})[R.p]) ? w.hcp[R.p] : P(R.p).hcp); R.hchg = 0; return render();
     case "hchg": R.hchg = 1; R.adj = null; return render();
