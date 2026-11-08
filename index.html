@@ -291,6 +291,32 @@ table.card18 td,table.card18 th{text-align:center !important;font-size:.95rem;}
 .choice.wx small{font-size:.8rem;font-weight:600;}
 table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
 
+/* groups going out */
+.grp{background:var(--card);border:1px solid var(--hair);border-radius:8px;padding:.7rem .8rem;margin:0 0 .7rem;}
+.grp.pool{border-style:dashed;}
+.grp-h{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:.5rem;font-family:var(--serif);color:var(--navy);font-size:1.1rem;}
+.grp-h select{width:auto;min-width:8.5rem;min-height:2.6rem;font-size:1rem;}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem;}
+.chip{min-height:2.9rem;padding:.3rem .8rem;border:2px solid var(--hair2);border-radius:999px;background:#fff;color:var(--navy);font-family:var(--serif);font-weight:700;font-size:1.05rem;cursor:pointer;}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff;}
+.chip.out{text-decoration:line-through;color:var(--mut);}
+.chip.warn{border-color:var(--red);color:var(--red);}
+.chip.quiet{color:var(--mut);font-weight:600;}
+.mvbar{position:sticky;top:3.6rem;z-index:5;}
+.teetype{width:8.5rem;min-height:2.6rem;font-size:1.1rem;border:2px solid var(--navy);border-radius:8px;padding:0 .5rem;}
+.mine{background:rgba(255,255,255,.08);border:1px solid rgba(226,209,159,.4);border-radius:8px;padding:.7rem .8rem;margin:.8rem 0 .2rem;color:#f4f1e8;}
+.mine b{display:block;font-family:var(--serif);font-size:1.15rem;color:var(--gold-pale);}
+.mine span{display:block;margin-top:.15rem;}
+.btn.ghost{background:transparent;color:#f4f1e8;border-color:rgba(226,209,159,.6);margin-top:.6rem;min-height:2.9rem;font-size:1rem;}
+.gmsg{white-space:pre-wrap;font-family:var(--sans);font-size:.9rem;background:#fff;border:1px solid var(--hair);border-radius:6px;padding:.6rem;color:var(--ink);}
+.row.barred{opacity:.6;}
+.row.barred .nm{text-decoration:none;}
+.rel{font-weight:800;}
+.rel.lvl{color:#1f7a34;}
+.rel.bet{color:#b3121f;}
+.rel.wor{color:#111;}
+.cbn.wait{color:var(--amber);border-color:#e6cf91;background:var(--amber-wash);}
+
 </style>
 </head>
 <body>
@@ -310,9 +336,9 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
    Saving: every change is a small op ({op, path, value}) sent to the relay (worker/worker.js),
    never the whole document (the NTRC v38 lesson). Changes show at once, queue on the phone
    while there's no signal, retry by themselves, and say plainly whether they're saved. */
-const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "3.0", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
+const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "3.6", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
 const BASE = {"settings": {"twos": 0, "prizes": {"overall": 50, "front": 25, "back": 25}, "course": "Thorpe Hall GC", "format": "stableford"}, "players": [], "weeks": [], "money": [], "updatedAt": ""};               // data baked in at build time: the fallback copy
-const BUILD = "v3.0 · 11-26";
+const BUILD = "v3.6 · 11-26";
 const MONO = "<svg class=\"sp-mono\" role=\"img\" aria-label=\"TS\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"56\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"60\" cy=\"60\" r=\"50\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"/><text x=\"60\" y=\"74\" text-anchor=\"middle\" font-family=\"Charter,Georgia,serif\" font-weight=\"700\" font-size=\"42\" fill=\"currentColor\" letter-spacing=\"2\">TS<\/text><\/svg>";              // the monogram, inline SVG
 let WORKER = String(CFG.worker_url || "").replace(/\/+$/, "");
 const HOSTED = typeof location !== "undefined" && /^https?:$/.test(location.protocol);
@@ -464,7 +490,7 @@ function localApply(it) {
         const w = p[0] === "weeks" ? step(d.weeks, p[1]) : null;
         if (w && w.locked) throw { status: 403, error: "locked" };
         const ok = op.op === "set" && ((p.length === 4 && p[0] === "weeks" && (p[2] === "cards" || p[2] === "hcp") && p[3] === ME())
-          || (p.length === 3 && p[0] === "players" && p[1] === ME() && p[2] === "hcp") || (p.length === 4 && p[0] === "weeks" && p[2] === "age" && p[3] === ME()) || (p.length === 3 && p[0] === "players" && p[1] === ME() && (p[2] === "nick" || p[2] === "age" || p[2] === "name")));
+          || (p.length === 3 && p[0] === "players" && p[1] === ME() && p[2] === "hcp") || (p.length === 4 && p[0] === "weeks" && (p[2] === "age" || p[2] === "avail") && p[3] === ME()) || (p.length === 3 && p[0] === "players" && p[1] === ME() && (p[2] === "nick" || p[2] === "age" || p[2] === "name")));
         if (!ok) throw { status: 403 };
       }
       applyOp(d, op);
@@ -548,6 +574,8 @@ function relOf(w, id, cat) {
   if (cat !== "overall" || !homeCourse(w)) return null;
   return v - playH(w, id) - sum(CARD().par);
 }
+/* net to handicap, coloured like a scoreboard: green level, red better (minus), black worse (plus) */
+const relHtml = (x, dp) => x == null ? "–" : `<span class="rel ${Math.abs(x) < .05 ? "lvl" : x < 0 ? "bet" : "wor"}">${fmtRel(x, dp)}</span>`;
 const fmtRel = (x, dp) => x == null ? "–" : Math.abs(x) < .05 ? "level" : (x < 0 ? "−" : "+") + (dp ? fmtAvg(Math.abs(x)) : Math.abs(Math.round(x)));
 const shotAge = (w, id) => { const g = grossOf(w, id), a = ageOn(id, w.date, w); return !!(g && isNum(g.total) && a != null && g.total <= a); };
 const unit = w => MED(w) ? "strokes" : "points";
@@ -593,9 +621,26 @@ function chain(w, cat, id) {
 }
 /* rank one prize: level scores go to countback step by step, but only while every man
    still level has that number; then the admin's pick; then they share it. */
-function rank(w, cat) {
+/* ONE PRIZE A MAN (Justin, 08-11-2026). The overall is decided first, and its winner(s) are out of the rest of the
+   day. The front 9 and back 9 are then decided SIDE BY SIDE (no order) from the rest of the field. If one man is best
+   of the rest on BOTH nines he can still only win one: the admin chooses which (w.dbl[id] = "front"|"back"; until he
+   does, the back 9, and the app keeps asking); the other nine goes to the next best. */
+const PRIZE_ORDER = ["overall", "back", "front"];          // order for showing only
+function nineSplit(w) {
+  const O = rankCore(w, "overall", []).filter(r => r.pos === 1).map(r => r.id), ex = { front: [...O], back: [...O] }, both = [];
+  for (let n = 0; n < 6; n++) {
+    const F = rankCore(w, "front", ex.front).filter(r => r.pos === 1).map(r => r.id), B = rankCore(w, "back", ex.back).filter(r => r.pos === 1).map(r => r.id);
+    const two = F.filter(id => B.includes(id)); if (!two.length) break;
+    for (const id of two) { if (!both.includes(id)) both.push(id); (((w.dbl || {})[id]) === "front" ? ex.back : ex.front).push(id); }
+  }
+  return { overall: [], front: ex.front, back: ex.back, both, O };
+}
+/* the men who can't win this prize: the overall winner(s), and anyone taking the other nine instead */
+const barred = (w, cat) => nineSplit(w)[cat] || [];
+function rank(w, cat) { return rankCore(w, cat, barred(w, cat)); }
+function rankCore(w, cat, bar) {
   const med = MED(w), pick = ((w.pick || {})[cat]) || [];
-  const items = entrants(w).map(id => ({ id, ch: chain(w, cat, id) })).filter(x => x.ch && x.ch[0] != null);
+  const items = entrants(w).filter(id => !bar.includes(id)).map(id => ({ id, ch: chain(w, cat, id) })).filter(x => x.ch && x.ch[0] != null);
   const groups = [];
   const cmp = (a, b) => med ? a - b : b - a;
   function part(g, k) {
@@ -803,20 +848,27 @@ function rowsHtml(w, cat, limit, admin) {
     const cd = cardOf(w, x.id), h = playH(w, x.id);
     let meta = cat === "overall"
       ? (cd.out != null && cd.in != null ? `Out ${cd.out} · In ${cd.in}` : "Total only")
-      : (cat === "front" ? "holes 1 to 9" : "holes 10 to 18");
-    if (med) meta += ` · gross ${cat === "overall" ? cd.total : (cat === "front" ? cd.out : cd.in)} · handicap ${fmtH(h)}`;
-    const rl = relOf(w, x.id, cat); if (rl != null) meta += ` · net ${fmtRel(rl)}`;
+      : "";                                               // the heading says front 9 / back 9
+    if (med) meta += `${meta ? " · " : ""}gross ${cat === "overall" ? cd.total : (cat === "front" ? cd.out : cd.in)} · handicap ${fmtH(h)}`;
+    const rl = relOf(w, x.id, cat), netH = rl != null ? `${meta ? " · " : ""}net ${relHtml(rl)}` : "";
     let cbn = "";
     if (x.how === "admin") cbn = `<span class="cbn">placed by the admin</span>`;
     else if (isNum(x.how)) cbn = `<span class="cbn">countback: ${esc(c.steps[x.how])} ${fmtN(x.ch[x.how])}</span>`;
-    else if (x.eq && x.pos === 1) cbn = `<span class="cbn">level: shared</span>`;
+    else if (x.eq && x.pos === 1) cbn = needCB(w, cat) ? `<span class="cbn wait">level: countback needed</span>` : `<span class="cbn">shared: still level after the countback</span>`;
     if (cat === "overall" && shotAge(w, x.id)) cbn += `<span class="cbn age">shot their age (${ageOn(x.id, w.date, w)})</span>`;
     const sc = x.ch[0];
     return `<div class="row ${x.pos === 1 ? "win" : ""} ${admin ? "tap" : ""}" ${admin ? `data-go="card" data-w="${esc(w.id)}" data-p="${esc(x.id)}"` : ""}>
       <div class="pos">${x.pos}${x.eq ? "=" : ""}</div>
-      <div class="nm">${esc(nm(x.id))}<span class="meta">${esc(meta)}</span>${cbn}</div>
+      <div class="nm">${esc(nm(x.id))}<span class="meta">${esc(meta)}${netH}</span>${cbn}</div>
       <div class="sc">${fmtN(sc)}<small>${med ? "net" : "points"}</small></div></div>`;
-  }).join("") + `</div>`;
+  }).join("") + barredRows(w, cat) + `</div>`;
+}
+/* the men who scored well enough but already won a prize this week: shown greyed, so nobody wonders */
+function barredRows(w, cat) {
+  return barred(w, cat).map(id => { const ch = chain(w, cat, id); if (!ch || ch[0] == null) return "";
+    const won = PRIZE_ORDER.find(k => winnersOf(w, k).some(x => x.id === id));
+    return `<div class="row barred"><div class="pos">–</div><div class="nm">${esc(nm(id))}<span class="meta">${won ? `won the ${esc(CAT(won).label.toLowerCase())}: one prize a man` : "one prize a man"}</span></div>
+      <div class="sc">${fmtN(ch[0])}<small>${MED(w) ? "net" : "points"}</small></div></div>`; }).join("");
 }
 const fmtN = n => !isNum(n) ? "" : (Number.isInteger(n) ? String(n) : (Math.round(n * 10) / 10).toFixed(1).replace(".5", "½").replace(/\.0$/, ""));
 function prizeHtml(w, money) {
@@ -825,7 +877,9 @@ function prizeHtml(w, money) {
     const c = CAT(z.cat), win = winnersOf(w, z.cat);
     const who = win.length ? win.map(x => esc(nm(x.id))).join(" &amp; ") : "<span class='mut'>nobody yet</span>";
     const sc = win.length ? fmtN(win[0].ch[0]) + " " + (MED(w) ? "net" : "pts") : "";
-    return `<div class="prz-r"><div><span class="what">${c.label}</span><b>${who}</b> ${win.length > 1 ? "<span class='mut small'>(level)</span>" : ""}</div>
+    const n = win.length > 1 ? needCB(w, z.cat) : null;
+    const tag = win.length < 2 ? "" : n ? `<span class="cbn wait">level: countback needed (${esc(n.step.replace(/ \(.*\)/, ""))})</span>` : `<span class="cbn">shared: still level after the countback</span>`;
+    return `<div class="prz-r"><div><span class="what">${c.label}</span><b>${who}</b> ${tag}</div>
       <div>${money ? `<span class="amt">${fmtM(z.amt)}</span>` : `<span class="mut">${sc}</span>`}</div></div>`;
   }).join("") + `</div>`;
 }
@@ -861,8 +915,70 @@ function cardQuip(rel) {
   if (rel >= 8) return "Saved. A good walk, spoiled.";
   return "";
 }
+/* ---- groups going out, and who's in ----
+   w.groups: [{tee?, players:[ids]}] (the admins set and move them); w.avail: {id: true|false} (a player's own
+   "I can play" / "I can't make it"). Saying he can't make it takes him out of his group and the week without
+   anyone touching the groups; changing his mind puts him straight back where he was. */
+const TEES = (() => { const o = []; for (let m = 8 * 60 + 10; m <= 12 * 60; m += 8) o.push(p2(Math.floor(m / 60)) + ":" + p2(m % 60)); return o; })();
+const isOut = (w, id) => !!w.avail && w.avail[id] === false;
+const rawGroups = w => (w.groups || []).map(g => ({ tee: g.tee || "", players: [...(g.players || [])] }));
+const groupsOf = w => rawGroups(w).map(g => ({ tee: g.tee, players: g.players.filter(id => !isOut(w, id)) }));
+const groupIx = (w, id) => (w.groups || []).findIndex(g => (g.players || []).includes(id));
+/* everyone down to play this week: ticked, in a group, or said "I can play"; less anyone who's said he can't */
+const weekIds = w => [...new Set([...(w.players || []), ...(w.groups || []).flatMap(g => g.players || []),
+  ...Object.keys(w.avail || {}).filter(id => w.avail[id] === true)])].filter(id => !isOut(w, id) && P(id).active !== false);
+const unplaced = w => weekIds(w).filter(id => groupIx(w, id) < 0);
+const weekTee = w => (w.groups || []).map(g => g.tee).filter(Boolean).sort()[0] || w.tee || "";   // the earliest group, else the week's
+function teeSel(id, val) {
+  const opts = [...new Set([...(val && !TEES.includes(val) ? [val] : []), ...TEES])].sort();
+  return `<select id="${id}" data-tee="${id}"><option value="">No time yet</option>${opts.map(t => `<option${t === val ? " selected" : ""}>${t}</option>`).join("")}<option value="__type">Type a time…</option></select>`;
+}
+const normTee = t => { const m = String(t || "").trim().match(/^(\d{1,2})[:.\s]?(\d\d)$/); if (!m || +m[1] > 23 || +m[2] > 59) return null; return p2(+m[1]) + ":" + m[2]; };
+function groupsHtml(w) {
+  const G = rawGroups(w), mv = R.mv && weekIds(w).concat(Object.keys(w.avail || {})).includes(R.mv) ? R.mv : null;
+  const chip = id => `<button class="chip${mv === id ? " on" : ""}${isOut(w, id) ? " out" : ""}" data-act="mv" data-p="${esc(id)}">${esc(nm(id))}</button>`;
+  let h = `<h2 class="h2">Groups going out</h2>`;
+  if (mv) h += `<div class="cbbox mvbar"><h4>Move ${esc(nm(mv))} to:</h4><div class="chips">${G.map((g, i) => groupIx(w, mv) === i && !isOut(w, mv) ? "" :
+      `<button class="chip" data-act="mvto" data-g="${i}">Group ${i + 1}${g.tee ? " · " + g.tee : ""}</button>`).join("")}
+    <button class="chip" data-act="mvto" data-g="new">A new group</button>${groupIx(w, mv) >= 0 ? `<button class="chip" data-act="mvto" data-g="none">Not in a group</button>` : ""}
+    ${isOut(w, mv) ? "" : `<button class="chip warn" data-act="mvto" data-g="out">Not playing</button>`}<button class="chip quiet" data-act="mv" data-p="">Cancel</button></div></div>`;
+  h += G.map((g, i) => { const live = g.players.filter(id => !isOut(w, id)), gone = g.players.filter(id => isOut(w, id));
+    return `<div class="grp"><div class="grp-h"><b>Group ${i + 1}</b>${teeSel("gt" + i, g.tee)}</div>
+      <div class="chips">${live.map(chip).join("") || `<span class="mut small">nobody yet</span>`}</div>
+      ${live.length > 4 ? `<p class="hint">That's ${live.length} in one group.</p>` : ""}${gone.length ? `<p class="mut small">Can't make it now: ${gone.map(id => esc(nm(id))).join(", ")}</p>` : ""}</div>`; }).join("");
+  const un = unplaced(w), saidYes = Object.keys(w.avail || {}).filter(id => w.avail[id] === true);
+  if (un.length) h += `<div class="grp pool"><div class="grp-h"><b>Not in a group yet</b></div><div class="chips">${un.map(id => chip(id) + (saidYes.includes(id) ? "" : "")).join("")}</div>
+    ${un.some(id => saidYes.includes(id)) ? `<p class="mut small">Said they can play: ${un.filter(id => saidYes.includes(id)).map(id => esc(nm(id))).join(", ")}</p>` : ""}</div>`;
+  const outs = Object.keys(w.avail || {}).filter(id => w.avail[id] === false && groupIx(w, id) < 0);
+  if (outs.length) h += `<p class="mut small">Can't make it this week: ${outs.map(chip).join(" ")}</p>`;
+  const others = active().map(p => p.id).filter(id => !weekIds(w).includes(id) && !isOut(w, id));
+  h += `<div class="btns2">${un.length ? `<button class="btn go" data-act="gmake">Put them in fours</button>` : ""}<button class="btn" data-act="gadd">Add a group</button></div>`;
+  if (others.length) h += R.addw ? `<div class="grp pool"><div class="grp-h"><b>Add to this week</b></div><div class="chips">${others.map(id => `<button class="chip" data-act="wadd" data-p="${esc(id)}">${esc(nm(id))}</button>`).join("")}</div>
+      <button class="link" data-act="addw">Done adding</button></div>` : `<button class="btn quiet" data-act="addw">Add someone to this week</button>`;
+  if (G.some(g => g.players.some(id => !isOut(w, id)))) h += `<button class="btn quiet" data-act="gwa">Send the groups to WhatsApp</button><div id="gwaBox"></div>`;
+  h += `<p class="note">Tap a name to move it. Players see their group on their Home page, and can say they can't make it, which takes them out.</p>`;
+  return h;
+}
+/* save new groups (whole list: admins only); the week's tee for the stats follows group 1 */
+function saveGroups(w, G, label) {
+  G = G.filter(g => g.players.length || g.tee);
+  const ops = [set(["weeks", w.id, "groups"], G.map(g => ({ tee: g.tee || "", players: g.players })))];
+  const ids = [...new Set([...(w.players || []), ...G.flatMap(g => g.players)])]; ops.push(set(["weeks", w.id, "players"], ids));
+  const t = (G.find(g => g.tee) || {}).tee; if (t) ops.push(set(["weeks", w.id, "tee"], t));
+  save(ops, label || "Groups " + fmtDate(w.date));
+}
+function myWeekHtml(w, me) {
+  if (!me || w.locked) return "";
+  const out = isOut(w, me), gi = groupIx(w, me), G = rawGroups(w), inn = weekIds(w).includes(me);
+  if (out) return `<div class="mine"><b>You've said you can't make it.</b><button class="btn ghost" data-act="avail" data-on="1">I can play after all</button></div>`;
+  if (gi >= 0) { const g = G[gi], mates = g.players.filter(id => id !== me && !isOut(w, id));
+    return `<div class="mine"><b>You're in: Group ${gi + 1}${g.tee ? " · " + esc(g.tee) : ""}</b>${mates.length ? `<span>with ${esc(mates.map(nm).join(", ").replace(/, ([^,]*)$/, " and $1"))}</span>` : ""}
+      <button class="btn ghost" data-act="avail" data-on="">I can't make it now</button></div>`; }
+  if (inn) return `<div class="mine"><b>You're down to play.</b><span>Groups to follow.</span><button class="btn ghost" data-act="avail" data-on="">I can't make it now</button></div>`;
+  return `<div class="mine"><b>Playing on Saturday?</b><div class="btns2"><button class="btn ghost" data-act="avail" data-on="1">I can play</button><button class="btn ghost" data-act="avail" data-on="">Can't this week</button></div></div>`;
+}
 function missingHtml(w) {
-  const miss = (w.players || []).filter(id => !cardOf(w, id));
+  const miss = weekIds(w).filter(id => !cardOf(w, id));
   return miss.length ? `<p class="missing">Still to come in: ${miss.map(id => esc(nm(id))).join(", ")}</p>` : "";
 }
 
@@ -873,12 +989,13 @@ function vHome() {
   if (w) {
     const mine = me && cardOf(w, me);
     h += `<div class="panel navy"><div class="kick">This week</div><div class="wk-t">${esc(fmtDate(w.date, true, true))}</div>
-      <div class="wk-f">${HOME} · ${esc(fmtWords(w))}</div>
+      <div class="wk-f">${HOME} · ${esc(fmtWords(w))}${weekTee(w) ? " · first tee " + esc(weekTee(w)) : ""}</div>
+      ${myWeekHtml(w, me)}
       ${me || ADMIN() ? `<button class="btn main" data-act="mycard">${mine ? `Change my card (${mine.total != null ? mine.total : "…"} ${unit(w)})` : "Put in my card"}</button>
       ${ADMIN() ? `<button class="btn" data-go="pick" data-w="${esc(w.id)}" style="background:transparent;color:#f4f1e8;border-color:rgba(226,209,159,.6)">Put in a card for someone else</button>` : ""}`
       : `<p class="wk-f" style="margin-top:.8rem">You're just looking. Playing? Ask the admin to send your link.</p>`}</div>`;
     if (ADMIN()) {
-      const ent = entrants(w), miss = (w.players || []).filter(id => !cardOf(w, id)), od = ent.filter(id => odd(w, id).length);
+      const ent = entrants(w), miss = weekIds(w).filter(id => !cardOf(w, id)), od = ent.filter(id => odd(w, id).length);
       h += `<div class="panel"><div class="kick">Admin</div><p><b>${ent.length}</b> card${ent.length === 1 ? "" : "s"} in${miss.length ? `, <b>${miss.length}</b> still to come` : ""}${od.length ? `, <b>${od.length}</b> to check` : ""}.</p>
         <button class="btn go" data-go="week" data-w="${esc(w.id)}">Check the cards and lock the week</button></div>`;
     }
@@ -1025,10 +1142,10 @@ function cardState(w, id) {
 function vWeek() {
   const w = WK(R.w); if (!w) return vWeeks();
   let h = `${backBtn()}<div class="kick" style="text-align:center">${w.locked ? "Final result" : "Cards still coming in"}</div>
-    <h1 class="h1">${esc(fmtDate(w.date, true, true))}</h1><p class="sub">${HOME} · ${esc(fmtWords(w))}${w.tee ? ` · tee ${esc(w.tee)}` : ""}${(w.wx || []).length ? ` · ${esc(wxLong(w))}` : ""}</p>`;
+    <h1 class="h1">${esc(fmtDate(w.date, true, true))}</h1><p class="sub">${HOME} · ${esc(fmtWords(w))}${weekTee(w) ? ` · tee ${esc(weekTee(w))}` : ""}${(w.wx || []).length ? ` · ${esc(wxLong(w))}` : ""}</p>`;
   if (!w.locked && !ADMIN() && ME()) h += `<button class="btn main" data-act="mycard" data-w="${esc(w.id)}">${ME() && cardOf(w, ME()) ? "Change my card" : "Put in my card"}</button>`;
   if (ADMIN() && !w.locked) h += adminWeek(w);
-  h += `<h2 class="h2">The winners</h2>${prizeHtml(w, ADMIN())}`;
+  h += `<h2 class="h2">The winners</h2>${prizeHtml(w, ADMIN())}${ADMIN() ? tiesHtml(w) : ""}`;
   h += `<h2 class="h2">Overall <small>18 holes</small></h2>${rowsHtml(w, "overall", 0, ADMIN())}${missingHtml(w)}${spoonHtml(w)}`;
   h += `<h2 class="h2">Front 9</h2>${rowsHtml(w, "front", 5, ADMIN())}`;
   h += `<h2 class="h2">Back 9</h2>${rowsHtml(w, "back", 5, ADMIN())}`;
@@ -1041,24 +1158,16 @@ function vWeek() {
   if (ADMIN() && w.locked) h += adminWeek(w);
   return h;
 }
-function adminWeek(w) {
-  let h = `<h2 class="h2">Admin: the cards</h2>`;
-  const ids = [...new Set([...(w.players || []), ...entrants(w)])];
-  h += ids.map(id => {
-    const c = cardOf(w, id), o = odd(w, id), pd = paidFor(w, id), fee = wEntry(w) + wTwos(w);
-    const tag = !c ? `<span class="tag out">no card</span>` : (o.length ? `<span class="tag odd">check</span>` : `<span class="tag in">card in</span>`);
-    return `<div class="chk"><div class="nm tap" data-go="card" data-w="${esc(w.id)}" data-p="${esc(id)}" style="cursor:pointer">${esc(nm(id))}
-        <span class="meta">${c ? (c.out != null ? `${c.out} + ${c.in != null ? c.in : "?"} = ` : "") + (c.total != null ? c.total : "?") + " " + unit(w) : "tap to put it in"}${o.length ? " · " + esc(o.join(", ")) : ""}</span></div>${tag}
-      ${c || pd ? `<div class="paid"><button class="${!pd ? "on" : ""}" data-act="pay" data-p="${esc(id)}" data-how="">Not paid</button>
-        <button class="${pd && pd.how === "cash" ? "on" : ""}" data-act="pay" data-p="${esc(id)}" data-how="cash">Paid cash</button>
-        <button class="${pd && pd.how === "transfer" ? "on" : ""}" data-act="pay" data-p="${esc(id)}" data-how="transfer">Paid transfer</button></div>` : ""}</div>`;
-  }).join("");
-  h += `<div class="panel"><div class="kick">The day, for the stats</div>
-    <label class="fld"><span>Tee time</span><input id="wTee" type="time" value="${esc(w.tee || "")}"></label>
-    <div class="fld"><span>The weather <small class="mut">(tap all that fit)</small></span><div class="choice wx">${WX.map(([k, e, l]) => `<button class="${(w.wx || []).includes(k) ? "on" : ""}" data-act="wx" data-k="${k}"><span class="wxe">${e}</span><small>${l}</small></button>`).join("")}</div></div></div>`;
-  h += `<p class="note">Entry ${fmtM(pence(wEntry(w)) + pence(wTwos(w)))} a man. Tap a name to change their card.</p>
-    <button class="btn" data-go="pick" data-w="${esc(w.id)}" data-all="1">Put in a card for someone else</button>`;
-  /* ties the countback numbers would settle */
+/* ties: the countback numbers to ask for, and the admin's pick; shown right under the winners, any time, even locked */
+function tiesHtml(w) {
+  let h = "";
+  for (const id of nineSplit(w).both) {
+    const ch = (w.dbl || {})[id];
+    h += `<div class="cbbox"><h4>${esc(nm(id))}: best front 9 AND back 9</h4><p>One prize a man, so he takes one and the other goes to the next best.
+      ${ch ? `He's taking the <b>${ch === "front" ? "front 9" : "back 9"}</b>.` : `Which does he take? (Until you choose, it's the back 9.)`}</p>
+      <div class="btns2"><button class="btn${ch === "front" ? " go" : ""}" data-act="dbl" data-p="${esc(id)}" data-c="front">Front 9</button>
+      <button class="btn${ch === "back" ? " go" : ""}" data-act="dbl" data-p="${esc(id)}" data-c="back">Back 9</button></div></div>`;
+  }
   for (const c of CATS) {
     const n = needCB(w, c.k);
     if (n) {
@@ -1073,11 +1182,31 @@ function adminWeek(w) {
     if (top.length > 1 || (top[0] && top[0].how === "admin")) {
       const lv = rank(w, c.k).filter(x => x.level && x.ch[0] === (top[0] && top[0].ch[0]));
       if (lv.length > 1 && (top.length > 1 || top[0].how === "admin"))
-        h += `<div class="cbbox"><h4>${c.label}: still level after the countback</h4><p>They share it, unless you pick a winner.</p>
-          <div class="btns2">${lv.map(x => `<button class="btn" data-act="pick" data-cat="${c.k}" data-p="${esc(x.id)}">${esc(nm(x.id))} wins</button>`).join("")}
-          <button class="btn quiet" data-act="pick" data-cat="${c.k}" data-p="">They share it</button></div></div>`;
+        h += `<div class="cbbox"><h4>${c.label}: level</h4><p>${top[0] && top[0].how === "admin" ? `You picked <b>${esc(nm(top[0].id))}</b>. Tap another to change it, or make it shared.` : (needCB(w, c.k) ? "Put in the countback numbers above. If you already know who won, you can tap him." : "Still level after the last 6, last 3 and last hole, so they share it, unless you know otherwise.")}</p>
+          <div class="btns2">${lv.map(x => `<button class="btn${(((w.pick || {})[c.k]) || [])[0] === x.id ? " go" : ""}" data-act="pick" data-cat="${c.k}" data-p="${esc(x.id)}">${esc(nm(x.id))} wins</button>`).join("")}
+          <button class="btn quiet${((w.pick || {})[c.k] || []).length ? "" : " on"}" data-act="pick" data-cat="${c.k}" data-p="">They share it</button></div></div>`;
     }
   }
+  return h;
+}
+function adminWeek(w) {
+  let h = w.locked ? "" : groupsHtml(w);
+  h += `<h2 class="h2">Admin: the cards</h2>`;
+  const ids = [...new Set([...weekIds(w), ...entrants(w)])];
+  h += ids.map(id => {
+    const c = cardOf(w, id), o = odd(w, id), pd = paidFor(w, id), fee = wEntry(w) + wTwos(w);
+    const tag = !c ? `<span class="tag out">no card</span>` : (o.length ? `<span class="tag odd">check</span>` : `<span class="tag in">card in</span>`);
+    return `<div class="chk"><div class="nm tap" data-go="card" data-w="${esc(w.id)}" data-p="${esc(id)}" style="cursor:pointer">${esc(nm(id))}
+        <span class="meta">${c ? (c.out != null ? `${c.out} + ${c.in != null ? c.in : "?"} = ` : "") + (c.total != null ? c.total : "?") + " " + unit(w) : "tap to put it in"}${o.length ? " · " + esc(o.join(", ")) : ""}</span></div>${tag}
+      ${c || pd ? `<div class="paid"><button class="${!pd ? "on" : ""}" data-act="pay" data-p="${esc(id)}" data-how="">Not paid</button>
+        <button class="${pd && pd.how === "cash" ? "on" : ""}" data-act="pay" data-p="${esc(id)}" data-how="cash">Paid cash</button>
+        <button class="${pd && pd.how === "transfer" ? "on" : ""}" data-act="pay" data-p="${esc(id)}" data-how="transfer">Paid transfer</button></div>` : ""}</div>`;
+  }).join("");
+  h += `<div class="panel"><div class="kick">The day, for the stats</div>
+    ${(w.groups || []).some(g => g.tee) ? `<p class="note">First tee: <b>${esc(weekTee(w))}</b> (from the groups)</p>` : `<label class="fld"><span>Tee time</span>${teeSel("wTee", w.tee || "")}</label>`}
+    <div class="fld"><span>The weather <small class="mut">(tap all that fit)</small></span><div class="choice wx">${WX.map(([k, e, l]) => `<button class="${(w.wx || []).includes(k) ? "on" : ""}" data-act="wx" data-k="${k}"><span class="wxe">${e}</span><small>${l}</small></button>`).join("")}</div></div></div>`;
+  h += `<p class="note">Entry ${fmtM(pence(wEntry(w)) + pence(wTwos(w)))} a man. Tap a name to change their card.</p>
+    <button class="btn" data-go="pick" data-w="${esc(w.id)}" data-all="1">Put in a card for someone else</button>`;
   if (wTwos(w)) h += `<h2 class="h2">Who got a 2?</h2>` + entrants(w).map(id => `<div class="tick"><button class="${(w.twosWon || []).includes(id) ? "on" : ""}" data-act="two" data-p="${esc(id)}">${esc(nm(id))}</button><span></span></div>`).join("");
   const pz = prizes(w);
   h += `<h2 class="h2">The money this week</h2><div class="tots"><span>Pot (${entrants(w).length} × ${fmtM(pence(wEntry(w)))})</span><b>${fmtM(pot(w))}</b>
@@ -1085,7 +1214,8 @@ function adminWeek(w) {
     <p class="note">${w.locked ? "Prizes and entries are in everyone's balance." : "Prizes and entries go into everyone's balance when you lock the week."}</p>`;
   h += `<button class="btn" data-go="setup" data-w="${esc(w.id)}">Change the week's set-up</button>`;
   h += w.locked ? `<button class="btn warn" data-act="lock" data-on="">Unlock this week</button><p class="note">Locked: only you can change it.</p>`
-    : `<button class="btn go" data-act="lock" data-on="1">Lock this week</button><p class="note">Lock it when the cards are all in and right. After that, only you can change it.</p>`;
+    : `${CATS.some(c => needCB(w, c.k)) ? `<p class="hint">Still to settle: ${CATS.filter(c => needCB(w, c.k)).map(c => c.label).join(", ")}. Put in the countback numbers above before you lock.</p>` : ""}
+      <button class="btn go" data-act="lock" data-on="1">Lock this week</button><p class="note">Lock it when the cards are all in and right. After that, only you can change it.</p>`;
   return h;
 }
 /* ---------- all weeks ---------- */
@@ -1138,7 +1268,7 @@ function turnoutChart(T) {
   return `<figure class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Players each week">${g}${av}${bars}${xl}</svg>
     <figcaption id="tbInfo" class="tbinfo">Dotted line: the average, ${fmtAvg(avg)} a week. Tap a bar to see that week.</figcaption></figure>`;
 }
-const tbWords = w => `${fmtDate(w.date, true)}: <b>${entrants(w).length} played</b>${w.tee ? " · tee " + esc(w.tee) : ""}${(w.wx || []).length ? " · " + esc(wxWords(w)) : ""}`;
+const tbWords = w => `${fmtDate(w.date, true)}: <b>${entrants(w).length} played</b>${weekTee(w) ? " · tee " + esc(weekTee(w)) : ""}${(w.wx || []).length ? " · " + esc(wxWords(w)) : ""}`;
 function avgRows(G, label) {
   if (!G.length) return "";
   const top = Math.max(...G.map(g => g.avg));
@@ -1162,7 +1292,7 @@ function vSeason() {
     h += `<h2 class="h2">How many play</h2><div class="tiles"><div><b>${fmtAvg(avg)}</b>a week on average</div><div><b>${hi.n}</b>most<small>${esc(fmtDate(hi.w.date))}</small></div><div><b>${lo.n}</b>fewest<small>${esc(fmtDate(lo.w.date))}</small></div></div>
       ${turnoutChart(T)}`;
     const wxd = avgBy(T.filter(t => (t.w.wx || []).length), w => w.wx, WX.map(x => x[0])).map(g => Object.assign(g, { label: (wxOf(g.k)[1] + " " + wxOf(g.k)[2]).trim() }));
-    const tee = avgBy(T.filter(t => t.w.tee), w => [w.tee]);
+    const tee = avgBy(T.filter(t => weekTee(t.w)), w => [weekTee(w)]);
     const day = avgBy(T, w => [dayOf(w)], DAYS);
     const mon = avgBy(T, w => [String(w.date).slice(5, 7)]).map(g => Object.assign(g, { label: MONTHN[+g.k - 1] }));
     h += `<h3 class="h3">By the weather</h3>${wxd.length ? avgRows(wxd, "Weather") : `<p class="note">No weather put in yet. The admin taps it in on each week.</p>`}
@@ -1171,7 +1301,7 @@ function vSeason() {
       <h3 class="h3">By month</h3>${avgRows(mon, "Month")}
       <p class="note">A handful of weeks is a hint, not proof. A week that was rainy and windy counts under both.</p>
       <h3 class="h3">Every week</h3><table class="t wl"><thead><tr><th></th><th>Date</th><th>Played</th><th>Tee</th><th>Weather</th></tr></thead><tbody>` +
-      [...T].reverse().map(t => `<tr class="tap" data-go="week" data-w="${esc(t.w.id)}"><td></td><td class="n">${esc(dayOf(t.w).slice(0, 3))} ${esc(fmtDate(t.w.date))}</td><td class="p">${t.n}</td><td>${esc(t.w.tee || "–")}</td><td class="wxl">${esc(wxWords(t.w) || "–")}</td></tr>`).join("") + `</tbody></table>`;
+      [...T].reverse().map(t => `<tr class="tap" data-go="week" data-w="${esc(t.w.id)}"><td></td><td class="n">${esc(dayOf(t.w).slice(0, 3))} ${esc(fmtDate(t.w.date))}</td><td class="p">${t.n}</td><td>${esc(weekTee(t.w) || "–")}</td><td class="wxl">${esc(wxWords(t.w) || "–")}</td></tr>`).join("") + `</tbody></table>`;
   }
   return h;
 }
@@ -1226,7 +1356,7 @@ function vStat() {
     : `<div class="empty">No wins yet. Next Saturday.</div>`);
   h += `<h2 class="h2">Every round</h2><table class="t wl"><thead><tr><th></th><th>Date</th><th>Points</th><th>v hcp</th><th>Hcp</th></tr></thead><tbody>` +
     [...R0].reverse().map(x => `<tr class="tap${x.aged ? " me" : ""}" data-go="week" data-w="${esc(x.w.id)}"><td>${x.aged ? "★" : ""}</td><td class="n">${esc(fmtDate(x.w.date))}</td>
-      <td>${x.pts != null ? x.pts : "–"}</td><td class="p">${fmtRel(x.rel)}</td><td>${isNum(x.h) ? esc(fmtH(x.h)) : "–"}</td></tr>`).join("") + `</tbody></table>
+      <td>${x.pts != null ? x.pts : "–"}</td><td class="p">${relHtml(x.rel)}</td><td>${isNum(x.h) ? esc(fmtH(x.h)) : "–"}</td></tr>`).join("") + `</tbody></table>
     <p class="note">"v hcp" is the round against playing to handicap: 36 points is level, 37 is −1, 33 is +3.${age != null ? " ★ shot their age (gross, worked out from the points and that day's handicap on the Thorpe Hall GC card)." : ""}</p>`;
   return h;
 }
@@ -1489,7 +1619,7 @@ function vSetup() {
     <p class="note">At ${HOME}.</p>
     <div class="fld"><span>Scoring</span><div class="choice"><button class="${d.format !== "gross" ? "on" : ""}" data-act="sfmt" data-f="stableford">Points<br><small>Stableford</small></button>
       <button class="${d.format === "gross" ? "on" : ""}" data-act="sfmt" data-f="gross">Strokes<br><small>medal, net after handicap</small></button></div></div>
-    <label class="fld"><span>Tee time</span><input id="sTee" type="time" value="${esc(d.tee)}"></label>
+    <label class="fld"><span>First tee time <small class="mut">(optional; the groups can have their own)</small></span>${teeSel("sTee", d.tee)}</label>
     <div class="fld"><span>Who's playing <small class="mut">(${d.players.length} ticked)</small></span>
       <div class="btns2">${prev ? `<button class="btn quiet" data-act="slast">Same as last week</button>` : ""}<button class="btn quiet" data-act="snone">Untick everyone</button></div>
       ${ps.map(p => `<div class="tick"><button class="${d.players.includes(p.id) ? "on" : ""}" data-act="stick" data-p="${esc(p.id)}">${esc(nm(p.id))}</button>
@@ -1577,11 +1707,19 @@ function wire() {
     const w = WK(R.w), n = num(e.value); const val = n == null ? null : Math.round(n);
     save([set(["weeks", w.id, "cb", e.dataset.cb, e.dataset.f], val)], nm(e.dataset.cb) + ": countback"); render();
   }));
-  ["sDate", "sTee"].forEach(k => { const e = $(k); if (e) e.addEventListener("change", () => {
-    if (k === "sDate") DRAFT.date = e.value; else DRAFT.tee = e.value; }); });
-  const tee = $("wTee"); if (tee) tee.addEventListener("change", () => { const w = WK(R.w), t = tee.value;
-    if (t && !/^\d\d:\d\d$/.test(t)) return toast("Put the time in like 08:30");
-    save([t ? set(["weeks", w.id, "tee"], t) : { op: "del", path: ["weeks", w.id, "tee"] }], "Tee time " + fmtDate(w.date)); toast("Saved"); });
+  { const e = $("sDate"); if (e) e.addEventListener("change", () => { DRAFT.date = e.value; }); }
+  /* tee times: a wheel every 8 minutes from 08:10, or "Type a time…" */
+  const teeSet = (id, t) => { const w = WK(R.w);
+    if (id === "sTee") { DRAFT.tee = t; return; }
+    if (id === "wTee") { save([t ? set(["weeks", w.id, "tee"], t) : { op: "del", path: ["weeks", w.id, "tee"] }], "Tee time " + fmtDate(w.date)); toast("Saved"); return; }
+    const G = rawGroups(w), i = +id.slice(2); if (!G[i]) return; G[i].tee = t; saveGroups(w, G, "Tee time, group " + (i + 1)); toast("Saved"); render(); };
+  v.querySelectorAll("[data-tee]").forEach(sel => sel.addEventListener("change", () => {
+    const id = sel.dataset.tee;
+    if (sel.value !== "__type") return teeSet(id, sel.value);
+    const inp = document.createElement("input"); inp.id = id; inp.inputMode = "numeric"; inp.placeholder = "e.g. 08:15"; inp.className = "teetype";
+    sel.replaceWith(inp); inp.focus();
+    inp.addEventListener("change", () => { const t = normTee(inp.value); if (!t) return toast("Put the time in like 08:15"); teeSet(id, t); if (id === "sTee") render(); });
+  }));
   v.querySelectorAll("[data-tip]").forEach(g => { const show = () => { const i = $(g.dataset.into); if (!i) return;
     v.querySelectorAll("[data-into='" + g.dataset.into + "'].on").forEach(x => x.classList.remove("on")); g.classList.add("on"); i.innerHTML = g.dataset.tip; };
     g.addEventListener("click", show); g.addEventListener("mouseenter", show); });
@@ -1666,7 +1804,9 @@ async function act(a, d, el) {
     case "pick": { const lv = rank(w, d.cat).filter(x => x.level && x.ch[0] === winnersOf(w, d.cat)[0].ch[0]).map(x => x.id);
       const order = d.p ? [d.p, ...lv.filter(x => x !== d.p)] : [];
       save([d.p ? set(["weeks", w.id, "pick", d.cat], order) : { op: "del", path: ["weeks", w.id, "pick", d.cat] }], CAT(d.cat).label + " tie");
-      return render(); }
+      toast(d.p ? `${CAT(d.cat).label}: ${nm(d.p)} wins` : `${CAT(d.cat).label}: shared`); return render(); }
+    case "dbl": save([set(["weeks", w.id, "dbl", d.p], d.c)], nm(d.p) + " takes the " + (d.c === "front" ? "front 9" : "back 9"));
+      toast(nm(d.p) + " takes the " + (d.c === "front" ? "front 9" : "back 9")); return render();
     case "lock": save([set(["weeks", w.id, "locked"], !!d.on)], d.on ? "Lock the week" : "Unlock the week"); toast(d.on ? "Locked" : "Unlocked"); return render();
     case "sfmt": DRAFT.format = d.f; return render();
     case "wx": { const now = new Set(w.wx || []); now.has(d.k) ? now.delete(d.k) : now.add(d.k);
@@ -1679,6 +1819,31 @@ async function act(a, d, el) {
       const ops = [set(["players", id, "age"], +v)], tw = thisWeek(); if (tw && !tw.locked && cardOf(tw, id)) ops.push(set(["weeks", tw.id, "age", id], +v));
       save(ops, nm(id) + ": age", "age" + id); toast("Saved"); return render(); }
     case "ageoff": save([set(["players", d.p, "age"], null)], nm(d.p) + ": age", "age" + d.p); toast("Taken off"); return render();
+    case "mv": R.mv = d.p || null; return render();
+    case "mvto": { const id = R.mv; if (!id) return render(); let G = rawGroups(w);
+      G.forEach(g => g.players = g.players.filter(x => x !== id));
+      if (d.g === "out") { R.mv = null; save([set(["weeks", w.id, "avail", id], false)], nm(id) + ": not playing"); saveGroups(w, G); toast(nm(id) + " is out this week"); return render(); }
+      if (d.g === "new") G.push({ tee: "", players: [id] }); else if (d.g !== "none") G[+d.g].players.push(id);
+      if (isOut(w, id)) save([set(["weeks", w.id, "avail", id], true)], nm(id) + ": back in");
+      if (d.g === "none") { const pl = [...new Set([...(w.players || []), id])]; save([set(["weeks", w.id, "players"], pl)], "Who's playing"); }
+      R.mv = null; saveGroups(w, G, nm(id) + ": group"); return render(); }
+    case "gadd": { const G = rawGroups(w); G.push({ tee: "", players: [] }); save([set(["weeks", w.id, "groups"], G)], "Add a group"); return render(); }
+    case "gmake": { const G = rawGroups(w).map(g => ({ tee: g.tee, players: g.players })), un = unplaced(w);
+      for (const id of un) { let g = G.find(x => x.players.filter(y => !isOut(w, y)).length < 4); if (!g) { g = { tee: "", players: [] }; G.push(g); } g.players.push(id); }
+      saveGroups(w, G, "Groups " + fmtDate(w.date)); toast("Put in fours: move anyone you like"); return render(); }
+    case "addw": R.addw = !R.addw; return render();
+    case "wadd": { const pl = [...new Set([...(w.players || []), d.p])]; const ops = [set(["weeks", w.id, "players"], pl)];
+      if (isOut(w, d.p)) ops.push(set(["weeks", w.id, "avail", d.p], true));
+      save(ops, nm(d.p) + ": added to the week"); toast(nm(d.p) + " added"); return render(); }
+    case "gwa": { const G = groupsOf(w).filter(g => g.players.length), un = unplaced(w);
+      const msg = `${CFG.app_name}: ${fmtDate(w.date, true, true)}, ${HOME}\n\n` + G.map((g, i) => `${g.tee || "Group " + (i + 1)}: ${g.players.map(nm).join(", ")}`).join("\n")
+        + (un.length ? `\n\nStill to place: ${un.map(nm).join(", ")}` : "") + (CFG.live_url ? `\n\nCan't make it? Say so in the app: ${CFG.live_url}` : "");
+      $("gwaBox").innerHTML = `<div class="panel"><p><b>The groups message is ready.</b> Tap the button, pick the Shankers chat, then press send.</p>
+        <a class="btn main" href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">Open WhatsApp</a>
+        <pre class="gmsg">${esc(msg)}</pre></div>`; return; }
+    case "avail": { const tw = thisWeek() && !thisWeek().locked ? thisWeek() : null; if (!tw || !ME()) return;
+      save([set(["weeks", tw.id, "avail", ME()], !!d.on)], d.on ? "I can play" : "I can't make it");
+      toast(d.on ? "Great, you're down to play" : "Thanks. You're out this week"); return render(); }
     case "sort": R.s = d.s; try { history.replaceState(R, ""); } catch (e) {} return render();
     case "stick": { const i = DRAFT.players.indexOf(d.p); i >= 0 ? DRAFT.players.splice(i, 1) : DRAFT.players.push(d.p); return render(); }
     case "slast": { const l = lastWeek(); DRAFT.players = [...((l && (l.players && l.players.length ? l.players : entrants(l))) || [])].filter(id => P(id).active !== false); return render(); }
