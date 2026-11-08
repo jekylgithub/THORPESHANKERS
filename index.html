@@ -316,6 +316,7 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
 .rel.bet{color:#b3121f;}
 .rel.wor{color:#111;}
 .cbn.wait{color:var(--amber);border-color:#e6cf91;background:var(--amber-wash);}
+.cbtag{color:var(--gold);font-weight:700;}
 
 </style>
 </head>
@@ -336,9 +337,9 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
    Saving: every change is a small op ({op, path, value}) sent to the relay (worker/worker.js),
    never the whole document (the NTRC v38 lesson). Changes show at once, queue on the phone
    while there's no signal, retry by themselves, and say plainly whether they're saved. */
-const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "3.6", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
+const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "3.7", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
 const BASE = {"settings": {"twos": 0, "prizes": {"overall": 50, "front": 25, "back": 25}, "course": "Thorpe Hall GC", "format": "stableford"}, "players": [], "weeks": [], "money": [], "updatedAt": ""};               // data baked in at build time: the fallback copy
-const BUILD = "v3.6 · 11-26";
+const BUILD = "v3.7 · 11-26";
 const MONO = "<svg class=\"sp-mono\" role=\"img\" aria-label=\"TS\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"56\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"60\" cy=\"60\" r=\"50\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"/><text x=\"60\" y=\"74\" text-anchor=\"middle\" font-family=\"Charter,Georgia,serif\" font-weight=\"700\" font-size=\"42\" fill=\"currentColor\" letter-spacing=\"2\">TS<\/text><\/svg>";              // the monogram, inline SVG
 let WORKER = String(CFG.worker_url || "").replace(/\/+$/, "");
 const HOSTED = typeof location !== "undefined" && /^https?:$/.test(location.protocol);
@@ -730,12 +731,24 @@ function winStats(yr) {
   for (const w of byDate(DOC.weeks)) {
     if (!inYr(w, yr)) continue;
     const fee = pence(wEntry(w)) + pence(wTwos(w));
-    for (const id of entrants(w)) { const t = T[id] = T[id] || { id, played: 0, wins: 0, front: 0, back: 0, overall: 0, won: 0, paid: 0, list: [] }; t.played++; t.paid += fee; }
-    for (const z of prizes(w)) for (const id of z.ids) { const t = T[id]; t.wins++; t[z.cat]++; t.won += z.each; t.list.push({ w, cat: z.cat, p: z.each, shared: z.ids.length > 1 }); }
+    for (const id of entrants(w)) { const t = T[id] = T[id] || { id, played: 0, wins: 0, front: 0, back: 0, overall: 0, won: 0, paid: 0, list: [], cbw: 0, cbl: 0, lost: [] }; t.played++; t.paid += fee; }
+    for (const z of prizes(w)) {
+      const cb = cbHow(w, z.cat);                       // how a tie for the top was settled, if there was one
+      for (const id of z.ids) { const t = T[id]; t.wins++; t[z.cat]++; t.won += z.each; if (cb) t.cbw++; t.list.push({ w, cat: z.cat, p: z.each, shared: z.ids.length > 1, cb }); }
+      if (cb) for (const id of cbLosers(w, z.cat)) { const t = T[id]; if (t) { t.cbl++; t.lost.push({ w, cat: z.cat, cb, to: z.ids }); } }
+    }
     const t2 = tb[w.id]; if (t2.each) for (const id of t2.ids) { T[id].won += t2.each; T[id].list.push({ w, cat: "twos", p: t2.each, shared: t2.ids.length > 1 }); }
   }
   return Object.values(T).map(t => Object.assign(t, { net: t.won - t.paid }));
 }
+/* won (or lost) on countback: the winner was level at the top and the countback (or the admin) settled it */
+function cbHow(w, cat) {
+  const win = winnersOf(w, cat); if (win.length !== 1) return null;
+  const x = win[0]; if (x.how === "admin") return "picked by the admin";
+  return isNum(x.how) && x.how > 0 ? CAT(cat).steps[x.how].replace(/ \(.*\)/, "") : null;
+}
+const cbLosers = (w, cat) => { const win = winnersOf(w, cat); if (win.length !== 1) return [];
+  return rank(w, cat).filter(x => x.id !== win[0].id && x.ch[0] === win[0].ch[0]).map(x => x.id); };
 const SORTS = { wins: ["Most wins", ["wins", "won", "net"]], won: ["Most won", ["won", "wins", "net"]], net: ["Best net", ["net", "won", "wins"]] };
 function winTable(yr, by) {
   const k = (SORTS[by] || SORTS.wins)[1], rows = winStats(yr);
@@ -1240,7 +1253,7 @@ function winHtml(yr, by, limit) {
   const big = { wins: r => [r.wins, r.wins === 1 ? "win" : "wins"], won: r => [fmtM(r.won), "won"], net: r => [netHtml(r.net), "net"] }[SORTS[by] ? by : "wins"];
   return `<div class="lb">` + rows.slice(0, limit || 999).map(r => { const [v, l] = big(r);
     return `<div class="row tap${r.id === ME() ? " me" : ""}" data-go="stat" data-p="${esc(r.id)}" data-y="${esc(yr)}"><div class="pos">${r.pos}${r.eq ? "=" : ""}</div>
-      <div class="nm">${esc(nm(r.id))}<span class="meta">Front ${r.front} · Back ${r.back} · Overall ${r.overall}</span>
+      <div class="nm">${esc(nm(r.id))}<span class="meta">Front ${r.front} · Back ${r.back} · Overall ${r.overall}${r.cbw || r.cbl ? ` · countback: won ${r.cbw}, lost ${r.cbl}` : ""}</span>
       <span class="meta">Played ${r.played} · won ${fmtM(r.won)} · net ${netHtml(r.net)}</span></div><div class="sc">${v}<small>${l}</small></div></div>`; }).join("") + `</div>`;
 }
 function yearPick(yr, v) {
@@ -1349,11 +1362,14 @@ function vStat() {
     <div class="tiles"><div><b>${P0.length ? fmtAvg(sum(P0.map(x => x.pts)) / P0.length) : "–"}</b>points a round</div><div><b>${G.length ? fmtRel(Math.min(...G.map(x => x.rel))) : "–"}</b>best round<small>v handicap</small></div>
     <div><b>${age != null ? ages : "–"}</b>${age != null ? "shot their age" : "age not given"}</div></div>
     <table class="t"><thead><tr><th></th><th>Prize</th><th>Wins</th></tr></thead><tbody>
-    ${CATS.map(c => `<tr><td></td><td class="n">${esc(c.label)}</td><td class="p">${r[c.k]}</td></tr>`).join("")}</tbody></table>`;
+    ${CATS.map(c => `<tr><td></td><td class="n">${esc(c.label)}</td><td class="p">${r[c.k]}</td></tr>`).join("")}
+    <tr><td></td><td class="n">Won on countback</td><td class="p">${r.cbw}</td></tr><tr><td></td><td class="n">Lost on countback</td><td class="p">${r.cbl}</td></tr></tbody></table>`;
   h += `<h2 class="h2">Handicap</h2>${hcpChart(hcpHist(id, yr))}`;
   h += `<h2 class="h2">Every win</h2>` + (r.list.length ? `<div class="lb">` + [...r.list].reverse().map(x => `<div class="row tap" data-go="week" data-w="${esc(x.w.id)}"><div class="pos">★</div>
-      <div class="nm">${x.cat === "twos" ? "2s" : esc(CAT(x.cat).label)}${x.shared ? " <small class='mut'>(shared)</small>" : ""}<span class="meta">${esc(fmtDate(x.w.date, true))}</span></div><div class="sc">${fmtM(x.p)}</div></div>`).join("") + `</div>`
+      <div class="nm">${x.cat === "twos" ? "2s" : esc(CAT(x.cat).label)}${x.shared ? " <small class='mut'>(shared)</small>" : ""}<span class="meta">${esc(fmtDate(x.w.date, true))}${x.cb ? ` · <b class="cbtag">on countback (${esc(x.cb)})</b>` : ""}</span></div><div class="sc">${fmtM(x.p)}</div></div>`).join("") + `</div>`
     : `<div class="empty">No wins yet. Next Saturday.</div>`);
+  if (r.lost.length) h += `<h2 class="h2">Lost on countback <small>${r.lost.length}</small></h2><div class="lb">` + [...r.lost].reverse().map(x => `<div class="row tap" data-go="week" data-w="${esc(x.w.id)}"><div class="pos">✗</div>
+      <div class="nm">${esc(CAT(x.cat).label)}<span class="meta">${esc(fmtDate(x.w.date, true))} · to ${esc(x.to.map(nm).join(" & "))} on the ${esc(x.cb)}</span></div></div>`).join("") + `</div>`;
   h += `<h2 class="h2">Every round</h2><table class="t wl"><thead><tr><th></th><th>Date</th><th>Points</th><th>v hcp</th><th>Hcp</th></tr></thead><tbody>` +
     [...R0].reverse().map(x => `<tr class="tap${x.aged ? " me" : ""}" data-go="week" data-w="${esc(x.w.id)}"><td>${x.aged ? "★" : ""}</td><td class="n">${esc(fmtDate(x.w.date))}</td>
       <td>${x.pts != null ? x.pts : "–"}</td><td class="p">${relHtml(x.rel)}</td><td>${isNum(x.h) ? esc(fmtH(x.h)) : "–"}</td></tr>`).join("") + `</tbody></table>
@@ -1363,7 +1379,7 @@ function vStat() {
 /* ---------- compare two or more ---------- */
 const short = id => P(id).nick || String(P(id).name || id).split(" ")[0];
 function cmpData(id, yr) {
-  const s = winStats(yr).find(x => x.id === id) || { played: 0, wins: 0, front: 0, back: 0, overall: 0, won: 0, paid: 0, net: 0 };
+  const s = winStats(yr).find(x => x.id === id) || { played: 0, wins: 0, front: 0, back: 0, overall: 0, won: 0, paid: 0, net: 0, cbw: 0, cbl: 0 };
   const R0 = roundsOf(id, yr), P0 = R0.filter(x => x.pts != null).map(x => x.pts), G = R0.filter(x => x.rel != null).map(x => x.rel), H = hcpHist(id, yr);
   return Object.assign({ id }, s, { avgPts: P0.length ? sum(P0) / P0.length : null, bestPts: P0.length ? Math.max(...P0) : null,
     avgG: G.length ? sum(G) / G.length : null, bestG: G.length ? Math.min(...G) : null, ages: R0.filter(x => x.aged).length, hasAge: isNum(P(id).age) || DOC.weeks.some(w => w.age && isNum(w.age[id])),
@@ -1395,6 +1411,9 @@ function roast(D, yr) {
     else if (d.hMove != null && d.hMove <= -1) L.push(`${short(d.id)}'s handicap has come down ${fmtN(-d.hMove)}. The rest of you would like a word.`);
   for (const d of D) if (d.front >= 2 && d.front >= 2 * d.back) L.push(`${short(d.id)} wins the front 9 ${d.front} times, the back 9 ${d.back}. Flies out of the blocks, then the legs go.`);
     else if (d.back >= 2 && d.back >= 2 * d.front) L.push(`${short(d.id)} wins the back 9 ${d.back} times, the front 9 ${d.front}. Only wakes up at the 10th.`);
+  const cbk = [...D].sort((p, q) => q.cbw - p.cbw)[0], cbu = [...D].sort((p, q) => q.cbl - p.cbl)[0];
+  if (cbk && cbk.cbw >= 2) L.push(`${short(cbk.id)} has won ${cbk.cbw} on countback. Fine margins, or a fine pencil?`);
+  if (cbu && cbu.cbl >= 2 && cbu !== cbk) L.push(`${short(cbu.id)} has lost ${cbu.cbl} on countback. So close, so often.`);
   const ag = [...D].filter(d => d.ages).sort((p, q) => q.ages - p.ages);
   if (ag.length) L.push(`${ag.map((d, i) => `${short(d.id)} ${i ? "" : "has shot their age "}${d.ages} time${d.ages === 1 ? "" : "s"}`).join(", ")}. Everyone else here is younger and worse.`);
   const pts = by("avgPts", 1); if (pts.length > 1 && pts[0].avgPts - pts[pts.length - 1].avgPts >= 1)
@@ -1414,7 +1433,7 @@ function vCmp() {
   const n = x => fmtN(x), avg = x => fmtAvg(x);
   h += `<h2 class="h2">The numbers</h2><div class="cmpwrap"><table class="t cmpt"><thead><tr><th></th>${D.map(d => `<th>${esc(short(d.id))}</th>`).join("")}</tr></thead><tbody>
     ${row("Played", "played", n)}${row("Wins", "wins", n, 1)}${row("Front 9", "front", n, 1)}${row("Back 9", "back", n, 1)}${row("Overall", "overall", n, 1)}
-    ${row("Won", "won", x => fmtM(x), 1)}${row("Net", "net", x => netHtml(x), 1)}${row("Points a round", "avgPts", avg, 1)}${row("Best points", "bestPts", n, 1)}
+    ${row("Won on countback", "cbw", n, 1)}${row("Lost on countback", "cbl", n)}${row("Won", "won", x => fmtM(x), 1)}${row("Net", "net", x => netHtml(x), 1)}${row("Points a round", "avgPts", avg, 1)}${row("Best points", "bestPts", n, 1)}
     ${row("v handicap, a round", "avgG", x => fmtRel(x, 1), -1)}${row("Best v handicap", "bestG", x => fmtRel(x), -1)}${row("Handicap now", "hNow", x => esc(fmtH(x)))}
     ${row("Handicap moved", "hMove", x => x === 0 ? "same" : (x > 0 ? "up " : "down ") + fmtN(Math.abs(x)))}
     ${D.some(d => d.hasAge) ? row("Shot their age", "ages", (x, d) => d.hasAge ? n(x) : "–", 1) : ""}</tbody></table></div>
