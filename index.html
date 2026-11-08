@@ -310,9 +310,9 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
    Saving: every change is a small op ({op, path, value}) sent to the relay (worker/worker.js),
    never the whole document (the NTRC v38 lesson). Changes show at once, queue on the phone
    while there's no signal, retry by themselves, and say plainly whether they're saved. */
-const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "2.7", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
+const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "2.8", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
 const BASE = {"settings": {"twos": 0, "prizes": {"overall": 50, "front": 25, "back": 25}, "course": "Thorpe Hall GC", "format": "stableford"}, "players": [], "weeks": [], "money": [], "updatedAt": ""};               // data baked in at build time: the fallback copy
-const BUILD = "v2.7 · 11-26";
+const BUILD = "v2.8 · 11-26";
 const MONO = "<svg class=\"sp-mono\" role=\"img\" aria-label=\"TS\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"56\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"60\" cy=\"60\" r=\"50\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"/><text x=\"60\" y=\"74\" text-anchor=\"middle\" font-family=\"Charter,Georgia,serif\" font-weight=\"700\" font-size=\"42\" fill=\"currentColor\" letter-spacing=\"2\">TS<\/text><\/svg>";              // the monogram, inline SVG
 let WORKER = String(CFG.worker_url || "").replace(/\/+$/, "");
 const HOSTED = typeof location !== "undefined" && /^https?:$/.test(location.protocol);
@@ -464,7 +464,7 @@ function localApply(it) {
         const w = p[0] === "weeks" ? step(d.weeks, p[1]) : null;
         if (w && w.locked) throw { status: 403, error: "locked" };
         const ok = op.op === "set" && ((p.length === 4 && p[0] === "weeks" && (p[2] === "cards" || p[2] === "hcp") && p[3] === ME())
-          || (p.length === 3 && p[0] === "players" && p[1] === ME() && p[2] === "hcp") || (p.length === 4 && p[0] === "weeks" && p[2] === "age" && p[3] === ME()) || (p.length === 3 && p[0] === "players" && p[1] === ME() && (p[2] === "nick" || p[2] === "age")));
+          || (p.length === 3 && p[0] === "players" && p[1] === ME() && p[2] === "hcp") || (p.length === 4 && p[0] === "weeks" && p[2] === "age" && p[3] === ME()) || (p.length === 3 && p[0] === "players" && p[1] === ME() && (p[2] === "nick" || p[2] === "age" || p[2] === "name")));
         if (!ok) throw { status: 403 };
       }
       applyOp(d, op);
@@ -1310,6 +1310,8 @@ function vMe() {
   const me = ME(), big = +(lsGet(K.big) || 0);
   let h = `<h1 class="h1">Me</h1>`;
   if (me) h += `<p class="sub">This phone is set up for <b>${esc(P(me).name)}</b>.</p>
+      <label class="fld"><span>My full name</span><input id="fullName" maxlength="40" autocomplete="name" value="${esc(P(me).name || "")}"></label>
+      <button class="btn" data-act="fullname">Save my name</button>
       <label class="fld"><span>The name others see (a nickname, if you like)</span><input id="nick" maxlength="30" value="${esc(P(me).nick || "")}" placeholder="${esc(P(me).name)}"></label>
       <button class="btn" data-act="nick">Save my nickname</button>
       <label class="fld"><span>My playing handicap at Thorpe Hall GC</span><input id="myH" inputmode="numeric" maxlength="3" value="${isNum(P(me).hcp) ? fmtH(P(me).hcp) : ""}"></label>
@@ -1616,6 +1618,9 @@ async function act(a, d, el) {
     case "sure": R.sure = 1; return render();
     case "forget": AUTH = null; lsDel(K.auth); if (WORKER) lsDel(K.srv); return go("me");
     case "big": lsSet(K.big, d.n); applyBig(); return render();
+    case "fullname": { const v = ($("fullName").value || "").replace(/\s+/g, " ").trim().slice(0, 40);
+      if (v.length < 2) return toast("Put in your first name and surname");
+      save([set(["players", ME(), "name"], v)], "Your name"); toast("Saved"); return render(); }
     case "nick": { const v = ($("nick").value || "").trim().slice(0, 30); save([set(["players", ME(), "nick"], v)], "Your nickname"); toast("Saved"); return render(); }
     case "addp": { const name = ($("npName").value || "").trim(); if (!name) return toast("Put in their name first");
       const twin = DOC.players.find(p => String(p.name).trim().toLowerCase() === name.toLowerCase());
