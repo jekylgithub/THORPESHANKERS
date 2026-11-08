@@ -306,9 +306,9 @@ table.card18 td,table.card18 th{text-align:center !important;font-size:.95rem;}
    Saving: every change is a small op ({op, path, value}) sent to the relay (worker/worker.js),
    never the whole document (the NTRC v38 lesson). Changes show at once, queue on the phone
    while there's no signal, retry by themselves, and say plainly whether they're saved. */
-const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "2.0", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
+const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "2.1", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
 const BASE = {"settings": {"twos": 0, "prizes": {"overall": 50, "front": 25, "back": 25}, "course": "Thorpe Hall GC", "format": "stableford"}, "players": [], "weeks": [], "money": [], "updatedAt": ""};               // data baked in at build time: the fallback copy
-const BUILD = "v2.0 · 11-26";
+const BUILD = "v2.1 · 11-26";
 const MONO = "<svg class=\"sp-mono\" role=\"img\" aria-label=\"TS\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"56\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"60\" cy=\"60\" r=\"50\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"/><text x=\"60\" y=\"74\" text-anchor=\"middle\" font-family=\"Charter,Georgia,serif\" font-weight=\"700\" font-size=\"42\" fill=\"currentColor\" letter-spacing=\"2\">TS<\/text><\/svg>";              // the monogram, inline SVG
 let WORKER = String(CFG.worker_url || "").replace(/\/+$/, "");
 const HOSTED = typeof location !== "undefined" && /^https?:$/.test(location.protocol);
@@ -390,7 +390,9 @@ const ME = () => AUTH && AUTH.id && DOC.players.some(p => p.id === AUTH.id) ? AU
 /* names already set up on a phone (the relay keeps the list): they're left off "Who are you?" */
 let CLAIMED = jget("ts.claimed.v1") || [], FREEP = jget("ts.free.v1") || [];
 /* live: the relay sends only the names not yet set up (the scores stay private); try-out: from the data */
-const free = () => WORKER ? [...FREEP].sort((a, b) => (a.nick || a.name).localeCompare(b.nick || b.name)) : active().filter(p => !CLAIMED.includes(p.id));
+const free = () => (WORKER ? [...FREEP] : active().map(p => ({ id: p.id, name: p.name, nick: p.nick, set: CLAIMED.includes(p.id), pin: true })))
+  .sort((a, b) => (a.nick || a.name).localeCompare(b.nick || b.name));
+const lock = p => p.set ? `<small>🔒 your 4 numbers</small>` : "";
 const ADMIN = () => !!ADMINPIN || !!(ME() && (WORKER ? AUTH.admin : (CFG.admins || []).includes(ME())));
 const adminCred = () => ADMINPIN ? { pin: ADMINPIN } : AUTH.key ? { key: AUTH.key } : { by: AUTH.id, pin: AUTH.pin };
 function cred(as) {
@@ -1281,6 +1283,15 @@ function ageHtml(id, mine) {
     <label class="fld"><span>${mine ? "My age" : "Their age"}</span><input id="ag${esc(id)}" inputmode="numeric" maxlength="3" value="${isNum(a) ? a : ""}"></label>
     <button class="btn" data-act="agesave" data-p="${esc(id)}">Save ${mine ? "my" : "their"} age</button>${isNum(a) ? `<button class="link" data-act="ageoff" data-p="${esc(id)}">Take it off</button>` : ""}`;
 }
+/* signed in by the link: pick 4 numbers, for the home-screen app, another phone or a computer */
+function vMyPin() {
+  if (!ME()) return vHome();
+  return `<h1 class="h1">Pick 4 numbers</h1><p class="sub">You'll need them if you open the app from your home screen,
+    or on another phone or a computer.</p>
+    <label class="box" style="max-width:14rem;margin:0 auto"><input id="npin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off"></label>
+    <div id="pinMsg"></div><button class="btn main" data-act="mypin">Save my 4 numbers</button>
+    <button class="btn quiet" data-act="mypinskip">Not now</button>`;
+}
 /* ---------- me ---------- */
 function vMe() {
   const me = ME(), big = +(lsGet(K.big) || 0);
@@ -1291,7 +1302,8 @@ function vMe() {
       <label class="fld"><span>My playing handicap at Thorpe Hall GC</span><input id="myH" inputmode="numeric" maxlength="3" value="${isNum(P(me).hcp) ? fmtH(P(me).hcp) : ""}"></label>
       <div id="hMsg"></div><button class="btn" data-act="myhsave">Save my handicap</button>
       <button class="btn quiet" data-go="stat" data-p="${esc(me)}">My wins and money</button>
-      <h2 class="h2">My age <small>if you like</small></h2>${ageHtml(me, true)}`;
+      <h2 class="h2">My age <small>if you like</small></h2>${ageHtml(me, true)}
+      ${WORKER ? `<h2 class="h2">My 4 numbers</h2><p class="note">For the home-screen app, another phone or a computer.</p><button class="btn quiet" data-go="mypin">Choose new 4 numbers</button>` : ""}`;
   else h += `<p class="sub">This phone isn't set up for anyone yet.</p><button class="btn go" data-act="who">Say who I am</button>`;
   h += `<h2 class="h2">Writing size</h2><div class="choice" style="grid-template-columns:1fr 1fr 1fr">
     ${["Normal", "Bigger", "Biggest"].map((l, i) => `<button class="${big === i ? "on" : ""}" data-act="big" data-n="${i}" style="font-size:${1 + i * .15}rem">${l}</button>`).join("")}</div>
@@ -1320,19 +1332,22 @@ function vA2() {
 /* ---------- signing in ---------- */
 function vWho() {
   const ps = free();
-  if (!ps.length) return `${backBtn("home")}<h1 class="h1">Who are you?</h1><div class="empty">Everyone on the list is already set up on their phone.</div>
-    <p class="note">New to the Shankers, or a new phone? Ask the admin to send your link on WhatsApp.</p>`;
-  return `${backBtn("home")}<h1 class="h1">Who are you?</h1><p class="sub">Tap your name. Names already set up on a phone aren't shown.</p>
-    <div class="who">${ps.map(p => `<button data-act="iam" data-p="${esc(p.id)}">${esc(p.nick || p.name)}${p.nick ? `<small>${esc(p.name)}</small>` : ""}</button>`).join("")}</div>
-    <p class="note">Not on the list, or a new phone? Ask the admin to send your link.</p>`;
+  return `${backBtn("home")}<h1 class="h1">Who are you?</h1><p class="sub">Tap your name.</p>
+    <div class="who">${ps.map(p => `<button data-act="iam" data-p="${esc(p.id)}">${esc(p.nick || p.name)}${p.nick && !p.set ? `<small>${esc(p.name)}</small>` : ""}${lock(p)}</button>`).join("")}</div>
+    <p class="note">🔒 means already set up: it opens with that person's own 4 numbers (on the home-screen app, a new phone or a computer).
+    Not on the list? Ask the admin to send your link.</p>`;
 }
 function vPin() {
-  const p = P(R.p);
+  const p = P(R.p), f = free().find(x => x.id === R.p) || {};
+  if (f.set && !f.pin) return `${backBtn()}<h1 class="h1">${esc(p.name)}</h1>
+    <p class="sub">You set up with your WhatsApp link, so there are no 4 numbers yet.</p>
+    <p class="note">Open your link again (the WhatsApp message from the admin). Once you're in, it asks you to pick 4 numbers,
+    and those work here too. Lost the link? Ask the admin to send it again.</p>`;
   return `${backBtn()}<h1 class="h1">${esc(p.name)}</h1>
-    <p class="sub">Put in your 4 numbers.<br>First time? Pick any 4 numbers and remember them.</p>
+    <p class="sub">${f.set ? "Put in your 4 numbers." : "Put in your 4 numbers.<br>First time? Pick any 4 numbers and remember them."}</p>
     <label class="box" style="max-width:14rem;margin:0 auto"><input id="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off"></label>
     <div id="pinMsg"></div><button class="btn main" data-act="pin">Go in</button>
-    <p class="note">Easier: ask the admin to send you your link on WhatsApp. One tap and you're in for good.</p>`;
+    <p class="note">${f.set ? "Forgotten them? Ask the admin to reset your sign-in." : "Easier: ask the admin to send you your link on WhatsApp. One tap and you're in for good."}</p>`;
 }
 function vHcp1() {
   const me = ME(); if (!me) return vHome();
@@ -1505,7 +1520,7 @@ async function loadHist(path) {
   if (R.v === "hist") render();
 }
 
-const VIEWS = { home: vHome, pick: vPick, card: vCard, week: vWeek, weeks: vWeeks, season: vSeason, stat: vStat, cmp: vCmp, me: vMe, a2: vA2,
+const VIEWS = { home: vHome, pick: vPick, card: vCard, week: vWeek, weeks: vWeeks, season: vSeason, stat: vStat, cmp: vCmp, me: vMe, mypin: vMyPin, a2: vA2,
   who: vWho, pin: vPin, hcp1: vHcp1, admin: vAdmin, players: vPlayers, player: vPlayer, money: vMoney, setup: vSetup, settings: vSettings, hist: vHist };
 
 /* ======================= taps ======================= */
@@ -1568,6 +1583,12 @@ async function act(a, d, el) {
     case "who": return go("who");
     case "iam": if (!WORKER) { AUTH = { id: d.p }; jset(K.auth, AUTH); toast("Hello, " + nm(d.p)); return afterSignIn(); }
       return go("pin", { p: d.p });
+    case "mypin": { const np = ($("npin").value || "").replace(/\D/g, "");
+      if (np.length !== 4) { $("pinMsg").innerHTML = `<div class="hint">It needs 4 numbers.</div>`; return; }
+      let r; try { r = await post("/setpin", Object.assign(AUTH.key ? { key: AUTH.key } : { player: AUTH.id, pin: AUTH.pin }, { newpin: np })); } catch (e) { r = { net: true }; }
+      if (!r.ok) { $("pinMsg").innerHTML = `<div class="hint">${r.net ? "No signal at the moment. Try again in a minute." : "That didn't work. Try again."}</div>`; return; }
+      AUTH.pinSet = true; if (AUTH.pin) AUTH.pin = np; jset(K.auth, AUTH); lsSet("ts.pinasked.v1", "1"); toast("Saved. Remember them."); return afterSignIn(); }
+    case "mypinskip": lsSet("ts.pinasked.v1", "1"); return afterSignIn();
     case "pin": { const pin = ($("pin").value || "").replace(/\D/g, "");
       if (pin.length !== 4) { $("pinMsg").innerHTML = `<div class="hint">It needs 4 numbers.</div>`; return; }
       let r; try { r = await post("/login", { player: R.p, pin }); } catch (e) { r = { net: true }; }
@@ -1685,6 +1706,7 @@ function signedOut() {
     if (splashUp) buildSplash(); else go("who"); toast("Your sign-in was reset. Tap your name to set up again."); });
 }
 function afterSignIn() {
+  if (WORKER && AUTH && AUTH.key && !AUTH.pinSet && !lsGet("ts.pinasked.v1") && R.v !== "mypin") return go("mypin");
   if (ME() && !isNum(P(ME()).hcp) && !(PENDING && PENDING.w) && R.v !== "hcp1") return go("hcp1");
   if (PENDING && PENDING.w) { const w = PENDING.w; PENDING = null; return go("card", { w, p: ME() }); }
   if (PENDING && PENDING.pick) { const w = PENDING.pick; PENDING = null; return go("pick", { w }); }
@@ -1703,8 +1725,8 @@ function buildSplash() {
   let h = `<div class="in">${MONO}<div class="sp-t">${esc(CFG.app_name)}</div>${CFG.tagline ? `<div class="sp-tag">${esc(CFG.tagline)}</div>` : ""}${jibe() ? `<div class="sp-jibe">${esc(jibe())}</div>` : ""}`;
   if (me || ADMIN()) h += `<div class="sp-hi">Hello, ${esc(me ? nm(me) : (CFG.admin_name || "admin"))}</div><button class="btn main" data-sp="in">Go in</button>`;
   else { const f = free();
-    h += f.length ? `<div class="sp-q">Who are you?</div><div class="who">${f.map(p => `<button data-sp="iam" data-p="${esc(p.id)}">${esc(p.nick || p.name)}</button>`).join("")}</div>
-      <div class="sp-tag">Your name not here? It's set up on another phone. Ask the admin to send your link.</div>`
+    h += f.length ? `<div class="sp-q">Who are you?</div><div class="who">${f.map(p => `<button data-sp="iam" data-p="${esc(p.id)}">${esc(p.nick || p.name)}${lock(p)}</button>`).join("")}</div>
+      <div class="sp-tag">🔒 already set up: tap it and put in your 4 numbers.</div>`
       : `<div class="sp-q">Everyone on the list is set up.</div><div class="sp-tag">New to the Shankers? Ask the admin to add you and send your link.</div>`;
     if (!WORKER) h += `<button class="btn quiet" data-sp="look">Just looking</button>`; }
   splashEl.innerHTML = h + `</div>`;
