@@ -310,9 +310,9 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
    Saving: every change is a small op ({op, path, value}) sent to the relay (worker/worker.js),
    never the whole document (the NTRC v38 lesson). Changes show at once, queue on the phone
    while there's no signal, retry by themselves, and say plainly whether they're saved. */
-const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "2.4", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
+const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "2.5", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"]};
 const BASE = {"settings": {"twos": 0, "prizes": {"overall": 50, "front": 25, "back": 25}, "course": "Thorpe Hall GC", "format": "stableford"}, "players": [], "weeks": [], "money": [], "updatedAt": ""};               // data baked in at build time: the fallback copy
-const BUILD = "v2.4 · 11-26";
+const BUILD = "v2.5 · 11-26";
 const MONO = "<svg class=\"sp-mono\" role=\"img\" aria-label=\"TS\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"56\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"60\" cy=\"60\" r=\"50\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"/><text x=\"60\" y=\"74\" text-anchor=\"middle\" font-family=\"Charter,Georgia,serif\" font-weight=\"700\" font-size=\"42\" fill=\"currentColor\" letter-spacing=\"2\">TS<\/text><\/svg>";              // the monogram, inline SVG
 let WORKER = String(CFG.worker_url || "").replace(/\/+$/, "");
 const HOSTED = typeof location !== "undefined" && /^https?:$/.test(location.protocol);
@@ -698,7 +698,7 @@ function winTable(yr, by) {
 }
 /* turnout: how many put a card in, each finished week, with the day, tee time and weather */
 /* the weather, as a few pictures (Justin: "just a few emoji"): key, picture, word */
-const WX = [["sun", "☀️", "Bright sunshine"], ["hazy", "🌤️", "Hazy"], ["cloud", "☁️", "Cloudy"], ["fog", "🌫️", "Foggy"], ["rain", "🌧️", "Soaking"], ["storm", "⛈️", "Thunder"], ["wind", "💨", "Windy"]];
+const WX = [["sun", "☀️", "Bright sunshine"], ["hazy", "🌤️", "Hazy"], ["cloud", "☁️", "Cloudy"], ["fog", "🌫️", "Foggy"], ["rain", "🌧️", "Soaking"], ["storm", "🌩️", "Thunder"], ["wind", "💨", "Windy"]];
 const wxOf = k => WX.find(x => x[0] === k) || [k, "", k];
 const wxWords = w => (w.wx || []).map(k => wxOf(k)[1] || wxOf(k)[2]).join(" ");          // pictures only, in lists
 const wxLong = w => (w.wx || []).map(k => (wxOf(k)[1] + " " + wxOf(k)[2]).trim()).join(", ");
