@@ -350,6 +350,11 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
 .cardsat{margin-top:.9rem;font-weight:700;color:var(--gold-pale);font-size:1.05rem;}
 .cardin{margin-top:.9rem;font-size:1.05rem;}
 .panel.navy .cardin b{color:var(--gold-pale);}
+.mypay{margin:.8rem 0 .2rem;}
+.mypay>span{display:block;font-size:.95rem;margin-bottom:.1rem;}
+.mypay .btn.ghost{margin-top:.4rem;}
+.paidl{margin-top:.7rem;font-weight:700;}
+.paidl .link{color:var(--gold-pale);font-weight:600;min-height:2.2rem;}
 
 </style>
 </head>
@@ -370,9 +375,9 @@ table.wl td.wxl{font-size:1.2rem;letter-spacing:.1em;}
    Saving: every change is a small op ({op, path, value}) sent to the relay (worker/worker.js),
    never the whole document (the NTRC v38 lesson). Changes show at once, queue on the phone
    while there's no signal, retry by themselves, and say plainly whether they're saved. */
-const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "5.6", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"], "thoughts": ["The ball doesn't know your handicap. Neither, judging by Saturday, do you.", "Every round starts level. It's the next 18 holes that are the problem.", "A bad round of golf still beats a good day at work.", "Keep your head down. Partly for the swing, partly for the embarrassment.", "The hole is four and a quarter inches wide. Some weeks it shrinks.", "Play the shot you've got, not the one you saw on telly.", "Nobody remembers your score. Everybody remembers your shank.", "The fairway is the wide green bit. Worth a visit now and then.", "Tempo beats power. So does a decent lie.", "Count every shot. Your playing partners already are.", "Bunkers are only sand with ambition.", "The best putt is the one you've already holed in your head.", "Practice swings are free. The real one costs a tenner.", "Golf is a game of misses. The trick is missing in the right direction.", "Every Stableford point is a small act of defiance.", "There's no such thing as a gimme in a countback.", "A good walk spoiled is still a good walk.", "Aim small, miss small. Aim at the trees, hit the trees.", "The 19th hole has never lost a ball.", "Swing easy. Easy is the hardest bit.", "Your handicap is a statement of fact, not a target.", "Respect the course, repair the pitch mark, blame the wind.", "Talent hits the ball. Character finds it.", "One good shot is all it takes to come back next Saturday.", "Fast greens, slow hands.", "If in doubt, take one more club. If still in doubt, take two.", "Out of bounds is only a suggestion until it isn't.", "The last 3 holes are worth more than you think. Ask anyone who's lost on countback.", "Good golf is mostly patience. Shankers golf is mostly optimism.", "Lose the ball, keep the sense of humour.", "Read the putt, then trust it. Then blame the green.", "A par is a par. How you got there is between you and your God.", "Never up, never in. Always up, sometimes in the bunker behind.", "Hit it, find it, hit it again. The whole game in nine words.", "The scorecard never lies, but it does leave out the excuses.", "Smooth is fast. Quick is a hook.", "Every round has one shot that brings you back. Find it, then go home.", "There are no bad lies, only interesting ones.", "Golf builds character. So does the walk back to the tee.", "The wind is the same for everybody. It just knows where you are."]};
+const CFG = {"app_name": "Thorpe SHANKERS", "short_name": "Shankers", "monogram": "TS", "tagline": "Every Saturday. Front 9, back 9, overall.", "jibes": ["…and a hokey cokey. You put your front 9 in, your back 9 out.", "Where the handicaps go up and the stories get longer.", "Ten pounds well spent. Mostly by other people.", "Out in 18, back in 12, in the bar by 1.", "Every Saturday. Every excuse.", "Home of the 4-foot gimme and the 40-yard shank.", "Grip it and grumble.", "The course is long. The countback is longer."], "version": "5.9", "built_by": "Justin Lawrence", "admin_by": "Kevin Ford", "admin_name": "Kevin Ford", "github_owner": "", "repo": "THORPESHANKERS", "live_url": "https://jekylgithub.github.io/THORPESHANKERS/", "worker_url": "https://thorpeshankers-relay.jklmac.workers.dev", "season_start": "", "admins": ["justin", "kevin"], "thoughts": ["The ball doesn't know your handicap. Neither, judging by Saturday, do you.", "Every round starts level. It's the next 18 holes that are the problem.", "A bad round of golf still beats a good day at work.", "Keep your head down. Partly for the swing, partly for the embarrassment.", "The hole is four and a quarter inches wide. Some weeks it shrinks.", "Play the shot you've got, not the one you saw on telly.", "Nobody remembers your score. Everybody remembers your shank.", "The fairway is the wide green bit. Worth a visit now and then.", "Tempo beats power. So does a decent lie.", "Count every shot. Your playing partners already are.", "Bunkers are only sand with ambition.", "The best putt is the one you've already holed in your head.", "Practice swings are free. The real one costs a tenner.", "Golf is a game of misses. The trick is missing in the right direction.", "Every Stableford point is a small act of defiance.", "There's no such thing as a gimme in a countback.", "A good walk spoiled is still a good walk.", "Aim small, miss small. Aim at the trees, hit the trees.", "The 19th hole has never lost a ball.", "Swing easy. Easy is the hardest bit.", "Your handicap is a statement of fact, not a target.", "Respect the course, repair the pitch mark, blame the wind.", "Talent hits the ball. Character finds it.", "One good shot is all it takes to come back next Saturday.", "Fast greens, slow hands.", "If in doubt, take one more club. If still in doubt, take two.", "Out of bounds is only a suggestion until it isn't.", "The last 3 holes are worth more than you think. Ask anyone who's lost on countback.", "Good golf is mostly patience. Shankers golf is mostly optimism.", "Lose the ball, keep the sense of humour.", "Read the putt, then trust it. Then blame the green.", "A par is a par. How you got there is between you and your God.", "Never up, never in. Always up, sometimes in the bunker behind.", "Hit it, find it, hit it again. The whole game in nine words.", "The scorecard never lies, but it does leave out the excuses.", "Smooth is fast. Quick is a hook.", "Every round has one shot that brings you back. Find it, then go home.", "There are no bad lies, only interesting ones.", "Golf builds character. So does the walk back to the tee.", "The wind is the same for everybody. It just knows where you are."]};
 const BASE = {"settings": {"twos": 0, "prizes": {"overall": 50, "front": 25, "back": 25}, "course": "Thorpe Hall GC", "format": "stableford"}, "players": [], "weeks": [], "money": [], "updatedAt": ""};               // data baked in at build time: the fallback copy
-const BUILD = "v5.6 · 11-26";
+const BUILD = "v5.9 · 11-26";
 const MONO = "<svg class=\"sp-mono\" role=\"img\" aria-label=\"TS\" viewBox=\"0 0 120 120\"><circle cx=\"60\" cy=\"60\" r=\"56\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"60\" cy=\"60\" r=\"50\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"/><text x=\"60\" y=\"74\" text-anchor=\"middle\" font-family=\"Charter,Georgia,serif\" font-weight=\"700\" font-size=\"42\" fill=\"currentColor\" letter-spacing=\"2\">TS<\/text><\/svg>";              // the monogram, inline SVG
 let WORKER = String(CFG.worker_url || "").replace(/\/+$/, "");
 const HOSTED = typeof location !== "undefined" && /^https?:$/.test(location.protocol);
@@ -526,7 +531,7 @@ function localApply(it) {
         const w = p[0] === "weeks" ? step(d.weeks, p[1]) : null;
         if (w && w.locked) throw { status: 403, error: "locked" };
         const ok = op.op === "set" && ((p.length === 4 && p[0] === "weeks" && (p[2] === "cards" || p[2] === "hcp") && p[3] === ME())
-          || (p.length === 3 && p[0] === "players" && p[1] === ME() && p[2] === "hcp") || (p.length === 4 && p[0] === "weeks" && (p[2] === "age" || p[2] === "avail") && p[3] === ME()) || (p.length === 3 && p[0] === "players" && p[1] === ME() && (p[2] === "nick" || p[2] === "age" || p[2] === "name")));
+          || (p.length === 3 && p[0] === "players" && p[1] === ME() && p[2] === "hcp") || (p.length === 4 && p[0] === "weeks" && (p[2] === "age" || p[2] === "avail" || p[2] === "paid") && p[3] === ME()) || (p.length === 3 && p[0] === "players" && p[1] === ME() && (p[2] === "nick" || p[2] === "age" || p[2] === "name")));
         if (!ok) throw { status: 403 };
       }
       applyOp(d, op);
@@ -639,7 +644,9 @@ const entrants = w => Object.keys(w.cards || {}).filter(id => cardOf(w, id));
 /* PAYING is what puts a man in (Justin: "cash in is essential"); handing in a card is his choice. In the pot: anyone who
    has paid for the week, has a card in, or is marked DNR (did not return a card). A DNR is in the pot and pays his
    entry but isn't ranked; once the week is locked, anyone paid with no card is a DNR too. */
-const paidIds = w => DOC.money.filter(m => m && m.wk === w.id && /^Paid /.test(m.what || "")).map(m => m.p);
+/* who's paid this week: the player's own tick (w.paid[id] = "cash"|"transfer", Justin: the onus is on the player),
+   or an older payment line from the admin */
+const paidIds = w => [...new Set([...Object.keys(w.paid || {}).filter(id => w.paid[id]), ...DOC.money.filter(m => m && m.wk === w.id && /^Paid /.test(m.what || "")).map(m => m.p)])];
 const noCard = (w, id) => !cardOf(w, id) && (!!(w.nr && w.nr[id]) || (w.locked && paidIds(w).includes(id)));
 const inPot = w => [...new Set([...entrants(w), ...Object.keys(w.nr || {}).filter(id => w.nr[id] && !cardOf(w, id)), ...paidIds(w)])];
 function hcpOf(w, id) { const h = (w.hcp || {})[id]; return isNum(h) ? h : (isNum(P(id).hcp) ? P(id).hcp : 0); }
@@ -750,6 +757,7 @@ function lines(id) {
     if (!w.locked || !(cardOf(w, id) || noCard(w, id))) continue;
     const fee = pence(wEntry(w));
     if (fee) L.push({ date: w.date, what: "Entry " + fmtDate(w.date), p: -fee, wk: w.id });
+    if (w.paid && w.paid[id]) L.push({ date: w.date, what: "Paid " + w.paid[id] + " " + fmtDate(w.date), p: fee, wk: w.id, paid: true });
     for (const z of prizes(w)) if (z.ids.includes(id) && z.each)
       L.push({ date: w.date, what: CAT(z.cat).label + " winner " + fmtDate(w.date) + (z.ids.length > 1 ? " (shared)" : ""), p: z.each, wk: w.id });
   }
@@ -761,11 +769,11 @@ function lines(id) {
    against entries. What a man OWES = his entries (finished weeks) less what he's paid in (and any "put right").
    Negative = owes; positive = paid ahead. "Up or down" (winnings less entries) is a separate, stats figure. */
 const isPayment = m => m && (m.amt > 0 || m.what === "Put right by the admin");
-const dueLines = id => lines(id).filter(l => l.wk ? /^Entry /.test(l.what) : isPayment(DOC.money.find(m => m.id === l.mid)));
+const dueLines = id => lines(id).filter(l => l.wk ? (/^Entry /.test(l.what) || l.paid) : isPayment(DOC.money.find(m => m.id === l.mid)));
 const balance = id => dueLines(id).reduce((a, l) => a + l.p, 0);
 const owesHtml = b => b < 0 ? `<span class="neg">owes ${fmtM(-b)}</span>` : b > 0 ? `<span class="mut">paid ahead ${fmtM(b)}</span>` : `<span class="mut">all paid</span>`;
 const upDown = (id, yr) => { const r = yr && winStats(yr).find(x => x.id === id); return r ? r.net : null; };
-function paidFor(w, id) { return DOC.money.find(m => m && m.wk === w.id && m.p === id && /^Paid /.test(m.what || "")); }
+function paidFor(w, id) { if (w.paid && w.paid[id]) return { how: w.paid[id], own: true }; return DOC.money.find(m => m && m.wk === w.id && m.p === id && /^Paid /.test(m.what || "")); }
 /* ---- stats: wins, money and turnout, from the finished (locked) weeks ---- */
 const seasonOf = w => String(w.date || "").slice(0, 4);
 function seasons() { return [...new Set(DOC.weeks.filter(w => w.locked).map(seasonOf))].sort(); }
@@ -1039,6 +1047,15 @@ const cardsOpen = w => Date.now() >= cardsOpenAt(w).getTime();
 /* the card button: there until his card is in (complete: it has a total), whether he or an admin put it in */
 const cardDone = (w, id) => { const c = cardOf(w, id); return !!(c && c.total != null); };
 const showCard = c => c.out != null && c.in != null ? `${c.out} + ${c.in} = ${c.total}` : String(c.total);
+function myPayHtml(w, me) {
+  if (!me || w.locked || awaitingPoll(w)) return "";
+  if (!cardsOpen(w)) return "";                           // the £10 goes in after the round, at the table (Justin)
+  if (isOut(w, me) && !inPot(w).includes(me)) return "";   // said he couldn't make it (groups or no groups, anyone else can tick)
+  const pd = paidFor(w, me);
+  if (pd) return `<p class="wk-f paidl">£${ENTRY} paid ${pd.how === "transfer" ? "by transfer" : "cash"} ✓ <button class="link" data-act="mypay" data-how="" data-w="${esc(w.id)}">Undo</button></p>`;
+  return `<div class="mypay"><span>Paid your £${ENTRY}? Tick it:</span><div class="btns2"><button class="btn ghost" data-act="mypay" data-how="cash" data-w="${esc(w.id)}">£${ENTRY} paid: cash</button>
+    <button class="btn ghost" data-act="mypay" data-how="transfer" data-w="${esc(w.id)}">£${ENTRY} paid: transfer</button></div></div>`;
+}
 function myCardHtml(w, me, cls) {
   if (!me || w.locked) return "";
   if (!cardsOpen(w)) return `<p class="${cls || "sub"} cardsat">${esc(cardsWhen(w))}.</p>`;
@@ -1061,7 +1078,7 @@ function myWeekHtml(w, me) {
   if (gi >= 0) { const g = G[gi], mates = g.players.filter(id => id !== me && !isOut(w, id));
     return `<div class="mine"><b>You're in: Group ${gi + 1}${g.tee ? " · " + esc(g.tee) : ""}</b>${mates.length ? `<span>with ${esc(mates.map(nm).join(", ").replace(/, ([^,]*)$/, " and $1"))}</span>` : ""}
       <button class="btn ghost" data-act="avail" data-on="" data-w="${esc(w.id)}">I can't make it now</button></div>`; }
-  if (inn) return `<div class="mine"><b>You're down to play.</b><span>Groups to follow.</span><button class="btn ghost" data-act="avail" data-on="" data-w="${esc(w.id)}">I can't make it now</button></div>`;
+  if (inn) return `<div class="mine"><b>You're down to play.</b>${(w.groups || []).some(g => (g.players || []).length) ? "<span>Groups to follow.</span>" : weekTee(w) ? `<span>First tee ${esc(weekTee(w))}.</span>` : ""}<button class="btn ghost" data-act="avail" data-on="" data-w="${esc(w.id)}">I can't make it now</button></div>`;
   return `<div class="mine"><b>Playing on Saturday?</b><div class="btns2"><button class="btn ghost" data-act="avail" data-on="1" data-w="${esc(w.id)}">I can play</button><button class="btn ghost" data-act="avail" data-on="" data-w="${esc(w.id)}">Can't this week</button></div></div>`;
 }
 /* ---- the weather at Thorpe Hall GC: now (in the header) and the forecast for the tee time (Home).
@@ -1117,7 +1134,7 @@ function vHome() {
       ${forecastHtml(w)}${myWeekHtml(w, me)}
       ${nextWeeks().map(nw => `<div class="wk-f nextl">Next: ${esc(fmtDate(nw.date, true, true))}${awaitingPoll(nw) ? ", slots booked" : ""}${teeList(nw).length ? " (" + teeList(nw).map(esc).join(" · ") + ")" : ""}</div>`).join("")}
       ${awaitingPoll(w) ? "" : me ? myCardHtml(w, me, "wk-f")
-      : `<p class="wk-f" style="margin-top:.8rem">You're just looking. Playing? Ask ${ADM} to send your link.</p>`}</div>`;
+      : `<p class="wk-f" style="margin-top:.8rem">You're just looking. Playing? Ask ${ADM} to send your link.</p>`}${myPayHtml(w, me)}</div>`;
     if (entrants(w).length) h += `<h2 class="h2">So far <small>${esc(fmtDate(w.date, false, true))}</small></h2>${prizeHtml(w, false)}
       <button class="btn quiet" data-go="week" data-w="${esc(w.id)}">See the leaderboard</button>`;
   } else {
@@ -1362,7 +1379,7 @@ function adminWeek(w) {
     const nr = noCard(w, id);
     const tag = !c ? (nr ? `<span class="tag nr">DNR</span>` : `<span class="tag out">no card yet</span>`) : (o.length ? `<span class="tag odd">check</span>` : `<span class="tag in">card in</span>`);
     return `<div class="chk"><div class="nm tap" data-go="card" data-w="${esc(w.id)}" data-p="${esc(id)}" style="cursor:pointer">${esc(nm(id))}
-        <span class="meta">${c ? (c.out != null ? `${c.out} + ${c.in != null ? c.in : "?"} = ` : "") + (c.total != null ? c.total : "?") + " " + unit(w) : "tap to put it in"}${o.length ? " · " + esc(o.join(", ")) : ""}</span></div>${tag}
+        <span class="meta">${c ? (c.out != null ? `${c.out} + ${c.in != null ? c.in : "?"} = ` : "") + (c.total != null ? c.total : "?") + " " + unit(w) : "no card yet"}${pd && pd.own ? " · ticked his £" + ENTRY + " himself" : ""}${o.length ? " · " + esc(o.join(", ")) : ""}</span></div>${tag}
       ${!c ? `<button class="link nrbtn" data-act="nr" data-p="${esc(id)}" data-on="${w.nr && w.nr[id] ? "" : "1"}">${w.nr && w.nr[id] ? "Undo DNR" : "DNR: he played but isn't handing in a card"}</button>` : ""}
       ${`<div class="paid"><button class="${!pd ? "on" : ""}" data-act="pay" data-p="${esc(id)}" data-how="">Not paid</button>
         <button class="${pd && pd.how === "cash" ? "on" : ""}" data-act="pay" data-p="${esc(id)}" data-how="cash">Paid cash</button>
@@ -1372,7 +1389,7 @@ function adminWeek(w) {
     ${(w.groups || []).some(g => g.tee) ? `<p class="note">First tee: <b>${esc(weekTee(w))}</b> (from the groups)</p>` : `<label class="fld"><span>Tee time</span>${teeSel("wTee", w.tee || "")}</label>`}
     <div class="fld"><span>The weather <small class="mut">(tap all that fit)</small></span><div class="choice wx">${WX.map(([k, e, l]) => `<button class="${(w.wx || []).includes(k) ? "on" : ""}" data-act="wx" data-k="${k}"><span class="wxe">${e}</span><small>${l}</small></button>`).join("")}</div></div></div>`;
   h += `<p class="note">Entry ${fmtM(pence(wEntry(w)))} a man. Tap a name to change their card.</p>
-    <button class="btn" data-go="pick" data-w="${esc(w.id)}" data-all="1">Put in a card for someone else</button>`;
+    <p class="note">Players put in their own cards and tick their own £${ENTRY}. Tap a name only to put a mistake right; the paid buttons are for anyone who forgets.</p>`;
   const pz = prizes(w);
   h += `<h2 class="h2">The money this week</h2><div class="tots"><span>Pot (${inPot(w).length} × ${fmtM(pence(wEntry(w)))})</span><b>${fmtM(pot(w))}</b>
     ${pz.map(z => `<span>${CAT(z.cat).label}: ${z.ids.length ? esc(z.ids.map(nm).join(" & ")) : "nobody"}</span><b>${fmtM(z.amt)}</b>`).join("")}</div>
@@ -1788,6 +1805,7 @@ function vMoney() {
     t.entry += (pence(wEntry(w))) * inPot(w).length;
     for (const z of prizes(w)) t.prize += z.each * z.ids.length;
   }
+  for (const w of DOC.weeks) if (w.locked && seasonOf(w) === yr) for (const id in (w.paid || {})) { if (w.paid[id] === "cash") t.cash += pence(wEntry(w)); else if (w.paid[id] === "transfer") t.transfer += pence(wEntry(w)); }
   for (const m of DOC.money) if (String(m.date || "").slice(0, 4) === yr) {
     if (m.how === "cash" && m.amt > 0) t.cash += pence(m.amt); else if (m.how === "transfer" && m.amt > 0) t.transfer += pence(m.amt);
     else if (m.amt < 0) t.out += -pence(m.amt);
@@ -2004,11 +2022,13 @@ async function act(a, d, el) {
     case "askdel": R.del = d.m; return render();
     case "deln": R.del = null; return render();
     case "delm": save([{ op: "del", path: ["money", d.m] }], "Remove a money line"); R.del = null; return render();
-    case "pay": { const cur = paidFor(w, d.p), ops = [];
-      if (cur) ops.push({ op: "del", path: ["money", cur.id] });
-      if (d.how) ops.push({ op: "push", path: ["money"], value: { id: uid("m"), date: w.date, p: d.p, amt: wEntry(w), what: "Paid " + d.how, how: d.how, wk: w.id } });
-      if (!ops.length) return;
-      save(ops, nm(d.p) + ": entry"); return render(); }
+    case "pay": { const old = DOC.money.find(m => m && m.wk === w.id && m.p === d.p && /^Paid /.test(m.what || "")), ops = [];
+      if (old) ops.push({ op: "del", path: ["money", old.id] });
+      ops.push(set(["weeks", w.id, "paid", d.p], d.how || null));
+      save(ops, nm(d.p) + ": entry " + (d.how || "not paid")); return render(); }
+    case "mypay": { const tw = (d.w && WK(d.w)) || thisWeek(); if (!tw || tw.locked || !ME()) return;
+      save([set(["weeks", tw.id, "paid", ME()], d.how || null)], d.how ? "£" + ENTRY + " paid (" + d.how + ")" : "£" + ENTRY + " not paid after all");
+      toast(d.how ? "Thanks: £" + ENTRY + " paid, " + (d.how === "cash" ? "cash" : "by transfer") : "Taken off"); return render(); }
     case "pick": { const lv = rank(w, d.cat).filter(x => x.level && x.ch[0] === winnersOf(w, d.cat)[0].ch[0]).map(x => x.id);
       const order = d.p ? [d.p, ...lv.filter(x => x !== d.p)] : [];
       save([d.p ? set(["weeks", w.id, "pick", d.cat], order) : { op: "del", path: ["weeks", w.id, "pick", d.cat] }], CAT(d.cat).label + " tie");
@@ -2018,7 +2038,8 @@ async function act(a, d, el) {
     case "tiechg": R.tie = d.c; return render();
     case "dbl": save([set(["weeks", w.id, "dbl", d.p], d.c)], nm(d.p) + " takes the " + (d.c === "front" ? "front 9" : "back 9"));
       toast(nm(d.p) + " takes the " + (d.c === "front" ? "front 9" : "back 9")); return render();
-    case "lock": R.unl = null; save([set(["weeks", w.id, "locked"], !!d.on)], d.on ? "Lock the week" : "Unlock the week"); toast(d.on ? "Locked" : "Unlocked: you can make changes"); return render();
+    case "lock": { R.unl = null; const ops = [set(["weeks", w.id, "locked"], !!d.on)];   // groups are left exactly as they are
+      save(ops, d.on ? "Lock the week" : "Unlock the week"); toast(d.on ? "Locked" : "Unlocked: you can make changes"); return render(); }
     case "unl": R.unl = w.id; return render();
     case "unlno": R.unl = null; return render();
     case "sfmt": DRAFT.format = d.f; return render();
